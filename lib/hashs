@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: lib/hashs
+# Created: Wednesday, 2021/05/26 - 00:47:46
+# Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2022/02/27 - 22:28:39
+# Modified By..: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.1.1.44
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > Implements a virtual Hash.
+#  >> Save keys/values in a temp file on disk for each HASH
+#  >> from: https://stackoverflow.com/a/2225712
+# ############################################################################
+# HISTORY:
+#
+
+__LIB_HASHS=true;
+
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# create a file based struct to save pairs key / value (Hash)
+# Ex. Hash.new hash_name
+#   -> create a file /tmp/hashs/map.SCRIPTNAME.hash_name 
+# @param $1 -> hash_name
+Hash.new() {
+    mkdir -p /tmp/hashs
+    _hash_filename_="/tmp/hashs/map.$APP.$1"
+    rm -f "$_hash_filename_"
+}
+
+# Add a key / value to a existent Hash / file
+# @param $1 -> hash_name ($_hash_filename_)
+# @param $2 -> key
+# @param $3 -> value
+Hash.put() {
+    echo "$2:$3" >> "$_hash_filename_"
+}
+alias Hash.add='Hash.put'
+
+# get a `value` from a Hash by its `key`
+# @param $1 -> hash_name
+# @param $2 -> `key`
+# @return -> `value`
+Hash.get() {
+    grep "^$2:" "$_hash_filename_" | cut -d ':' -f2
+}
+alias Hash.val='Hash.get'
+
+# get all keys in a Hash
+# @param $1 -> hash_name
+# @return <keys>
+Hash.keys(){
+    cat "$_hash_filename_" | cut -d ':' -f1
+}
+
+# get all `values` from a  Hash
+# @param $1 -> hash_name
+# @return <values>
+Hash.values(){
+    cat "$_hash_filename_" 2>/dev/null | cut -d ':' -f2
+}
+
+# get all pairs `key/value` from a Hash
+# @param $1 -> hash_name
+# @return <keys:values>
+Hash.all(){
+    cat "$_hash_filename_" 2>/dev/null
+}
+
+# count items in a Hash
+# @param $1 -> hash_name
+# @return <count>
+Hash.count(){
+    Hash.all | wc -l
+}
+
+# search a item in a Hash
+# @param $1 -> search_term
+# @return <count>
+Hash.search(){
+    Hash.all | grep "$*"
+}
+
+# search a item in a Hash
+# @param $1 -> search_term
+# @return <count>
+Hash.searchVal(){
+    Hash.values | grep "$*"
+}

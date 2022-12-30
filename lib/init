@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: lib/init
+# Created: Thursday, 2021/05/20 - 13:18:34
+# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2022/12/29 - 23:03:45
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.4.187
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# shellcheck disable=SC1090,2155
+# _INIT_DEBUG_=false
+# _INIT_DEBUG_=true
+
+checkLibLoaded(){
+  # convert fist arg to UPCASE 
+  local name=${1^^}
+
+  # replace '.' for '_'
+  name=${name//./_}
+  
+  # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
+  name=${name//LIB/}
+  
+  # Const for mark lib as loaded
+  lib_const="_xLIB_${name}"
+
+  # check last char (needs to be equal '_' underline)
+  if [[ ! "${lib_const:(-1)}" == "_" ]]; then
+    lib_const+="_"
+  fi
+
+  # check if load lib has a defined var __LIB_NAME and its not null
+  if eval "test -z \"\$${lib_const}\"" ; then
+    [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' not loaded. (const '$lib_const' not found.)"
+    return 1
+  else
+    [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' already loaded (skipping)"
+    return 0
+  fi
+}
+
+use(){
+
+  [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$@'\n"
+  
+  for lib_file in "$@"; do
+    
+    if ! checkLibLoaded "$lib_file"; then
+
+      local current_path=$(dirname "$0") 
+      local locations=( 
+        "$current_path/$lib_file" 
+        "$current_path/lib/$lib_file" 
+        "$HOME/bin/lib/$lib_file" 
+        "$HOME/bin/lib/vendor/$lib_file" 
+      )
+      local included=''
+
+      # search file in default destinations
+      li=0
+      for lib in "${locations[@]}"; do
+
+        if source "$lib" 2> /dev/null ; then
+          # success? set a flag; break loop
+          [ "$_INIT_DEBUG_" == 'true' ] && echo "load '${locations[$li]}' - location: $li)"
+          included="true"
+          break
+        fi
+        li=$((li+1))
+      done
+    else 
+      included="true"
+    fi
+
+    # not included with success? raise a error 
+    test -z "$included" && { echo "Error importing lib: $lib_file"; exit 1; }
+  
+  done
+}
+
+# create some aliases for use/import libraries
+alias include=use
+alias import=use
+alias require=use
+alias load=use
+alias unit=use

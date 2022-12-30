@@ -1,0 +1,407 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: lib/args
+# Created: Friday, 2022/02/11 - 20:09:07
+# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2022/11/10 - 01:00:35
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.2.4.861
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+__LIB_ARGS=true;
+
+use hashs utils
+# hash to save app params
+Hash.new main_params
+
+block=''
+# update text used in function 'usage'
+    # @param $1 -> string to customize each text of help sections. Use this pattern:
+        # -<option>="<text>"
+    # <options> identify a section and it can be:
+        # -h or --header
+        # -p or --param
+        # -b or --body
+        # -f or --footer
+# "<text>" is the string associated to this section and is required to be inside ""
+xhelp(){
+    # loop all params
+    for param in "$@"; do
+        # split key and value
+        key=$(echo $param | cut -d '=' -f1)
+        val=$(echo $param | cut -d '=' -f2)
+        
+        # check key arg
+        case $key in
+            -p|--param ) 
+                    param_id="$(echo $val | cut -d '+' -f1)"; 
+                    param_text="$(echo $val | cut -d '+' -f2-3)";
+                    Hash.put main_params "$param_id" "$param_text";;
+                    
+            -b|--body   ) __HELP_BODY__+="$val" ;;
+            -h|--header ) __HELP_HEADER__+="\n$val\n" ;;
+            -f|--footer ) __HELP_FOOTER__+="$val" ;;
+            --long-usage) __HELP_SHOW_ARGS__=true ;;
+        esac
+    done
+
+    # set vars VERSION, _CREATED_AT_, _AUTHOR_
+    xversion
+    xcreated
+    xauthor
+
+    # get all keys in main_params hash (format: key:value)
+    #   --> key pattern (shortkey,longkey): Ex: -k,--key
+    #   --> sed remove second key; 
+    #   --> tr replace breaklines '\n' for a space ' ' . 
+    # result: all shortkeys in one line
+    # __HELP_USAGE__="usage: \n  $APP $(Hash.keys main_params | sed 's/,--.[a-z]*//g' | tr -s '\n' ' ')" 
+    __HELP_USAGE__="usage: \n  $APP "
+    if [ $(Hash.count main_params) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
+        __HELP_USAGE__+="$(
+            Hash.keys main_params | \
+            sed 's/,--.[a-z,-]*//g' | \
+            sed 's/,.[a-z,-]*//g' | \
+            sed 's/^/[/g' | \
+            sed 's/$/]/g' | \
+            tr -s '\n' ' '
+        )" 
+    else
+        __HELP_USAGE__+="[OPTIONS] "
+    fi
+}
+setHelp(){ xhelp "$@"; }
+
+
+usage(){
+    # generate default help text if user not difined one
+    [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
+    
+    case "$1" in
+        -f|--field-error)
+            xhelp --long-usage
+            __exit_code=3 
+            __usage_msg="Error! empty value for '$2' param.\n\n" 
+        ;;
+
+        -m|--missing-param)
+            xhelp --long-usage
+            __exit_code=1 
+            __usage_msg="Error! Missing required param.\n\n" 
+        ;;
+        -r|--reject-unknow)
+            xhelp --long-usage
+            __exit_code=2 
+            __usage_msg="Error! invalid option ($2).\n\n" 
+        ;;
+        -c|--custom)
+            xhelp --long-usage
+            __exit_code=4        
+            __usage_msg="$2\n\n" 
+        ;;
+        -h|--help)
+            xhelp
+            __usage_full=true
+        ;;
+        *) 
+            __exit_code=0      
+            __usage_msg="" 
+        ;;
+    esac
+    # prints initial help text
+    echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
+
+    if [ -n "$__usage_full" ]; then
+        # help body text (before params/args)
+        [ -n "$__HELP_BODY__" ] && echo -e "\n${__HELP_BODY__}" 
+        # [ -z "$block" ] && echo -e "Available options:" || echo -e "$block"
+        
+        # get all key/values from main_params hash
+        #     pairs stored as 'key:value'. We parse to ':key:value' 
+        #       --> sed to add ':' in begin of each line 
+        #       --> column to equaly expand texts
+        # Hash.all main_params | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
+
+        __HELP_OPTIONS_DESCRIPTION__=''
+        for h in $(
+                Hash.all main_params | \
+                sed 's/^-/:-/g' | \
+                # sed 's/,/:/g' | \
+                sed 's/ /./g'  
+            ); do
+            b=$(echo $h | cut -d '+' -f2)
+            # echo "'$b' - '$block'"
+            if [ -n "${b// }" ]; then 
+                [ "${b}" != "${block// /.}" ] && block="${b}" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+                # echo
+            else 
+                if [ -z "$outblock" ];then
+                    block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+                    outblock=true
+                fi
+                # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+            fi
+            __HELP_OPTIONS_DESCRIPTION__+="$(echo ${h//./ } | cut -d '+' -f1)\n" 
+        done
+
+        # echo -e "$____HELP_OPTIONS_DESCRIPTION" | column -t -s ':' | sed 's/;/:/g'
+        echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+            column -L -t -s ':' -o ' ' | \
+            sed 's/;/:/g' | \
+            sed 's/,/,  /g' 
+            # sed '/^#/ s/ \{1,\}/ /g' | \
+        
+        # not null? prints footer 
+        [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
+        echo -e "v${_CURRENT_VERSION_} - writen by ${_AUTHOR_} ${_CREATED_AT_}"
+    
+    else
+        echo -e ""
+    fi
+    # quit with error code
+    exit $__exit_code
+}
+
+
+# setARGS: id="-h,--help" var=variable:value
+    #   --> dynamic create ARGs/actions
+    # @param $1: ARGs keys. Use comma (,) to separete multiple keys to same action
+    #   --> id="-h,--help"
+    # @param $2: action to execute with keys
+    #   this can be: [code] or [var]
+    #   --> code="cmd1; cmd2;"
+    #       run custom commands (cmd1 ; cmd2)
+    #   --> var=myVar1:value
+    #       create a var named 'myVar1' and assign 'value'
+    #       * var=myVar1+r
+    #       create a var 'myVar1' and require another param as value. If next arg was empyt raise a error.
+    # @param $3: description to generate help for this arg/action
+#   --> desc="text" 
+
+xargs(){
+    #TODO: refactor code below
+    while [ "$1" != "" ]; do
+        case $1 in
+            -i| --id) 
+                key=$1; shift
+                option_key=$(echo "$1" | tr -s ',' '|')
+                option_default=$1
+                description=''
+            ;;
+            # TODO: implements joint shortflags  (ex: -lsa) 
+            -v |--var) 
+                key=$1; shift
+                method=var
+                action_vars=''
+                option_rule=""
+                desc_var=""
+                
+                # $1 content -> can be a list of values comma separated
+                    # value,value
+                
+                for v in ${1//,/ }; do
+                    
+                    # method used in this arg
+                    option_content=$v
+
+                    var_name="$(echo "$option_content" | cut -d ':' -f1 | cut -d '+' -f1  )"
+
+                    case "$option_content" in
+                       *:* ) 
+                            # ":" will directly set value to variable
+                                #  variable:value
+                            
+                            var_value="$(echo "$option_content" | cut -d ':' -f2 | cut -d '+' -f1)"
+                            assign_vars=" $var_name=\"$var_value\" "
+                            # clear rules
+                            option_rule=""
+                            var_value=''
+                        ;;
+                       *+* ) 
+                            # "+" will require a new arg in command line. this value will be set to variable
+                                # variable+r 
+                            
+                            current_rule="$(echo "$option_content" | cut -d '+' -f2)"
+
+                            case "$current_rule" in
+                                # 'r' means 'required'
+                                r)  
+                                    option_rule+=" shift; requireARG \"\$1\" \"$var_name\" ;" 
+                                    desc_var+=" <$var_name>" 
+                                    if [ -z "$var_value" ]; then
+                                        assign_vars=" $var_name=\"\$1\" "
+                                    fi
+
+                                ;;
+                                # 'o' for 'optional'
+                                o)  
+                                    option_rule+=" " 
+                                    desc_var+=" <$var_name>" 
+                                    if [ -z "$var_value" ]; then
+                                        assign_vars=" [ -n \"\$2\" ] && { shift ; $var_name=\"\$1\" ;  } "
+                                    fi
+                                ;;
+                            esac
+                       ;;
+                    esac
+                    [ -n "$action_vars" ] && action_vars+=" ; "
+                    action_vars+=" $option_rule $assign_vars  "
+                    
+                done
+                
+            ;;
+            -c|--code) 
+                key=$1; shift
+                method=code
+                option_content=$1 
+                desc_var=''
+
+            ;;
+            -d|--desc) 
+                key=$1; shift
+                description="$*" 
+            ;;
+            -b|--block|-g|--group|-s|--section)
+                method=block
+                block="$2"
+
+        esac
+        shift
+    done
+
+    # bypass first arg to reject unknow/undefined args
+    if [ "$method" != "block" ]; then
+        # "--id <desc_var>+description+block"
+        setHelp --param="${option_default}${desc_var}+${description}+${block}"
+    fi
+
+    # generate output
+    case $method in
+        var ) __runARGS_case_options+=" $option_key) $action_vars ;; \n" ;;
+        code) __runARGS_case_options+=" $option_key) $option_content ;; \n" ;;
+        # --reject-unknow) __runARGS_case_options+="*) usage -r \$1 ;; \n" ;;
+    esac
+}
+setARGS(){ xargs "$@"; }
+
+# runARGS "$@"
+# generates a loop with case struct to evaluate all ARGs defined using `setARGS`
+xrun(){
+    xRunUsage(){
+        echo -e "'lib/args' main functions (xargs, xrun)
+        \n1) xargs -> set args to be validate in 'xrun' function
+        \nusage: xargs [OPTION] <VALUE>\
+        \n\nAvailable options:\
+        "
+        echo -e "\
+        \n  --id    <VALUE>; short and long key. ex: '-h,--help'\
+        \n  --code  <VALUE>; shell code to run by 'eval'\
+        \n  --var   <VALUE>; define vars\
+        \n  --desc  <TEXT>; description to this 'arg'\
+        \n  --block <VALUE>;\
+        " | column -t -s ';'
+        
+        echo -e "\
+        \nExamples:\
+        \n  xargs --id -h,--help --code 'usage --help'  --desc 'run function \"usage\"'\
+        \n  xargs --id -v,--var  --var  var:value,url+r --desc 'equivalent to \"var=value; read url\"'\
+        \n  xargs --block 'new block'\
+        
+        \n2) xrun -> create 'case struct/validate args' defined via 'function xargs' for your application\
+        \n\nusage: xrun [OPTIONS] \"\$@\"\
+        \n\nAvailable options:\
+        "
+        echo -e "
+        \n  --xrequire-one;script will require at least one argument\
+        \n  --xreject-unknow;raise an error if your script receives args not defined\
+        \n  --xversionrc;use full version with rc (release candidate)
+        \n  --xdebug;prints generated case with args for inspection\
+        \n  --xhelp;prints this message
+        " | column -t -s ';' 
+
+        # echo -e "\n[!] ATENTION:\
+        #     \n    1-You can't use 'xrun' arguments in your application.\
+        #     \n    2-You must pass all of your app/script args to 'xrun' validate then.\
+        #     \n\tex: xrun --xrequire-one \"\$@\"\
+        #     \n    3-xrun args will be removed via shift; so they need to be before incoming args (\"\$@\")\
+        #     "
+        exit 0
+    }
+    generateCase(){
+         # fill case with options (setARGS)
+        __runARGS_case_='case $1 in \n'
+        __runARGS_case_+=$__runARGS_case_options
+        __runARGS_case_+='esac'
+        # apply escape codes (\n \t) when print
+        __runARGS_case_=$(echo -e $__runARGS_case_)
+        
+        [ -n "$_ARGS_DEBUG"    ] && echo -e "$__runARGS_case_\n" ;
+        [ -n "$_ARGS_REQUIRED" ] && requireOne "$1" && unset _ARGS_REQUIRED;
+
+        # loop all params 
+        while [ "$1" != "" ]; do
+            # run generated 'case' code
+            eval "$__runARGS_case_"
+            shift
+        done
+    }
+
+    # Hash.all | grep -Ei '\+[a-zA-Z]' | wc -l
+    # set default grouping (has more than zero entries with groups? user defined)
+    if [ "$(Hash.all | grep -Ei '\+[a-z]' | wc -l)" -gt 0 ]; then
+        xargs --block "Information Options"
+    else
+        # no user group? use this for all options
+        xargs --block "Available Options"
+    fi
+    # set default args for any script
+    _CURRENT_VERSION_=$_VERSION_
+    xargs --id -h,--help    --code "usage --help" --desc "show this help"
+    xargs --id -v,--version --code "echo \"\$_CURRENT_VERSION_\"; exit" --desc "print version and exit"
+    
+    # search for xrun args 
+    for i in "$@"; do
+        case "$i" in
+            --xrequire-one | --requireOne | --require-one | --notNull)  
+                shift; _ARGS_REQUIRED=true
+            ;;
+            --xreject-unknow | --reject-unknow)
+                shift
+                __runARGS_case_options+=" *) usage --reject-unknow \$1 ;; \n"
+            ;;
+            --xdebug) 
+                shift; _ARGS_DEBUG=true; 
+            ;;
+            --xversion-full | --xversionrc)
+                shift; _CURRENT_VERSION_=$_VERSIONRC_
+            ;;
+            --xhelp)
+                shift; xRunUsage
+            ;; 
+        esac
+    done
+    generateCase "$@"
+}
+runARGS(){ xrun "$@"; } 
+
+# check if a ARG was given. Else quit
+# @param $1 -> arg to null check
+# @param $2 -> field name to error mensage when $1 empty
+requireARG(){
+    # $1 is empty? call usage with field name to get a error msg
+    test -z "$1" && { usage --field-error "$2"; } 
+        # || { true; } #echo "1"; -r}
+}
+
+requireOne(){
+    test -z "$1" && usage --missing-param; 
+}

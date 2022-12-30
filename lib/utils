@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: lib/utils
+# Created: Thursday, 2021/05/20 - 00:26:27
+# Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Wednesday, 2022/12/21 - 01:00:41
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.0.6.386
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+__LIB_UTILS=true;
+
+# using A && B || C
+# # running cmds create a block {} and use 'true'; inside.
+#     # This will avoid executing the part after || by accident when the code between && and || fails.
+
+# shellcheck disable=SC2120,2015,2016
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# create constants
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+
+# application name
+APP=$(basename "$0")
+APP_DIR=$(dirname "$0")
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# methods
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+
+
+xversion(){
+    # set app version (dynamic from header comments or static)
+    _VERSION_="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f1-3)"
+    # if [ "$1" == '--full' ]; then 
+    local release="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f4)"
+    _VERSIONRC_="$_VERSION_-rc$release"
+    # fi
+    [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
+}
+
+xcreated(){
+    # set app version (dynamic from header comments or static)
+    _CREATED_AT_="$(head -n 20 "$0" | \
+        grep '# Created:' -m1 | \
+        tr -d ' ' | \
+        cut -d ':' -f2 | \
+        cut -d ',' -f2 | \
+        cut -d '-' -f1 | \
+        cut -d '/' -f1\
+    )"
+    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
+}
+
+xauthor(){
+    _AUTHOR_=$(
+        head -n 20 "$0" | \
+        grep '# Author.:' -m1 | \
+        cut -d ':' -f2 |\
+        cut -d ',' -f1 |\
+        cut -c2-
+    )
+    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknow>'
+}
+
+getPath(){
+    for tool in "$@"; do
+        if which "$tool" 2>&1 > /dev/null; then
+            which "$tool"
+            return 0
+        fi
+    done
+    return 1
+}
+
+requirements(){
+    fail(){
+        local tool=$1
+        local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
+        echo -e "$error_msg"
+        notify-send "$0" "$error_msg"
+        exit 10
+    }
+    check(){
+        (which "$1" >/dev/null) 2> /dev/null
+    }
+    for tool in "$@"; do
+        if [[ "$tool" =~ ":" ]]; then
+            local found=''
+            for t in ${tool//\:/ }; do 
+                if check $t; then
+                    found=true
+                    break;
+                else
+                    found=false
+                fi
+            done
+            [ "$found" != 'true' ] && fail "$tool"
+        else
+            if ! check $tool; then
+                fail $tool
+            fi
+        fi
+    done
+}
+# alias to requirements 
+is_installed(){ requirements "$@"; }
+
+# function to return a basepath from a file
+# @param $1 -> file: /etc/hosts
+# @return path to file -> /etc
+basepath(){
+    echo "$1" | rev | cut -d '/' -f2-30 | rev
+}
+
+# prints a table with supported colors
+rainbow(){
+    for (( i = 0; i < 8; i++ )); do 
+        echo -e "\033[0;3"$i"m FG: (0;3$i); \033[1;3"$i"m FG-Light: (1;3$i) -> \033[0;4"$i"m BG: (0;4$i); \033[1;4"$i"m BG-Light: (1;4$i) \033[0m "
+    done
+}
+
+
+# ternary operator
+# tern "expr" "true value" "false value"
+tern(){
+    if eval "$1"; then echo "$2"; else echo "$3"; fi
+}
+
+# function to check if current user is ROOT 
+isROOT(){
+    if [ $UID = 0 ] ; then 
+        echo true 
+    else
+        echo false
+    fi
+}
+
+# function to require ROOT user
+requireROOT(){
+    if [ $UID = 0 ] ; then 
+        return 0 
+    else
+        echo "Error! You need to be ROOT to run '$APP'."
+        exit 1
+    fi
+}
