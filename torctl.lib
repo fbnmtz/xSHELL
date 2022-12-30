@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: torctl.lib
+# Created: Tuesday, 2022/11/29 - 20:46:56
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2022/12/29 - 23:18:35
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.2.278
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+#!/usr/bin/bash
+
+__LIB_TORCTL_LIB=true
+
+APP_HOME='~/.fbnmtz/torctl'
+mkdir -p $APP_HOME
+
+# get current IP Address
+current_ip(){    
+   echo $(curl --silent ifconfig.me)
+}
+
+# get geo information of current ip address
+ip_geo_information(){
+   echo $(curl --silent  http://ip-api.com/json/$(current_ip))
+}
+
+# function to start TOR SERVER
+start_tor_server(){
+    # start tor server with docker
+     docker run --rm \
+        -d \
+        --net host \
+        -v $APP_DIR/torctl.rc:/etc/tor/torrc \
+        -v $APP_DIR/torctl.resolv.conf:/etc/resolv.conf \
+        --entrypoint "" \
+        --name torctl_server \
+        m88v2/tor-server:latest \
+        /bin/sh -c 'tor -f /etc/tor/torrc' &> /dev/null
+}
+
+# setup firewall rules to host use 'tor_server'
+configure_firewall(){
+
+    # show current FW config 
+    # iptables -L -nv --line-number | more
+    
+    # save a backup
+    iptables-save > $APP_HOME/iptables.rules.bkp
+
+    ### set vars
+    _tor_uid=$(docker exec -u tor torctl_server id -u)
+    _non_tor="192.168.1.0/24 192.168.0.0/24"
+    _trans_port="9040"
+    _dns_port="5353"
+
+    ### set iptables *nat
+    iptables -t nat -A OUTPUT -m owner --uid-owner $_tor_uid -j RETURN
+    iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-ports $_dns_port
+
+    # allow clearnet access for hosts in $_non_tor
+    for _clearnet in $_non_tor 127.0.0.0/9 127.128.0.0/10; do
+        iptables -t nat -A OUTPUT -d $_clearnet -j RETURN
+    done
+
+    # redirect all other output to Tor's TransPort
+    iptables -t nat -A OUTPUT -p tcp --syn -j REDIRECT --to-ports $_trans_port
+
+    ### set iptables *filter
+    iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+    # allow clearnet access for hosts in $_non_tor
+    for _clearnet in $_non_tor 127.0.0.0/8; do
+        iptables -A OUTPUT -d $_clearnet -j ACCEPT
+    done
+
+    # allow only Tor output
+    iptables -A OUTPUT -m owner --uid-owner $_tor_uid -j ACCEPT
+    iptables -A OUTPUT -j REJECT
+}
+
+# restore default rules or setup a clear firewall
+restore_firewall(){
+
+    if [ -f $APP_HOME/iptables.rules.bkp ]; then
+        iptables-restore $APP_HOME/iptables.rules.bkp
+    else
+        # clear all FW rules
+        iptables -P INPUT ACCEPT
+        iptables -P FORWARD ACCEPT
+        iptables -P OUTPUT ACCEPT
+        iptables -t nat -F
+        iptables -t mangle -F
+        iptables -F
+        iptables -X
+    fi
+}
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+# script actions
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+
+actionStart(){
+    # require ROOT to run
+    requireROOT
+    
+    echo "-> Starting Tor Server"
+    if start_tor_server; then
+        echo "-> setting up iptables rules"
+        configure_firewall
+        echo '-> Fetching current IP...'
+        sleep 2
+        echo "-> CURRENT IP: $(current_ip)" 
+    else
+        echo "-> fail to start server... (check your docker service)"
+        exit 2
+    fi
+}
+
+actionStop(){
+    # require ROOT to run
+    requireROOT
+    
+    echo "-> Stopping Tor Server"
+    docker stop torctl_server &> /dev/null
+    echo "-> clear firewall rules"
+    restore_firewall
+    echo "-> CURRENT IP: $(current_ip)" 
+}
+
+actionStatus(){
+    # check if TorServer is running via docker
+    if docker ps | grep torctl &> /dev/null; then
+        echo "-> Tor Server is running..."
+    else 
+        echo "-> Tor Server is NOT RUNNING"
+    fi
+    echo "-> CURRENT IP: $(current_ip)..."
+    echo "-> Details:"
+    ip_geo_information | jq 
+}
+
+actionRestart(){
+    actionStop
+    actionStart
+}

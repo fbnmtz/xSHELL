@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: bin (none)
+# File...: torctl
+# Created: Monday, 2022/11/21 - 20:55:29
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2022/12/29 - 23:18:48
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.2.91
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+# shellcheck disable=SC1090,SC2154    
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+source ~/bin/lib/init    
+use args torctl.lib 
+
+# check requirements for this app
+requirements docker curl jq grep iptables
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+xargs --id -s,--start   --var action:start   --desc "start Tor Server and redirect traffic throug it"    
+xargs --id -t,--stop    --var action:stop    --desc "stop Tor Server and restore firewall rules"    
+xargs --id -S,--status  --var action:status  --desc "show current status"    
+xargs --id -r,--restart --var action:restart --desc "restart Tor Server"    
+
+# run params
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"    
+
+# check selected action
+case "$action" in
+    start   ) actionStart   ;;
+    stop    ) actionStop    ;;
+    status  ) actionStatus  ;;
+    restart ) actionRestart ;;
+esac
