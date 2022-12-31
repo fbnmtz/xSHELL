@@ -1,3 +1,20 @@
+<!--
+ ############################################################################
+ Project: shell (none)
+ File...: docs/torctl.md
+ Created: Saturday, 2022/12/31 - 10:30:51
+ Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Last Modified: Saturday, 2022/12/31 - 11:07:19
+ Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Version: 0.0.1.7
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Description: 
+  >
+ ############################################################################
+ HISTORY:
+-->
 # torctl
 
 Simple scritp to setup a tor-server via docker and route all traffic of your system to it.
@@ -20,4 +37,9 @@ v0.0.2-rc91 - writen by @fbnmtz 2022
 
 ```
 
-[voltar](../readme.md)
+```
+# requirements for this app
+docker curl jq grep iptables
+```
+
+[voltar](../)

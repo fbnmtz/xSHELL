@@ -1,3 +1,20 @@
+<!--
+ ############################################################################
+ Project: shell (none)
+ File...: readme.md
+ Created: Friday, 2022/12/30 - 04:54:21
+ Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Last Modified: Saturday, 2022/12/31 - 11:06:48
+ Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Version: 0.0.1.57
+ ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+ Description: 
+  >
+ ############################################################################
+ HISTORY:
+-->
 # Shell
 
 This repository contains some scripts and a simple library system for shell.
