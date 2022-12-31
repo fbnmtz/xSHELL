@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2022/12/31 - 11:06:48
+ Last Modified: Saturday, 2022/12/31 - 16:07:38
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.1.57
+ Version: 0.0.3.130
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -25,13 +25,13 @@ This repository contains some scripts and a simple library system for shell.
 # clone this repo to your '/home'
  git clone https://github.com/fbnmtz/shell ~/bin
 
-# Add scripts to your  system $PATH
+# Add scripts to your system $PATH
 echo "export PATH="$PATH:$HOME/bin" >> ~/.profile
 ```
 
-## Using libs
+## Using lib system
 
-Now you can use this libs/funcions in your scripts follow steps bellow:
+Now you can use this libs/funcions in your scripts following steps bellow:
 
 ```bash
 # import lib system to your script
@@ -43,28 +43,37 @@ use args
 # you can list/validade all binaries/tools needed by your script easily using 'requirements' function
 requirements ls cut docker
 
-# you can easily define args and usage info with 'xargs' function
-xargs --id -V,--variable --var var_name:var_value --desc "create a variable named as 'var_name' with 'var_value'"
-# when receive -V or --var arg, this function will 
-# equivalent code:
-# var_name='var_value'    
+# now, you can easily define args and usage info with 'xargs' function
+# params supported:
+#      * --id <shortflat,longflag>
+#            this param require two params 
+#                1. --var or --code
+#                2. --desc
+#          * --var <var1:varvalue,var2+r,var3+o>
+#          * --desc <description>
+# We have another param made to be used alone 
+#      * --section <group name>
+#            this param will group args defined after it
+
+# example: how to set args/actions
+xargs --id -p,--print --code "echo 'print test'" --desc "print some code"
+xargs --id -m,--math  --var expression+r         --desc "solve math expression" 
+
+# after define args, pass all script params (var $@) to 'xrun' function 
+# xrun params:
+#   * --xreject-unknow : throw error when receive an parameter not defined with 'xargs'
+#   * --xrequire-one: throw error if no param given
+#   * --xversionrc: show full version with release candidate
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+
+# code for -m/--math arg
+if [ ! -z "$expression" ] ; then
+    echo $(($expression))
+fi
 
 ```
 
-### Main Lib's
-
-* init
-* args
-* utils
-* hashs
-
-### Lib 'args'
-
-* main functions
-  * requirements
-  * xargs
-  * xrun
-
 ## Some scripts
 
-1. [torctl](./docs/torctl.md)
+1. [LIB's](./lib/readme.md)
+2. [torctl](./docs/torctl.md)
