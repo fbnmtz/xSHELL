@@ -73,7 +73,10 @@ fi
 
 ```
 
-## Some scripts
+## Libraries
 
 1. [LIB's](./lib/readme.md)
-2. [torctl](./docs/torctl.md)
+## Script's
+   
+1. [torctl](./docs/torctl.md)
+2. [mdate](docs/mdate.md)
