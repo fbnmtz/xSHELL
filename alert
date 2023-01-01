@@ -6,10 +6,10 @@
 # Created: Wednesday, 2020/10/01 - 12:13:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2022/12/31 - 23:36:18
+# Last Modified: Saturday, 2022/12/31 - 23:44:55
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.3.70
+# Version: 0.1.3.80
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -29,7 +29,9 @@ filename="$(mdate -y -m -d).log"
 cmd='notify-send'
 
 # define args
-xargs --id -c,--critical --code "level=critical; shift" --desc "define notification level as 'critical'"
+xargs --id -c,--critical --var level:critical --desc "define notification level as 'critical'"
+xargs --id -t,--title    --var title+r        --desc "set title of notification"
+xargs --id -m,--msg      --var msg+r          --desc "set mensage of notification"
 
 # run params
 xrun --xrequire-one --xversionrc "$@"
@@ -42,7 +44,7 @@ params="${params/--critical/}"
 echo  "$(mdate --us) | '$1' '$2' '$3'" >> $APP_HOME/$filename
 
 # add critical level 
-if [ ! -z "$level" ]; then
+if [ -n "$level" ]; then
     params+=" -u $level"
 fi
 
