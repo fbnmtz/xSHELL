@@ -1,0 +1,751 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: mpvtube.lib
+# Created: Friday, 2022/02/11 - 23:14:08
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2023/01/01 - 01:30:21
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.3.624
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# aux functions
+
+# notify send
+_ns(){
+    alert "$1" "$2" "$3"
+}
+_notify(){ _ns "$@"; }
+
+# debug
+_debug(){
+    if [ "$DEBUG" == "TRUE" ]; then
+        echo -e "$(mdate --us) - $*" >> $MYLOG
+        _ns "$1" "$2" "$3"
+    fi
+}
+
+isYoutubeUrl(){
+    if echo "$1" | grep --quiet -E '^https|^http|\.be|\.com|\.com.br'; then
+        domain=$(echo "$1" | cut -d ':' -f2 | sed 's/\/\///' | cut -d '/' -f1 | sed 's/^www.//')
+        case "$domain" in
+            youtu.be|youtube.com|youtube.com.br) return 0 ;;
+            *) return 1 
+        esac
+    fi
+}
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# variables
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+DEBUG="FALSE"
+MYHOME=/home/$USER/.fbnmtz/mpvtube
+MYTMP=$MYHOME/tmp
+# MYTMP=/tmp/mpvtube
+MYLOG=$MYTMP/mpvtube.log
+MYHIST=$HOME/.config/mpv/log/mpvhistory.log
+
+SEARCHHOME=$MYHOME/searchs
+
+
+playlist=$MYHOME/channels.list
+favlist=$MYHOME/favorites.list
+
+
+__initApp__(){
+    # create dirs
+    mkdir -p "$MYHOME"/playlists "$MYHOME"/watch/{reverse,ramdom} "$MYTMP" "$SEARCHHOME"
+
+    run_playlist=$MYTMP/channels.list
+
+    # set defualt player
+    mpvtube_player=mpv
+    
+    # # TODO: property feature incomplete. Check it later
+    # # override properties set by user
+    # case "$property" in
+    #     player)  
+    #         mpvtube_player=$value
+    #     ;;
+    #     selector) 
+    #         mpvtube_selector=$value 
+    #     ;;
+    # esac
+
+
+    # filter list to run
+    [ -f $playlist ] && {
+        grep -v "#" "$playlist" | sort > $run_playlist
+        true
+    } || { 
+        echo "file '$playlist' not found"
+        exit 1
+    }
+}
+
+rofiConfig(){
+    BORDER="#1F1F1F"
+    SEPARATOR="#1F1F1F"
+    FOREGROUND="#FFFFFF"
+    BACKGROUND="#1F1F1F"
+    BACKGROUND_ALT="#252525"
+    HIGHLIGHT_BACKGROUND="#7cb342"
+    HIGHLIGHT_FOREGROUND="#1F1F1F"
+
+    BLACK="#000000"
+    WHITE="#ffffff"
+    RED="#e53935"
+    GREEN="#43a047"
+    YELLOW="#fdd835"
+    BLUE="#1e88e5"
+    MAGENTA="#00897b"
+    CYAN="#00acc1"
+    PINK="#d81b60"
+    PURPLE="#8e24aa"
+    INDIGO="#3949ab"
+    TEAL="#00897b"
+    LIME="#c0ca33"
+    AMBER="#ffb300"
+    ORANGE="#fb8c00"
+    BROWN="#6d4c41"
+    GREY="#757575"
+    BLUE_GREY="#546e7a"
+    DEEP_PURPLE="#5e35b1"
+    DEEP_ORANGE="#f4511e"
+    LIGHT_BLUE="#039be5"
+    LIGHT_GREEN="#7cb342"
+}
+
+play(){
+    local link=$1
+    local mode=$2
+    local choice=$3
+
+    # player settings
+    # local player=mpv
+    local player_args="\
+        --ytdl-raw-options=yes-playlist= \
+        --force-window=immediate \
+        --stream-record=$HOME/lastvideo.mkv \
+        --ytdl-raw-options=force-ipv4= \
+        --ytdl-raw-options=cookies= \
+    "
+    # --really-quiet 
+    # player_args=$( isYoutubeUrl "$link" && { echo " --profile=yt" ; true; } || echo " --profile=others" )
+    # run_args=$( [ -z "$custom_args" ] && { echo "$player_args" ; true; } || echo "$custom_args" )
+
+    player_args+=$( tern "isYoutubeUrl $link" " --profile=yt,web" " --profile=others,web" )
+    run_args=$( tern "[ -z \"$custom_args\" ]" "$player_args"  "$custom_args" )
+
+    if [ -z "${link// }" ]; then
+        _debug "$APP" "error: link empty! exiting"
+    else
+        # Send notification
+        icon=""
+        _ns "$icon YouTube $(echo $mode| xargs)" "$choice\n$link"
+
+        $mpvtube_player $run_args $link
+    fi
+}
+
+formatPlaylist(){
+    local filename=$1
+    local action=$2
+
+    local pl_name
+    local pl_status
+    local playlist_item
+    
+    while read -r LINE; do
+        if [ "$action" == "-h" ]; then
+            # in history file, cut only "date" and "video title" 
+            playlist_item="$(echo ${LINE//\[&&\]/;} | cut -d ";" -f 1,2,3 | cut -d '#' -f1 )" 
+            # playlist_item=$(echo $LINE | \
+            #     awk '
+            #         BEGIN{FS=OFS="[&&]"}
+            #         {
+            #             d=$1" "$2; 
+            #             t="";
+            #             for (i=4;i<=55;i++) {
+            #                 t=t" "$i;
+            #             }
+            #             printf "#%s - #%s #@%s", d,t,$3
+            #     }'
+            # )
+            # playlist_item="$(echo $LINE | cut -d " " -f 3)"
+            # echo ${playlist_item//;/\#;}
+            printf "%s\n" "${playlist_item//;/\#;}"
+        else
+            # others modes get all, except url "TAG - Channel Name@url"
+            playlist_item="$(echo $LINE | cut -d "@" -f 1)"
+
+            pl_name="$(echo $LINE | cut -d "@" -f3)"
+            
+            if [ "$pl_name" != "" ]; then
+                pl_status="ok" 
+            else
+                pl_status="null"
+            fi
+            
+            [ -f "$MYHOME/playlists/$pl_name-uploads.m3u" ] && {
+                _update=$(head -n1 $MYHOME/playlists/$pl_name-uploads.m3u | \
+                    cut -d '@' -f1 | cut -d '=' -f2
+                )
+                true
+            } || _update="null"
+            
+            echo "${playlist_item} #@$pl_status #${_update}"  
+        fi
+    done < "$filename"
+}
+
+choosePlaylistItem(){
+    local playlist=$1
+    local action=$2
+
+    local rtheme="$HOME/.config/rofimenu.defaults/config.rasi"
+    local rwidth="1200"
+    local rfont="source code Pro nerd fonts 16"
+    local prompt="YouTube ❯"
+    local INDENT='   '
+    local padding=50
+
+    local choice
+
+    choice=$( formatPlaylist "$playlist" "$action" | column -t -s \# |\
+        rofi \
+            -no-config \
+            -width $rwidth \
+            -font "$rfont" \
+            -padding $padding \
+            -dmenu -i \
+            -fuzzy -p "$prompt $mode" -mesg 'x'  -select $INDENT 
+    )
+
+    echo "$choice"
+}
+
+getLinkByItem(){
+    local src=$1 ; shift;
+    local choice=$*
+    
+    local linktoplay
+    
+    choice=$(echo $choice | cut -d '@' -f1 | rev | cut -c2- | rev)
+    if [ -n "${choice}" ]; then
+        linktoplay=$( grep -m 1 "${choice}" $src | cut -d '@' -f 2)
+        echo "$linktoplay"
+    fi
+}
+
+# TODO: refactor 
+createPlaylistForChannel(){
+    local choice=$1
+    local source=$2
+    local playlist=$3
+
+    local rtheme="$HOME/.config/rofimenu.defaults/config.rasi"
+    local rwidth="1200"
+    local rfont="source code Pro nerd fonts 16"
+    local prompt="YouTube ❯"
+    local INDENT='   '
+    local padding=50
+
+
+    # save given description
+    choice=$(echo $choice | cut -d '@' -f1)
+    ch=$choice
+    
+    echo $choice
+
+    # get channel link
+    linktoplay="$(grep -m 1 "$choice" $source | cut -d '@' -f 2)"
+    # search for reak channel name
+    channel_name="$(grep -m 1 "$choice" $source | cut -d '@' -f 3)"
+    echo $linktoplay
+    echo $channel_name
+
+    if ! isYoutubeUrl $linktoplay; then
+        echo "invalid url. works only with YOUTUBE"
+        exit 1
+    fi
+
+    if [ "$channel_name" == "" ]; then
+        channel_name=$(ytctl -cn $linktoplay | tr -s ' ' '-' | tr '[:upper:]' '[:lower:]' )
+        sed -i 's,'"$linktoplay"','"$linktoplay@$channel_name"',g' "$playlist"
+    fi
+
+    # default playlist of a channel
+    current_playlist=$MYHOME/playlists/${channel_name}-uploads.m3u
+    # if this playlist dont exists, we will create 
+    if [ ! -f $current_playlist ]; then
+        # get all ChannelVideos by channel url
+        _notify "mpvtube" "create playslist from: $channel_name" -c
+        ytinfo -cv $linktoplay > $current_playlist
+        if [ "$(cat $current_playlist)" != "null" ]; then
+            _notify "mpvtube" "$channel_name playlist done." -c
+        else
+            _notify "mpvtube FAIL" "$channel_name playlist not created." -c
+            rm $current_playlist
+        fi
+    else
+        # if file exists, check for updates (new videos from last sync)
+        if [ "$MPVTUBE_UPDATE" == "TRUE" ]; then
+            lastSync=$(sed -n 1p $current_playlist | cut -d '@' -f1 | cut -d '=' -f2)
+            
+            _notify "$APP update ($channel_name)" "lastsync: $lastSync" -c
+            # get new videos since lastsync
+            # out=$(ytinfo -vd $(echo $lastSync) $linktoplay)
+            ytinfo -vd $(echo $lastSync) $linktoplay > $MYTMP/${channel_name}-lastupdate.m3u
+            # ytruby "$linktoplay" "$channel_name" > $MYTMP/update.m3u
+            out=$(cat $MYTMP/${channel_name}-lastupdate.m3u)
+            # out=$(ytruby "$linktoplay" "$channel_name")
+            
+            cp -f $current_playlist $current_playlist.bkp
+
+            # if out inst null, we have new videos so lets write then in file
+            if [ "$out" != "null" ]; then
+                
+                # count amount of new videos
+                i=0
+                # output parse
+                final=""
+                while IFS= read -r line; do
+                    i=$((($i+1)))
+
+                    # check if this line is grather or equal to 2
+                    if [[ $i -ge 2 ]]; then
+
+                        # get id of this video
+                        newID="$(echo $line | cut -d '#' -f1 | rev | cut -d '/' -f1 | rev)"
+
+                        # check if in playlist has any video with this id
+                        vfind="$(cat $current_playlist | grep "$newID")"
+                        if [ "$vfind" == "" ]; then
+                            # save this only if not present in playlist
+                            final+="\n$line"
+                        fi
+                    else
+                        # if line is '1', this is update info
+                        update_date=$line
+                    fi
+                    # notfy-send "$line"
+                done <<< "$out"
+                
+                # escape \n to use in sed
+                outEscaped=${final//$'\n'/\\$'\n'}
+
+                firstLine=$(echo -e "$final" | head -n 3)
+                newVideos=$(echo -e "$final" | grep -v "updated=" |  wc -l)
+                # send notification to follow update process
+                _notify "$channel_name update: $newVideos new" "$firstLine\n..." -c
+
+                # delete line with old lastsync date
+                sed -i "/updated=$lastSync/d" $current_playlist
+                # write new videos output in playlist
+                sed -i "1 i $update_date $outEscaped" $current_playlist
+            else
+                # send notification to follow update process
+                _notify "$channel_name update fail" "$out" -c
+            fi 
+
+        fi
+    fi
+    # get last sync date
+    lastSync=$(sed -n 1p $current_playlist | cut -d '@' -f1 | cut -d '=' -f2)
+    # total of videos in this channel
+    total=$(cat $current_playlist | grep -v "# updated=" | wc -l)
+    
+    # reverse playlist
+    current_reverse=$MYHOME/watch/reverse/$channel_name.m3u
+    tac $current_playlist | grep -v "# updated=" > $current_reverse
+    
+    last_updated_playlist=$MYTMP/${channel_name}-lastupdate.m3u
+    last_updated_count=$(cat $last_updated_playlist | wc -l)
+
+    useInput=""
+    selectedRow=0
+    while [ "$video" != "exit" ]; do   
+
+        linktoplay=""
+            # | nl -s '@' \
+            # | cut -d '@' -f1-10 \
+
+
+        # ROFI -format options
+            #   's' selected string
+            #   'i' index (0 - (N-1))
+            #   'd' index (1 - N)
+            #   'q' quote string
+            #   'p' Selected string stripped from pango markup (Needs to be a valid string)
+            #   'f' filter string (user input)
+            #   'F' quoted filter string (user input)
+
+        # answer=userIput%index%selectedString
+        
+        answer="$( echo -e "\
+            $current_playlist # 1:all:3:all:5:videos\r\n\
+            $current_reverse # 1:rev:3:rev:5:all-reverse\r\n\
+            $current_playlist --shuffle # 1:all:3:rdm:5:ramdom\r\n\
+            $last_updated_playlist # 1:last:3:last:5:last-update ($last_updated_count)\r
+            " \
+            | cat - $current_playlist \
+            | cut -d '#' -f2-5 \
+            | cut -d ':' -f4,6-10  | \
+            rofi -dmenu -i \
+                -width $rwidth \
+                -selected-row "$selectedRow" \
+                -config $rtheme \
+                -fuzzy -p "$channel_name uploads ($total) - sync: $lastSync" \
+                -filter "$userInput" \
+                -font "$rfont" \
+                -format "f%i%s" \
+                -multi-select )"
+        
+        _debug "\nrofi-output: $answer"
+        userInput=$(echo $answer | cut -d '%' -f1)
+        
+        # check if user selected one video
+        if [ "$(echo -e "$answer" | wc -l)" == "1" ]; then
+            # `answer` has only one value?
+            userInput=$(echo $answer | cut -d '%' -f1)
+            selectedRow=$(echo $answer | cut -d '%' -f2)
+            video=$(echo $answer | cut -d '%' -f3-40)
+
+        else
+            # `answer` has more than one value?
+            #  we create a list with this videos
+            _notify 'mpvtube' "$(echo "$answer" | wc -l) videos selected"
+            selected_videos_playlist="$MYHOME/watch/$channel_name-$(echo $userInput|tr -s ' ' '-')-$(echo -e "$answer" | wc -l)-selected.m3u"
+            
+            echo "# $current_playlist" > $selected_videos_playlist
+            while IFS="%" read -r input id vid; do
+                echo "$(cat $current_playlist | grep -m1 "$(echo $vid| cut -d ':' -f2)" )" >>$selected_videos_playlist
+                userInput=$input
+                selectedRow=$id
+                video=$vid
+            done <<< "$answer"
+            echo "answert: $answer"
+            # reverse to play older to new
+            tac $selected_videos_playlist > $selected_videos_playlist
+
+            # save playlist as linktoplay
+            linktoplay="$selected_videos_playlist"
+
+        fi
+        
+        # If user has not picked anything, exit
+        if [[ -z "${video// }" ]]; then
+            # print debug info if is active
+            _debug "error: video empty! exiting;"
+            # _notify "error: video empty! exiting;"
+            exit 1
+        fi
+
+        video_tile="$(echo $video | cut -d':' -f2-20)"
+
+        if [ "$linktoplay" == "" ]; then
+            # date of selected video
+            filter_date=$(echo $video |  cut -d ':' -f1)
+            # title of selected video
+            filter_title=$(echo $video |  cut -d ':' -f2-10)
+
+            # if in title have '[' or ']' will bug grep filter. so we escape this chars
+            filter_title=${filter_title/'['/\\'['}
+            filter_title=${filter_title/']'/\\']'}
+
+            # get link in playlist filtering by 'date' and 'title'
+            linktoplay="$(echo -e "\
+                $current_playlist # 1:all:3:all:5:videos\r\n \
+                $current_reverse # 1:rev:3:rev:5:all-reverse\r\n --shuffle \
+                $current_playlist # 1:all:3:rdm:5:ramdom\r\n \
+                $last_updated_playlist # 1:last:3:last:5:last-update ($last_updated_count)\r \
+                " \
+                | cat - $current_playlist 2> /dev/null | \
+                grep "$filter_date" | \
+                grep -m1 "$filter_title" | \
+                cut -d '#' -f1)"
+
+            echo "link: $linktoplay"
+            
+            if [[ "$linktoplay" =~ "--shuffle" ]]; then
+                # _notify "rdm"
+                name="$channel_name.m3u"
+                cat $current_playlist | sed '1d' | shuf > $MYHOME/watch/ramdom/$name 
+                linktoplay=$MYHOME/watch/ramdom/$name
+            fi
+
+            if [[ "$linktoplay" =~ "-lastupdate.m3u" ]]; then
+                tac $linktoplay  > $MYTMP/${channel_name}-playlastupdate.m3u
+                linktoplay=$MYTMP/${channel_name}-playlastupdate.m3u
+            fi
+
+        fi
+
+        
+        _debug "filter_title $filter_title"
+        _debug "playlist: $current_playlist"
+        _debug "video_selected_rofi: $video"
+        _debug "file_line_by_date: $(cat $current_playlist |  grep "$(echo $video |  cut -d ':' -f1)" )"
+        _debug "title: $(echo $video | cut -d ':' -f2) "
+        _debug "title-4words: $(echo $video | cut -d ':' -f2 | cut -d ' ' -f1-4) "
+        _debug "file_line_by_date_and_title: $(cat $current_playlist |  grep "$(echo $video |  cut -d ':' -f1)" | grep -m1 "$(echo $video | cut -d ':' -f2 | cut -d ' ' -f1-4)" )"
+        
+        # get line number for this link in playlist
+        id="$(grep -v '# updated=' $current_playlist \
+            | nl | grep -m 1 "$(echo $video|cut -d':' -f2)"  | \
+            awk '{print $1}')"
+
+        # print debug info if is active
+        _debug "video: $video"
+        _debug "total: $total"
+        _debug "choice: $choice"
+        _debug "mode: all; linktoplay: $linktoplay"
+        choice="$ch\n$video \n($id/$total)"
+        
+        # play $video
+        play $linktoplay
+
+    done
+    exit 1
+    
+}
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# main actions
+
+actionPlayAll(){
+    item=$(choosePlaylistItem $run_playlist)
+    link=$(getLinkByItem $run_playlist "$item")
+    
+    play $link
+}
+
+# TODO: refactor 
+actionAddChannel(){
+
+    local FILE=$MYHOME/channels.list
+    local FONT="Terminus bold 20"
+    local padding=40
+
+    local category=$1
+    local channel_name=$2
+    local url=$3
+
+    menu(){
+        prompt=$1; lines=$2
+        
+        rofi -no-config \
+            -dmenu \
+            -font "$FONT" \
+            -padding $padding \
+            -l "$lines" \
+            -i -p "$prompt"
+        # -mesg "$2" \
+    }
+
+    [ -z "$category" ] && category=$(grep -v "#" $FILE | \
+        cut -d '-' -f1 | sort | uniq -i | \
+        menu "Category" 10 )
+
+    # echo "$category"
+    [ -z "$category" ] && exit
+
+    [ -z "$channel_name" ] && channel_name=$(menu "channel name" )
+
+    # echo "$channel_name"
+    [ -z "$channel_name" ] && exit
+
+    [ -z "$url" ] && url=$(menu "channel url" )
+
+    # echo "$url"
+    [ -z "$url" ] && exit
+
+    local playlist_name=$(echo "$channel_name" | tr -s ' ' '-' | tr '[:upper:]' '[:lower:]' | tr -d '(' | tr -d ')' )
+    local cmd="$category - $channel_name @$url @$playlist_name"
+
+    notify-send "mpvtube add" "$cmd"
+    echo "$cmd" >> $FILE
+    echo "mpvtube - New entry on playlist: " "$cmd"
+
+}
+
+actionSelectAndPlay(){
+    item=$(choosePlaylistItem $run_playlist)
+    echo $item
+    [ -n "$item" ] &&
+        createPlaylistForChannel "$item" $run_playlist $playlist
+}
+
+actionFavPlay(){
+    item=$(choosePlaylistItem $favlist)
+    echo $item
+    [ -n "$item" ] &&
+        play $item
+}
+
+actionPlayFromHistory(){
+    tac $MYHIST > $MYTMP/mpvhistory.log
+    run_playlist=$MYTMP/mpvhistory.log
+
+    play "$(choosePlaylistItem $run_playlist -h | cut -d ';' -f3 | tr -d ' ')"
+}
+
+actionEdit(){
+    if [ -n "$1" ]; then
+        $1 $playlist
+    elif [ -n "$EDITOR" ]; then
+        $EDITOR $playlist
+    else
+        echo "No editor found. Define one in \$EDITOR or use --edit <editorName>"
+    fi
+}
+
+actionSearch(){
+
+    site=youtube.com && siteID=yt;
+    rofiConfig
+
+    search="$1"
+    
+    if [ -n "$search" ]; then 
+        # sub blank spaces for dash '-'
+        searchFix=${search// /-}
+
+        # get previous searchs to array
+        previous_searchs=( $(ls $SEARCHHOME/$siteID-${searchFix}* 2> /dev/null | cut -d '-' -f 2-30 | tr -s '-' ' ') )
+    else 
+        previous_searchs=$(ls $SEARCHHOME/) 
+        previous_searchs=${previous_searchs//yt-/}
+        # echo $previous_searchs
+        # exit
+    fi
+
+    lines="$(($(echo "$previous_searchs" | wc -l)+1))"
+    if [ $lines -gt 15 ]; then
+        lines=15
+    fi
+    # ask for a "search term" while one isnt provided
+    siteName="$(echo $site | cut -d '.' -f 1)"
+    [ ! -z $VERBOSE ] && echo "site: $siteName"
+    while [ "$search" == "" ]
+    do
+        search=$(echo -e "#R0#- exit\n$previous_searchs" | \
+            rofid -dmenu -i -lines $lines -p "$siteName $msg" \
+                -font "Fantasque Sans Mono 10" \
+                -color-enabled true \
+                -color-window "$BACKGROUND,$BORDER,$SEPARATOR" \
+                -color-normal "$BACKGROUND_ALT,$FOREGROUND,$BACKGROUND_ALT,$HIGHLIGHT_BACKGROUND,$HIGHLIGHT_FOREGROUND" \
+                -color-active "$BACKGROUND,$MAGENTA,$BACKGROUND_ALT,$HIGHLIGHT_BACKGROUND,$HIGHLIGHT_FOREGROUND" \
+                -color-urgent "$BACKGROUND,$YELLOW,$BACKGROUND_ALT,$HIGHLIGHT_BACKGROUND,$HIGHLIGHT_FOREGROUND")
+                msg="(select 'exit' to quit
+        )"
+    done
+
+    if [ "$search" == "#R0#- exit" ]; then
+        exit 0
+    fi
+
+    filename=$SEARCHHOME/$siteID"-"$(echo $search | tr -s ' ' '-')
+
+    found="false"
+    
+    for current_search in "${previous_searchs[@]}"; do
+        echo "${current_search} - ${siteID}-${current_search// /-}"
+        if [ "${siteID}-${current_search// /-}" == "${siteID}-${search// /-}" ]; then
+            found="true"
+            break
+        fi
+        # exit
+
+    done
+
+    if [ "${found}" == "true" ]; then
+        echo "found '$search' in previous files. loading"
+    else
+        # search cmd
+        # cmd="googler -s 1 -n 60 --json -w $site $search"
+        cmd="ddgr -n 25 --json -w $site $search"
+        [ ! -z $VERBOSE ] && echo "cmd: $cmd"
+
+        # execute search
+        # search_result=$(googler -s 1 -n 60 --json -w $site $search)
+        search_result=$(ddgr -n 25 --json -w $site $search)
+        # counter
+        i=0
+        # we have 60 results (0-59), so test each, until result is "null"
+        while [ "$(echo $search_result | jq -r .[$i])" != "null" ]
+        do
+            # write each result in a file with this format: "result_number - Title @url"
+            echo "#R$(($i+1))#- "$(echo $search_result | jq -r ."[$i].title")" @"$(echo $search_result | jq -r ".[$i].url") >>$filename 
+            # increment $i
+            i=$((i+1))
+        done
+        echo "exit" >>$filename 
+    fi
+
+    useInput=""
+    selectedRow=0 
+    # keep search list open to see another videos until user input "exit"
+    while true ; do 
+        # open another ROFI to select one result 
+        # if have problems width size use: 
+        #   xrandr | awk '$0 ~ "*" {print $1}' | uniq | cut -d 'x' -f 1
+        
+
+        # ROFI -format options
+        #   's' selected string
+        #   'i' index (0 - (N-1))
+        #   'd' index (1 - N)
+        #   'q' quote string
+        #   'p' Selected string stripped from pango markup (Needs to be a valid string)
+        #   'f' filter string (user input)
+        #   'F' quoted filter string (user input)
+
+        answer=$(cat $filename | cut -d '@' -f 1 | \
+                rofid -dmenu  -width 1200 \
+                    -i -fuzzy \
+                    -selected-row "$selectedRow"  \
+                    -filter "$userInput" \
+                    -format "f%i%s" \
+                    -p "$siteName ($(echo $filename | rev | cut -d '/' -f1 | rev | sed s,$siteID-,,))")
+
+        #  save current env (filter and selected row)
+        if [ "$(echo -e "$answer" | wc -l)" == "1" ]; then
+                    userInput=$(echo $answer | cut -d '%' -f1)
+                    selectedRow=$(echo $answer | cut -d '%' -f2)
+                    video=$(echo $answer | cut -d '%' -f3-40)
+        fi
+        # if user input "exit" finish script
+        if [ "$video" == "exit" ]; then
+            exit
+        fi
+        # after user choose a entry on list
+        # get link of video choosed
+        # cut id (#R01#..#R60#) to grep it in search_list 
+        link=$(cat $filename | grep -m 1 $(echo $video | cut -d '-' -f 1)  | cut -d '@' -f 2)
+
+        # if link not empty
+        if [ ! -z $link ]; then
+            # run video player with custom args
+            $mpvtube_player $player_args $link
+        fi
+        # sleep 0.2
+    done
+}
+
+actionDownload(){
+   if [ -n "$1" ] && isYoutubeUrl "$1" ; then
+    youtube-dl "$url"
+   fi 
+}

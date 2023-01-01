@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: mpvtube
+# Created: unknow, 2020/02/11 - 23:14:08
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2023/01/01 - 02:31:39
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.5.2.523
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > idea from elenapan, @github (https://github.com/elenapan/dotfiles)
+# 
+# Rofi menu for playing a youtube video, playlist or stream on mpv
+# Requirements:
+#    - youtube-dl
+#    - mpv
+#
+# The playlist file format should be as follows (example):
+#     Categorie - Channel Name @<some youtube url>
+#     ...
+#     Social Media - Youtube Brazil @https://www.youtube.com/channel/UCUN9lhwfMJRxMVuet7Shg0w
+#    ...
+# You can also add single videos or live streams to the playlist file.
+# It should work as long as the URL is valid.
+# 
+# ############################################################################
+# HISTORY:
+#
+
+# shellcheck disable=SC1090
+
+source ~/bin/lib/init
+use args utils mpvtube.lib
+requirements mpv youtube-dl:yt-dlp rofi googler:ddgr jq cut rev grep head sort uniq tr tac
+
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# define args
+xargs --id --,--custom-args --var custom_args+r                              --desc "user arguments to player (mpv) "
+xargs --id -a,--all         --var action:all                                 --desc "select item on playlist to play all videos"
+xargs --id -c,--channel     --var action:channel                             --desc "select item on playlist; select channel; select video (YT only)"
+xargs --id -d,--download    --var action:download,url+r                      --desc "download video from url "
+xargs --id -e,--edit        --var action:edit,editor+o                       --desc "edit playlist with default \$EDITOR (or with <editor>)"
+xargs --id -f,--fav         --var action:fav                                 --desc "select item on favourites playlist to play"
+xargs --id -H,--history     --var action:history                             --desc "select a video from history file (mpv plugin)"
+xargs --id -n,--new         --var action:add-channel,category+o,name+o,url+o --desc "add new channel in playlist"
+xargs --id -p,--play        --var action:play,url+r                          --desc "play given url"
+xargs --id -s,--search      --var action:search,query+o                      --desc "search query on YouTube "
+xargs --id -S,--set         --var property+o,value+o                         --desc "change runtime parameters (property;value) "
+xargs --id -u,--update      --var MPVTUBE_UPDATE:TRUE                        --desc "turn on update flag (work with --channel)"
+
+# xhelp --footer="Available Properties:\
+#     \n  # 'player'   (mpv or vlc)\
+#     \n  # 'selector' (rofi,fzf,terminal)\
+#     \n  # 'playlist' (normal,reverse,random)\
+# "
+
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+
+__initApp__
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# main app
+case "$action" in
+    all        ) actionPlayAll ;;
+    add-channel) actionAddChannel $category $name $url ;;
+    channel    ) actionSelectAndPlay ;;
+    fav        ) actionFavPlay ;;
+    history    ) actionPlayFromHistory ;;
+    edit       ) actionEdit $editor ;;
+    play       ) play $url ;;
+    search     ) actionSearch "$query" ;;
+    download   ) actionDownload $url ;;
+esac
