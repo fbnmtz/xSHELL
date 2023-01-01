@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: alert
+# Created: Wednesday, 2020/10/01 - 12:13:32
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2022/12/31 - 23:36:18
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.3.70
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+
+source ~/bin/lib/init
+
+use args
+requirements notify-send mdate
+
+APP_HOME=~/.fbnmtz/alert
+[ ! -d $APP_HOME ] && mkdir -p $APP_HOME
+
+# filename used for log
+filename="$(mdate -y -m -d).log"
+
+# define current app used for notifications
+cmd='notify-send'
+
+# define args
+xargs --id -c,--critical --code "level=critical; shift" --desc "define notification level as 'critical'"
+
+# run params
+xrun --xrequire-one --xversionrc "$@"
+
+# define params to notification app
+params="${@/-c/}"
+params="${params/--critical/}"
+
+# log notification
+echo  "$(mdate --us) | '$1' '$2' '$3'" >> $APP_HOME/$filename
+
+# add critical level 
+if [ ! -z "$level" ]; then
+    params+=" -u $level"
+fi
+
+# send notification
+$cmd $params
