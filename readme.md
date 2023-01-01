@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2022/12/31 - 16:07:38
+ Last Modified: Saturday, 2022/12/31 - 23:55:10
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.3.130
+ Version: 0.0.3.133
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -60,10 +60,10 @@ xargs --id -p,--print --code "echo 'print test'" --desc "print some code"
 xargs --id -m,--math  --var expression+r         --desc "solve math expression" 
 
 # after define args, pass all script params (var $@) to 'xrun' function 
-# xrun params:
+# xrun optional params:
 #   * --xreject-unknow : throw error when receive an parameter not defined with 'xargs'
-#   * --xrequire-one: throw error if no param given
-#   * --xversionrc: show full version with release candidate
+#   * --xrequire-one...: throw error if no param given
+#   * --xversionrc.....: show full version with release candidate
 xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 # code for -m/--math arg
@@ -78,5 +78,6 @@ fi
 1. [LIB's](./lib/readme.md)
 ## Script's
    
-1. [torctl](./docs/torctl.md)
+1. [alert](docs/alert.md)
 2. [mdate](docs/mdate.md)
+3. [torctl](./docs/torctl.md)
