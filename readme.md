@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2022/12/31 - 23:55:10
+ Last Modified: Sunday, 2023/01/01 - 02:33:51
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.3.133
+ Version: 0.0.3.135
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -23,7 +23,7 @@ This repository contains some scripts and a simple library system for shell.
 
 ```bash
 # clone this repo to your '/home'
- git clone https://github.com/fbnmtz/shell ~/bin
+git clone https://github.com/fbnmtz/shell ~/bin
 
 # Add scripts to your system $PATH
 echo "export PATH="$PATH:$HOME/bin" >> ~/.profile
@@ -41,7 +41,7 @@ source ~/bin/lib/init
 use args
 
 # you can list/validade all binaries/tools needed by your script easily using 'requirements' function
-requirements ls cut docker
+requirements echo
 
 # now, you can easily define args and usage info with 'xargs' function
 # params supported:
@@ -80,4 +80,5 @@ fi
    
 1. [alert](docs/alert.md)
 2. [mdate](docs/mdate.md)
-3. [torctl](./docs/torctl.md)
+3. [mpvtube](docs/mpvtube.md)
+4. [torctl](docs/torctl.md)

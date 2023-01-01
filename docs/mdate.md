@@ -3,7 +3,7 @@
 this is a wrapper to date command creating some shortcuts to get date in many formats
 
 
-```bash
+```
 mdate --help
 
 usage:
