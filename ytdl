@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: ytdl
+# Created: Sunday, 2022/04/03 - 16:49:39
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Monday, 2023/01/02 - 00:37:13
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.51
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+# shellcheck disable=SC1090,SC2154    
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+source ~/bin/lib/init    
+use args ytdl.lib
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+
+requirements yt-dlp:youtube-dl cut sed
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+    
+xargs --id -V,--video --var flag:video,url+r --desc "download video from YouTube url"    
+xargs --id -a,--audio --var flag:audio,url+r --desc "download audio from YouTube url"     
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+xhelp --header="ytdl - download a video/audio from a given url on YouTube"
+    
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"    
+    
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+case "$flag" in    
+    video) runVideo $url ;;
+    audio) runAudio $url ;;
+esac    
