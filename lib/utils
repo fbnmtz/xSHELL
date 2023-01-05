@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/utils
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2022/12/21 - 01:00:41
+# Last Modified: Wednesday, 2023/01/04 - 22:42:47
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.6.386
+# Version: 1.0.7.389
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-__LIB_UTILS=true;
+__xLIB_UTILS_=true;
 
 # using A && B || C
 # # running cmds create a block {} and use 'true'; inside.
@@ -87,7 +87,7 @@ requirements(){
         local tool=$1
         local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
         echo -e "$error_msg"
-        notify-send "$0" "$error_msg"
+        alert "$0" "$error_msg"
         exit 10
     }
     check(){
