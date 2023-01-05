@@ -6,10 +6,10 @@
 # Created: unknow, 2020/02/11 - 23:14:08
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 14:53:57
+# Last Modified: Thursday, 2023/01/05 - 17:47:40
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.5.3.535
+# Version: 0.5.3.536
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > idea from elenapan, @github (https://github.com/elenapan/dotfiles)
@@ -34,7 +34,7 @@
 # shellcheck disable=SC1090
 
 source ~/bin/lib/init
-use args utils mpvtube.lib
+use args mpvtube.lib
 requirements mpv youtube-dl:yt-dlp rofi ddgr jq cut rev grep head sort uniq tr tac
 
 
