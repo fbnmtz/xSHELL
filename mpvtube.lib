@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 23:14:08
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 08:58:19
+# Last Modified: Thursday, 2023/01/05 - 09:46:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.635
+# Version: 0.1.5.646
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -421,8 +421,13 @@ createPlaylistForChannel(){
         _debug "\nrofi-output: $answer"
         userInput=$(echo $answer | cut -d '%' -f1)
         
+        # count lines in user answer
+        answer_lines=$(echo -e "$answer" | wc -l)
+        # remove blank spaces (fix for MacOS)
+        answer_lines=${answer_lines// /}
+
         # check if user selected one video
-        if [ "$(echo -e "$answer" | wc -l)" == "1" ]; then
+        if [ ${answer_lines} -eq 1 ]; then
             # `answer` has only one value?
             userInput=$(echo $answer | cut -d '%' -f1)
             selectedRow=$(echo $answer | cut -d '%' -f2)
