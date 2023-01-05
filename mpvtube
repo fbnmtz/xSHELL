@@ -6,10 +6,10 @@
 # Created: unknow, 2020/02/11 - 23:14:08
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/04 - 18:54:00
+# Last Modified: Thursday, 2023/01/05 - 14:53:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.5.3.533
+# Version: 0.5.3.535
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > idea from elenapan, @github (https://github.com/elenapan/dotfiles)
@@ -52,6 +52,7 @@ xargs --id -p,--play        --var action:play,url+r                          --d
 xargs --id -s,--search      --var action:search,query+o                      --desc "search query on YouTube "
 xargs --id -S,--set         --var property+o,value+o                         --desc "change runtime parameters (property;value) "
 xargs --id -u,--update      --var MPVTUBE_UPDATE:TRUE                        --desc "turn on update flag (work with --channel)"
+xargs --id -D,--debug       --var DEBUG:TRUE                                 --desc "turn on debug flag"
 
 # xhelp --footer="Available Properties:\
 #     \n  # 'player'   (mpv or vlc)\

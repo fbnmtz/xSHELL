@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 23:14:08
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 09:46:30
+# Last Modified: Thursday, 2023/01/05 - 15:04:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.646
+# Version: 0.1.5.661
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -31,7 +31,7 @@ _notify(){ _ns "$@"; }
 # debug
 _debug(){
     if [ "$DEBUG" == "TRUE" ]; then
-        echo -e "$(mdate --us) - $*" >> $MYLOG
+        echo -e " debug -> $(mdate --us) - $*" | tee -a $MYLOG
         _ns "$1" "$2" "$3"
     fi
 }
