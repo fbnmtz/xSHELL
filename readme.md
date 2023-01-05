@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Tuesday, 2023/01/03 - 14:13:29
+ Last Modified: Thursday, 2023/01/05 - 15:13:10
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.3.136
+ Version: 0.0.4.146
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -26,14 +26,16 @@ This repository contains some scripts and a simple library system for shell.
 git clone https://github.com/fbnmtz/shell ~/bin
 
 # Add scripts to your system $PATH
-echo "export PATH="$PATH:$HOME/bin" >> ~/.profile
+echo "export PATH=\"$PATH:$HOME/bin\"" >> ~/.profile
 ```
 
 ## Using lib system
 
-Now you can use this libs/funcions in your scripts following steps bellow:
+Bellow, an example showing how you can use this libs/funcions in your scripts:
 
 ```bash
+# script: libsExample
+
 # import lib system to your script
 source ~/bin/lib/init  
 
@@ -56,6 +58,7 @@ requirements echo
 #            this param will group args defined after it
 
 # example: how to set args/actions
+xargs --section "Custom Args"
 xargs --id -p,--print --code "echo 'print test'" --desc "print some code"
 xargs --id -m,--math  --var expression+r         --desc "solve math expression" 
 
@@ -72,6 +75,25 @@ if [ ! -z "$expression" ] ; then
 fi
 
 ```
+
+The code above will generate this output
+```
+libsExapmle -h
+
+usage:
+  libsExapmle [-p] [-m <expression>] [-h] [-v]
+
+-> Custom Args:
+   -p,  --print             print some code
+   -m,  --math <expression> solve math expression
+
+-> Information Options:
+   -h,  --help              show this help
+   -v,  --version           print version and exit
+
+v0.0.1-rc1 - writen by @fbnmtz 2023
+
+``` 
 
 ## Libraries
 

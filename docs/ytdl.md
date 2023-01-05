@@ -1,6 +1,6 @@
 # ytdl
 
-script to easily donwload video/audio form YouTube (using youtube-dl or yt-dlp)
+script to easily download video/audio form YouTube (using youtube-dl or yt-dlp)
 
 ```
 ytdl -h
@@ -19,4 +19,3 @@ usage:
 v0.0.1-rc48 - writen by @fbnmtz 2022
 
 ```
-[back](../readme.md)

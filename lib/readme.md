@@ -10,6 +10,5 @@ Let's explain the libraries included in this repo
 ### Lib 'args'
 
 * main functions
-  * requirements
   * xargs
   * xrun
