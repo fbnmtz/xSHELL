@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/args
 # Created: Friday, 2022/02/11 - 20:09:07
-# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2022/11/10 - 01:00:35
+# Last Modified: Thursday, 2023/01/05 - 00:57:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.4.861
+# Version: 0.2.5.865
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-__LIB_ARGS=true;
+__xLIB_ARGS_=true;
 
 use hashs utils
 # hash to save app params

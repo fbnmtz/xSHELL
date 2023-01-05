@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/io
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2022/02/11 - 20:44:10
-# Modified By..: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# Last Modified: Thursday, 2023/01/05 - 00:37:48
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.1.29
+# Version: 0.1.1.30
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-__LIB_IO=true;
+_xLIB_IO_=true;
 
 write(){ echo -e "$@"; }
 

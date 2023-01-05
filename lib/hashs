@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/hashs
 # Created: Wednesday, 2021/05/26 - 00:47:46
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2022/02/27 - 22:28:39
-# Modified By..: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# Last Modified: Thursday, 2023/01/05 - 00:29:00
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.1.1.44
+# Version: 1.1.1.45
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Implements a virtual Hash.
@@ -19,7 +19,7 @@
 # HISTORY:
 #
 
-__LIB_HASHS=true;
+_xLIB_HASHS_=true;
 
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~

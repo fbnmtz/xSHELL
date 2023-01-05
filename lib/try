@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # #############################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/try
 # Created: <unknown>, 2014/08/07 - 10:30:00
 # Author.: Mathias Henze, user:3917943 (stackoverflow)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2022/02/11 - 20:43:22
-# Modified By..: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# Last Modified: Thursday, 2023/01/05 - 00:58:39
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.2.12
+# Version: 0.1.2.14
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > https://stackoverflow.com/questions/22009364/is-there-a-try-catch-command-in-bash
@@ -19,36 +19,31 @@
 # #############################################################
 #
 
-__LIB_TRY=true;
+_xLIB_TRY_=true;
 
 export AnException=100
 export AnotherException=101
 
-function try()
-{
+function try(){
     [[ $- = *e* ]]; SAVED_OPT_E=$?
     set +e
 }
 
-function throw()
-{
+function throw(){
     exit $1
 }
 
-function catch()
-{
+function catch(){
     export ex_code=$?
     (( $SAVED_OPT_E )) && set +e
     return $ex_code
 }
 
-function throwErrors()
-{
+function throwErrors(){
     set -e
 }
 
-function ignoreErrors()
-{
+function ignoreErrors(){
     set +e
 }
 
