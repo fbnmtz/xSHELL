@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: lib/exceptions
+# Created: Saturday, 2023/01/07 - 07:19:02
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2023/01/07 - 07:49:49
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.7
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+_xLIB_EXCEPTIONS_=true
+
+# File Exceptions
+exFileNotFound=10
+exFileAlredyExists=11
+
+# Dir Exceptions
+exDirNotFound=20
+exDirAlredyExists=21
