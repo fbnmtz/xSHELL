@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: shell (none)
-# File...: install
+# File...: install-shell
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/01/06 - 23:42:20
+# Last Modified: Saturday, 2023/01/07 - 08:55:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.5
+# Version: 0.0.2.34
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,8 +17,19 @@
 # HISTORY:
 #
 
-# clone this repo to your '/home'
-git clone https://github.com/fbnmtz/shell ~/bin
+source ~/bin/lib/init
+use exceptions
 
-# Add scripts to your system $PATH
-echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
+github=https://github.com
+repo=fbnmtz/shell
+
+if [ -d ~/bin ]; then
+    echo "faild to install repository '$repo'. Dir already exists"
+    exit $exDirAlredyExists
+else
+    # clone this repo to your '/home'
+    git clone "${github}/${repo}" ~/bin
+    
+    # Add scripts to your system $PATH
+    echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
+fi
