@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/01/05 - 16:25:25
+ Last Modified: Friday, 2023/01/06 - 23:44:12
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.10.151
+ Version: 0.0.10.154
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -22,11 +22,8 @@ This repository contains some scripts and a simple library system for shell.
 ## Install lib/scripts
 
 ```bash
-# clone this repo to your '/home'
-git clone https://github.com/fbnmtz/shell ~/bin
+curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
 
-# Add scripts to your system $PATH
-echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
 ```
 
 ## Using lib system
