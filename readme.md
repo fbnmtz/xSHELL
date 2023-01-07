@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Friday, 2023/01/06 - 23:44:12
+ Last Modified: Saturday, 2023/01/07 - 08:57:06
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.10.154
+ Version: 0.0.10.155
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -22,7 +22,7 @@ This repository contains some scripts and a simple library system for shell.
 ## Install lib/scripts
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install-shell | bash 
 
 ```
 
