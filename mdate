@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/10/01 - 12:52:37
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2022/12/31 - 17:32:02
+# Last Modified: Saturday, 2023/01/07 - 20:05:34
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.3.2.199
+# Version: 0.3.3.227
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,6 +26,7 @@ requirements date
 
 date_separator="/"
 time_separator=":"
+
 updateArgs(){ echo "%d$date_separator%m$date_separator%Y-%H$time_separator%M$time_separator%S" ; }
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
@@ -35,9 +36,11 @@ updateArgs(){ echo "%d$date_separator%m$date_separator%Y-%H$time_separator%M$tim
 # xargs --id -c,--char       --var char+r --code "args+=$char"   --desc "separator used in time"
 # xargs --id -c,--char       --code "shift; requireARG $1; args+=$1"   --desc "separator used in time"
 xargs --block "Date Options"
-xargs --id -d,--day        --code "args+=\"%d\""     --desc "current day (number)"
-xargs --id -m,--month      --code "args+=\"%m\""     --desc "current month (number)"    
-xargs --id -y,--year       --code "args+=\"%Y\""     --desc "current year (number)"
+xargs --id -d,--day        --code "args+=\"%d\""       --desc "current day (number)"
+xargs --id -m,--month      --code "args+=\"%m\""       --desc "current month (number)"    
+xargs --id -y,--year       --code "args+=\"%Y\""       --desc "current year (number)"
+xargs --id -Y,--year2      --code "args+=\"%y\""       --desc "current year (two digits)"
+xargs --id -D,--date       --code "args+=\"%d/%m/%Y\"" --desc "current date (full)"
 
 xargs --block "Time Options"
 xargs --id -H,--hour       --code "args+=\"%H\""     --desc "current hour (number)"
@@ -46,19 +49,25 @@ xargs --id -s,--seconds    --code "args+=\"%S\""     --desc "current seconds (nu
 xargs --id -t,--time       --code "args+=\"%H$time_separator%M$time_separator%S\"" --desc "current time (H M S)"
 
 xargs --block "General Options"
-xargs --id -c,--char       --code "[ -n "\$2" ] && { shift ; char="\$1" ; }; args+=\$char "   --desc "char separator" 
-xargs --id -u,--us         --code "args+=\"%Y$date_separator%m$date_separator%d-%H$time_separator%M$time_separator%S\" " --desc "full date in US format"
-xargs --id -b,--br         --code "args+=\"%d$date_separator%m$date_separator%Y-%H$time_separator%M$time_separator%S\" " --desc "full date in BR format"
-xargs --id -r,--header     --code "args+=\"%A, %d/%m/%Y - %H:%M:%S\"" --desc "date/time for header"
-xargs --id -R,--header-en  --code "export LC_TIME=en_US.UTF-8 2>/dev/null; args+=\"%A, %Y/%m/%d - %H:%M:%S\"" --desc "date/time for header (us format)"
-xargs --id -w,--weekday    --code "args+=\"%A\""     --desc "current weekday (name)"
-xargs --id -W,--weekday-en --code "export LC_TIME=en_US.UTF-8 2>/dev/null; args+=\"%A\"" --desc "current weekday (name) (us format)"
-xargs --id -f,--for-filename --code "" --desc "full date formated for filename"
+# xargs --id -c,--char       --code "[ -n "\$2" ] && { shift ; char="\$1" ; } "   --desc "char separator" 
+xargs --id -u,--us           --code "args+=\"%Y$date_separator%m$date_separator%d-%H$time_separator%M$time_separator%S\" " --desc "full date in US format"
+xargs --id -b,--br           --code "args+=\"%d$date_separator%m$date_separator%Y-%H$time_separator%M$time_separator%S\" " --desc "full date in BR format"
+xargs --id -r,--header       --code "args+=\"%A, %d/%m/%Y - %H:%M:%S\""                                                    --desc "date/time for header"
+xargs --id -R,--header-en    --code "export LC_TIME=en_US.UTF-8 2>/dev/null; args+=\"%A, %Y/%m/%d - %H:%M:%S\""            --desc "date/time for header (us format)"
+xargs --id -w,--weekday      --code "args+=\"%A\""                                                                         --desc "current weekday (name)"
+xargs --id -W,--weekday-en   --code "export LC_TIME=en_US.UTF-8 2>/dev/null; args+=\"%A\""                                 --desc "current weekday (name) (us format)"
+xargs --id -f,--for-filename --code "args=\"%Y%m%d-%H%M%S\""                                                               --desc "full date formated for filename"
 
 # [ "$type" == "date" ] && { date_separator=$date_char; } #args=$(updateArgs); }
 # [ "$type" == "time" ] && { time_separator=$time_char; } #args=$(updateArgs); }
 
 xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+
+# if [ -n "$char" ]; then
+#     date_separator="$char"
+#     time_separator="$char"
+#     args=$(updateArgs) 
+# fi
 
 [ -z "$args" ] && args=$(updateArgs)
 
