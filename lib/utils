@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/04 - 22:42:47
+# Last Modified: Sunday, 2023/01/08 - 01:20:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.7.389
+# Version: 1.0.8.398
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,6 +32,12 @@ __xLIB_UTILS_=true;
 # application name
 APP=$(basename "$0")
 APP_DIR=$(dirname "$0")
+
+# function to set $APP_HOME
+xsetHome(){
+    APP_HOME=~/.fbnmtz/$APP
+    mkdir -p "$APP_HOME"/{"$@"}
+}
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # methods
