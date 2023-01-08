@@ -6,10 +6,10 @@
 # Created: 2020/02/27 - 00:04:23
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 06:54:17
+# Last Modified: Sunday, 2023/01/08 - 00:03:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.34
+# Version: 0.1.5.44
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -29,21 +29,25 @@ requirements find sed awk sort rofi man llppac
 APP_HOME=~/.fbnmtz/$APP
 mkdir -p $APP_HOME
 
+xargs --id -b,--binary --var binary+o --desc "binary to show man"
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xrun --xversionrc "$@"
 
-
-SELECTED_BIN=$( find /usr/bin/ -type f | \
-    sed 's/\/usr\/bin\///g' | \
-    awk '{print $1}' | \
-    sort | \
-    rofi -no-config  \
-        -columns 1 \
-        -lines 10 \
-        -i -dmenu \
-        -theme ~/.config/rofi/rofi-menus/themes/appsmenu.rasi \
-        -p "Man Search" 
-)
+if [ -z $binary ]; then
+    SELECTED_BIN=$( find /usr/bin/ -type f | \
+        sed 's/\/usr\/bin\///g' | \
+        awk '{print $1}' | \
+        sort | \
+        rofi -no-config  \
+            -columns 1 \
+            -lines 10 \
+            -i -dmenu \
+            -theme ~/.config/rofi/rofi-menus/themes/appsmenu.rasi \
+            -p "Man Search" 
+    )
+else
+    SELECTED_BIN=$binary
+fi
 
 # save man content and open 
 if [ "$SELECTED_BIN" != "" ]; then
