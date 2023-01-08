@@ -6,10 +6,10 @@
 # Created: 2020/02/27 - 00:04:23
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/08 - 00:03:39
+# Last Modified: Sunday, 2023/01/08 - 00:30:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.44
+# Version: 0.1.7.48
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,6 +32,7 @@ mkdir -p $APP_HOME
 xargs --id -b,--binary --var binary+o --desc "binary to show man"
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xrun --xversionrc "$@"
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 
 if [ -z $binary ]; then
     SELECTED_BIN=$( find /usr/bin/ -type f | \
@@ -42,7 +43,6 @@ if [ -z $binary ]; then
             -columns 1 \
             -lines 10 \
             -i -dmenu \
-            -theme ~/.config/rofi/rofi-menus/themes/appsmenu.rasi \
             -p "Man Search" 
     )
 else
