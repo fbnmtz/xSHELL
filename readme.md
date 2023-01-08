@@ -5,16 +5,17 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/01/07 - 10:00:24
+ Last Modified: Sunday, 2023/01/08 - 14:42:55
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.11.160
+ Version: 0.0.11.168
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
  ############################################################################
  HISTORY:
 -->
+
 # Shell
 
 This repository contains some scripts and a simple library system for shell.
@@ -76,6 +77,7 @@ fi
 ```
 
 The code above will generate this output
+
 ```
 libsExapmle -h
 
@@ -92,16 +94,21 @@ usage:
 
 v0.0.1-rc1 - writen by @fbnmtz 2023
 
-``` 
+```
+
 Options '--help' and '--version' are automatically generated
 
 ## Libraries
 
-1. [LIB's](./lib/readme.md)
+1. [LIB&#39;s](./lib/readme.md)
+
 ## Script's
-   
-1. [alert](docs/alert.md)
-2. [mdate](docs/mdate.md)
-3. [mpvtube](docs/mpvtube.md)
-4. [torctl](docs/torctl.md)
-5. [ytdl](docs/ytdl.md)
+
+| script                  | Description                                           |
+| ----------------------- | ----------------------------------------------------- |
+| [alert](docs/alert.md)     | wrapper to notificatin of system                      |
+| [mdate](docs/mdate.md)     | Date wrapper make easy to get some values             |
+| [mpvtube](docs/mpvtube.md) | Watch videos from YouTube using rofi and mpv (no ads) |
+| [torctl](docs/torctl.md)   | Setup a tor-server and route all traffic to it        |
+| [ytdl](docs/ytdl.md)       | easily download video/audio from YouTube              |
+|                         |                                                       |
