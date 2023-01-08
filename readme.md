@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/01/08 - 14:42:55
+ Last Modified: Sunday, 2023/01/08 - 15:19:20
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.11.168
+ Version: 0.0.11.169
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -104,7 +104,7 @@ Options '--help' and '--version' are automatically generated
 
 ## Script's
 
-| script                  | Description                                           |
+| name                  | description                                           |
 | ----------------------- | ----------------------------------------------------- |
 | [alert](docs/alert.md)     | wrapper to notificatin of system                      |
 | [mdate](docs/mdate.md)     | Date wrapper make easy to get some values             |
