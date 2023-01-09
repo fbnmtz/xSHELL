@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/07 - 23:41:36
+# Last Modified: Sunday, 2023/01/08 - 02:21:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.42
+# Version: 0.0.4.44
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,7 +24,7 @@ github=https://github.com
 repo=fbnmtz/shell
 
 if [ -d ~/bin ]; then
-    echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir already exists"
+    echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
     exit $ExDirAlredyExists
 else
     # clone this repo to your '/home'
