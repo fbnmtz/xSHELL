@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/08 - 02:21:51
+# Last Modified: Tuesday, 2023/01/10 - 01:45:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.44
+# Version: 0.0.5.48
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,7 +28,9 @@ if [ -d ~/bin ]; then
     exit $ExDirAlredyExists
 else
     # clone this repo to your '/home'
-    git clone "${github}/${repo}" ~/bin
+    git clone "${github}/${repo}" ~/bin && \
+    mv ~/bin/scripts/* ~/bin/ && \
+    rm -rf ~/bin/scripts
     
     # Add scripts to your system $PATH
     echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
