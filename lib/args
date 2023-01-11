@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 00:57:13
+# Last Modified: Wednesday, 2023/01/11 - 00:39:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.5.865
+# Version: 0.2.5.877
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 __xLIB_ARGS_=true;
 
-use hashs utils
+use hashs args.utils
 # hash to save app params
 Hash.new main_params
 
@@ -198,7 +198,7 @@ xargs(){
                 description=''
             ;;
             # TODO: implements joint shortflags  (ex: -lsa) 
-            -v |--var) 
+            -v|--var) 
                 key=$1; shift
                 method=var
                 action_vars=''
@@ -291,7 +291,7 @@ xargs(){
         # --reject-unknow) __runARGS_case_options+="*) usage -r \$1 ;; \n" ;;
     esac
 }
-setARGS(){ xargs "$@"; }
+xarg(){ xargs "$@"; }
 
 # runARGS "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `setARGS`

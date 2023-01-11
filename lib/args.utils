@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: lib/args.utils
+# Created: Thursday, 2021/05/20 - 00:26:27
+# Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Monday, 2023/01/09 - 22:08:35
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.0.8.402
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+_xLIB_ARGS_UTILS_=true
+
+xversion(){
+    # set app version (dynamic from header comments or static)
+    _VERSION_="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f1-3)"
+    # if [ "$1" == '--full' ]; then 
+    local release="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f4)"
+    _VERSIONRC_="$_VERSION_-rc$release"
+    # fi
+    [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
+}
+
+xcreated(){
+    # set app version (dynamic from header comments or static)
+    _CREATED_AT_="$(head -n 20 "$0" | \
+        grep '# Created:' -m1 | \
+        tr -d ' ' | \
+        cut -d ':' -f2 | \
+        cut -d ',' -f2 | \
+        cut -d '-' -f1 | \
+        cut -d '/' -f1\
+    )"
+    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
+}
+
+xauthor(){
+    _AUTHOR_=$(
+        head -n 20 "$0" | \
+        grep '# Author.:' -m1 | \
+        cut -d ':' -f2 |\
+        cut -d ',' -f1 |\
+        cut -c2-
+    )
+    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknow>'
+}
