@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
+# Project: shell (none)
 # File...: lib/init
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2022/12/29 - 23:03:45
+# Last Modified: Wednesday, 2023/01/11 - 01:21:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.187
+# Version: 0.1.5.198
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,6 +21,23 @@
 # _INIT_DEBUG_=false
 # _INIT_DEBUG_=true
 
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# create constants
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+
+# application name
+APP=$(basename "$0")
+APP_DIR=$(dirname "$0")
+APP_HOME=""
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+
+# function to set $APP_HOME
+xsetHome(){
+    APP_HOME=~/.fbnmtz/$APP
+    mkdir -p "$APP_HOME"/{"$@"}
+}
+
+# check if some lib already loaded
 checkLibLoaded(){
   # convert fist arg to UPCASE 
   local name=${1^^}
@@ -49,6 +66,7 @@ checkLibLoaded(){
   fi
 }
 
+# import/use some library
 use(){
 
   [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$@'\n"
@@ -94,3 +112,38 @@ alias import=use
 alias require=use
 alias load=use
 alias unit=use
+
+# validade requirements
+requirements(){
+    fail(){
+        local tool=$1
+        local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
+        echo -e "$error_msg"
+        alert "$0" "$error_msg"
+        exit 10
+    }
+    check(){
+        (which "$1" >/dev/null) 2> /dev/null
+    }
+    for tool in "$@"; do
+        if [[ "$tool" =~ ":" ]]; then
+            local found=''
+            for t in ${tool//\:/ }; do 
+                if check $t; then
+                    found=true
+                    break;
+                else
+                    found=false
+                fi
+            done
+            [ "$found" != 'true' ] && fail "$tool"
+        else
+            if ! check $tool; then
+                fail $tool
+            fi
+        fi
+    done
+}
+# alias to requirements 
+is_installed(){ requirements "$@"; }
+xrequirements(){ requirements "$@"; }
