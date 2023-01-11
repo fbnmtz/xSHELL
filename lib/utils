@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/08 - 01:20:43
+# Last Modified: Tuesday, 2023/01/10 - 05:27:40
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.8.398
+# Version: 1.0.8.405
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,57 +26,8 @@ __xLIB_UTILS_=true;
 # shellcheck disable=SC2120,2015,2016
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# create constants
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-
-# application name
-APP=$(basename "$0")
-APP_DIR=$(dirname "$0")
-
-# function to set $APP_HOME
-xsetHome(){
-    APP_HOME=~/.fbnmtz/$APP
-    mkdir -p "$APP_HOME"/{"$@"}
-}
-
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # methods
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-
-
-xversion(){
-    # set app version (dynamic from header comments or static)
-    _VERSION_="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f1-3)"
-    # if [ "$1" == '--full' ]; then 
-    local release="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f4)"
-    _VERSIONRC_="$_VERSION_-rc$release"
-    # fi
-    [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
-}
-
-xcreated(){
-    # set app version (dynamic from header comments or static)
-    _CREATED_AT_="$(head -n 20 "$0" | \
-        grep '# Created:' -m1 | \
-        tr -d ' ' | \
-        cut -d ':' -f2 | \
-        cut -d ',' -f2 | \
-        cut -d '-' -f1 | \
-        cut -d '/' -f1\
-    )"
-    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
-}
-
-xauthor(){
-    _AUTHOR_=$(
-        head -n 20 "$0" | \
-        grep '# Author.:' -m1 | \
-        cut -d ':' -f2 |\
-        cut -d ',' -f1 |\
-        cut -c2-
-    )
-    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknow>'
-}
 
 getPath(){
     for tool in "$@"; do
@@ -88,38 +39,6 @@ getPath(){
     return 1
 }
 
-requirements(){
-    fail(){
-        local tool=$1
-        local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
-        echo -e "$error_msg"
-        alert "$0" "$error_msg"
-        exit 10
-    }
-    check(){
-        (which "$1" >/dev/null) 2> /dev/null
-    }
-    for tool in "$@"; do
-        if [[ "$tool" =~ ":" ]]; then
-            local found=''
-            for t in ${tool//\:/ }; do 
-                if check $t; then
-                    found=true
-                    break;
-                else
-                    found=false
-                fi
-            done
-            [ "$found" != 'true' ] && fail "$tool"
-        else
-            if ! check $tool; then
-                fail $tool
-            fi
-        fi
-    done
-}
-# alias to requirements 
-is_installed(){ requirements "$@"; }
 
 # function to return a basepath from a file
 # @param $1 -> file: /etc/hosts
@@ -143,7 +62,7 @@ tern(){
 }
 
 # function to check if current user is ROOT 
-isROOT(){
+isROOT?(){
     if [ $UID = 0 ] ; then 
         echo true 
     else
@@ -159,4 +78,11 @@ requireROOT(){
         echo "Error! You need to be ROOT to run '$APP'."
         exit 1
     fi
+}
+
+# print msg with dots
+dots() {
+    local pad=$(printf "%0.1s" "."{1..60})
+    printf " * %s%*.*s" "$1" 0 $((60-${#1})) "$pad"
+    return 0
 }
