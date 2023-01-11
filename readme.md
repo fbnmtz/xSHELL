@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Wednesday, 2023/01/11 - 16:35:04
+ Last Modified: Wednesday, 2023/01/11 - 16:58:41
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.11.173
+ Version: 0.0.11.174
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -41,7 +41,7 @@ source ~/bin/lib/init
 use args
 
 # call function 'requirements' to validade needed tools/binaries 
-requirements echo
+xrequirements echo
 
 # now, you can easily define args and usage info with 'xarg' function
 # params supported:
