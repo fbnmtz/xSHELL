@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: shell (none)
-# File...: xman
+# File...: scripts/xman
 # Created: 2020/02/27 - 00:04:23
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/08 - 00:30:39
+# Last Modified: Wednesday, 2023/01/11 - 20:45:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.7.48
+# Version: 0.2.0.61
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,22 +23,21 @@ source ~/bin/lib/init
 use args
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-requirements find sed awk sort rofi man llppac
+xrequirements find sed awk sort rofi man llppac
+xsetHome
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-APP_HOME=~/.fbnmtz/$APP
-mkdir -p $APP_HOME
-
-xargs --id -b,--binary --var binary+o --desc "binary to show man"
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+xarg --id -b,--binary --var binary+o --desc "binary to show man"
 xrun --xversionrc "$@"
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 
 if [ -z $binary ]; then
-    SELECTED_BIN=$( find /usr/bin/ -type f | \
+    SELECTED_BIN=$( find /usr/bin/ /bin/ /sbin/ -type f | \
         sed 's/\/usr\/bin\///g' | \
+        sed 's/\/bin\///g' | \
+        sed 's/\/sbin\///g' | \
         awk '{print $1}' | \
-        sort | \
+        sort -u | \
         rofi -no-config  \
             -columns 1 \
             -lines 10 \
