@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 15:09:19
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/11 - 16:58:49
+# Last Modified: Thursday, 2023/01/12 - 01:27:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.5
+# Version: 0.0.2.37
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,7 +27,7 @@
 source ~/bin/lib/init  
 
 # load basic lib 'args'
-use args
+use args system
 
 # you can list/validade all binaries/tools needed by your script easily using 'requirements' function
 xrequirements echo
@@ -46,8 +46,9 @@ xrequirements echo
 
 # example: how to set args/actions
 xarg --section "Custom Args"
-xarg --id -p,--print --code "echo 'print test'" --desc "print some code"
-xarg --id -m,--math  --var expression+r         --desc "solve math expression" 
+xarg --id -p,--print  --code "echo 'print test'" --desc "print some code"
+xarg --id -n,--notify,-ns,note --var title+r,text+r       --desc "test notify system"
+xarg --id -m,--math   --var expression+r         --desc "solve math expression" 
 
 # after define args, pass all script params (var $@) to 'xrun' function 
 # xrun optional params:
@@ -59,4 +60,9 @@ xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 # code for -m/--math arg
 if [ ! -z "$expression" ] ; then
     echo $(($expression))
+fi
+
+if [ -n "$title" ]; then
+    sys.notify $title $text
+    # System.notification "$title" "$text"
 fi
