@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: lib/system
+# Created: Thursday, 2023/01/05 - 21:11:59
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Wednesday, 2023/01/11 - 23:34:14
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.103
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+#!/usr/bin/bash
+
+_xLIB_SYSTEM_=true
+
+use utils
+
+_OS_=$(uname)
+_NOTIFY_APP=''
+_NOTIFY_ARG=''
+
+# return current OS
+System.OS(){
+    echo "${_OS_}"
+}
+sys.os(){ System.OS "$@"; }
+
+# call system notifyer
+System.notification(){
+    title=$1; text=$2;
+    
+    # case sys.os in
+    case $(sys.os) in
+        Darwin) 
+            _NOTIFY_APP="osascript"
+            _NOTIFY_ARG="-e \"display notification \"<text>\" with title \"<title>\"\""
+            _NOTIFY_ARG=$(echo $_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
+        ;;
+        Linux)  
+            _NOTIFY_APP="notify-send"
+            _NOTIFY_ARG='<title> <text>'
+            _NOTIFY_ARG=$(echo $_NOTIFY_ARG | sed "s/<text>/\"$text\"/g" | sed "s/<title>/\"$title\"/g")
+        ;;
+    esac
+    # echo "cmd: $_NOTIFY_APP $_NOTIFY_ARG"
+    eval "$_NOTIFY_APP $_NOTIFY_ARG"
+}
+sys.notify(){ System.notification "$@"; }
+
+# write contents on terminal
+System.write(){
+    echo "$@"
+}
+sys.write(){ System.write "$@"; }
