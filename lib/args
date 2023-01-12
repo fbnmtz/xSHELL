@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/11 - 00:39:19
+# Last Modified: Wednesday, 2023/01/11 - 23:55:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.5.877
+# Version: 0.2.6.952
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-__xLIB_ARGS_=true;
+_xLIB_ARGS_=true;
 
 use hashs args.utils
 # hash to save app params
@@ -255,7 +255,9 @@ xargs(){
                     esac
                     [ -n "$action_vars" ] && action_vars+=" ; "
                     action_vars+=" $option_rule $assign_vars  "
-                    
+                    # fix priblem when require two vars
+                    # ex --var v1+r,v2+r
+                    option_rule=''
                 done
                 
             ;;
