@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: shell (none)
+# File...: scripts/popcorn
+# Created: 2020/03/06 - 19:26:02
+# Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com) 
+#        (take idea for another script)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2023/01/12 - 01:30:17
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.1.4.94
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > popcorn (term version)
+#        use terminial to watch movies / series.
+#        you search for a name, get a list of torrents and select one to watch
+#        directly in mpv
+# 
+# we use two programs
+#   * pirateget (finds and downloads torrents from the Pirate Bay)
+#   * peerflix (open a magnetlink, download and open video in a given player (mpv))
+# ############################################################################
+# HISTORY:
+#
+
+source ~/bin/lib/init
+use args
+xrequirements pirate-get peerflix mpv
+
+xarg --id -s,--search --var search+o --desc "term for search a torrent"
+xarg --id -m,--magnet --var magnet+r --desc "magnet link for download"
+
+xrun --xversionrc "$@"
+if [ -z "$magnet" ]; then
+    [ -z "$search" ] && search="$@"
+    pirate-get -C \
+        "peerflix %s --all --list --subtitles --no-quit --mpv  -- \"$@\"" \
+        "$search"
+        # --on-donwloaded 'notify-send \"popcorn\" \"download 100%\" ' \
+else
+    peerflix "$magnet" --all --list --subtitles --no-quit --mpv --
+fi
+
+# docker run -p 9000:9000 -p 6881:6881 -p 6881:6881/udp \
+#     --rm -v /tmp/torrent-stream:/tmp/torrent-stream asapach/peerflix-server
