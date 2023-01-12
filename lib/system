@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/11 - 23:34:14
+# Last Modified: Thursday, 2023/01/12 - 20:07:47
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.103
+# Version: 0.0.1.106
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -39,8 +39,8 @@ System.notification(){
     # case sys.os in
     case $(sys.os) in
         Darwin) 
-            _NOTIFY_APP="osascript"
-            _NOTIFY_ARG="-e \"display notification \"<text>\" with title \"<title>\"\""
+            _NOTIFY_APP="osascript -e"
+            _NOTIFY_ARG="\"display notification \\\"<text>\\\" with title \\\"<title>\\\"\""
             _NOTIFY_ARG=$(echo $_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
         ;;
         Linux)  
