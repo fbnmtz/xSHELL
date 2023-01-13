@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: shell (none)
-# File...: src/lib/init
+# File...: lib/init
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 21:56:58
+# Last Modified: Friday, 2023/01/13 - 17:15:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.203
+# Version: 0.1.6.208
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -80,8 +80,8 @@ use(){
       local locations=( 
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file" 
-        "$HOME/bin/src/lib/$lib_file" 
-        "$HOME/bin/src/lib/vendor/$lib_file" 
+        "$HOME/bin/lib/$lib_file" 
+        "$HOME/bin/lib/vendor/$lib_file" 
       )
       local included=''
 
@@ -115,7 +115,7 @@ alias load=use
 alias unit=use
 
 # validade requirements
-requirements(){
+xrequirements(){
     fail(){
         local tool=$1
         local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
@@ -145,9 +145,6 @@ requirements(){
         fi
     done
 }
-# alias to requirements 
-is_installed(){ requirements "$@"; }
-xrequirements(){ requirements "$@"; }
 
 # load default libs on all scripts
 use system
