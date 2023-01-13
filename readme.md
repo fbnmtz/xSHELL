@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/01/12 - 16:23:44
+ Last Modified: Thursday, 2023/01/12 - 23:57:13
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.11.175
+ Version: 0.0.11.191
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -16,7 +16,23 @@
  HISTORY:
 -->
 
-# xSHELL
+<p align="center">
+    <a href="https://github.com/fbnmtz/shell/issues"><img src="https://img.shields.io/github/issues/fbnmtz/shell.svg"></a>
+    <a href="https://img.shields.io/github/forks/fbnmtz/shell.svg"><img src="https://img.shields.io/github/forks/fbnmtz/shell.svg"></a>
+    <a href="https://github.com/fbnmtz/shell/stargazers"><img src="https://img.shields.io/github/stars/fbnmtz/shell.svg"></a>
+    <a href="https://github.com/fbnmtz/shell/releases"><img src="https://img.shields.io/github/downloads/fbnmtz/shell/total.svg"></a>
+    <a href="https://repology.org/metapackage/shell/versions"><img src="https://repology.org/badge/tiny-repos/shell.svg"></a>
+    <a href="https://github.com/fbnmtz/shell/graphs/contributors">
+      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/fbnmtz/shell" />
+    </a>
+</p>
+
+
+
+<p align="center">
+    <img width="100px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
+    <h2 align="center">xSHELL library</h2>
+</p>
 
 
 This repository contains some scripts and a simple library system for shell.
@@ -111,11 +127,12 @@ Options '--help' and '--version' are automatically generated
 
 ## Script's
 
-| name                  | description                                           |
+| name                    | description                                           |
 | ----------------------- | ----------------------------------------------------- |
 | [alert](docs/alert.md)     | wrapper to notificatin of system                      |
 | [mdate](docs/mdate.md)     | Date wrapper make easy to get some values             |
 | [mpvtube](docs/mpvtube.md) | Watch videos from YouTube using rofi and mpv (no ads) |
+| [popcorn](docs/popcorn.md) | search torrents and watch via mpv                     |
 | [torctl](docs/torctl.md)   | Setup a tor-server and route all traffic to it        |
 | [ytdl](docs/ytdl.md)       | easily download video/audio from YouTube              |
 |                         |                                                       |
