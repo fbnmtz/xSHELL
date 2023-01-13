@@ -8,7 +8,7 @@
  Last Modified: Thursday, 2023/01/12 - 23:57:13
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.11.191
+ Version: 0.0.12.192
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -31,7 +31,6 @@
 
 <p align="center">
     <img width="100px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
-    <h2 align="center">xSHELL library</h2>
 </p>
 
 
