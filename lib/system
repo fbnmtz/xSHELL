@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 20:07:47
+# Last Modified: Thursday, 2023/01/12 - 21:15:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.106
+# Version: 0.0.3.146
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -34,22 +34,27 @@ sys.os(){ System.OS "$@"; }
 
 # call system notifyer
 System.notification(){
-    title=$1; text=$2;
+    local title="$1" 
+    local text="$2" 
+    local level="$3";
+
+    echo -e "\nsys.notify: title: $title; text:$text; level:$level\n";
     
     # case sys.os in
     case $(sys.os) in
         Darwin) 
             _NOTIFY_APP="osascript -e"
             _NOTIFY_ARG="\"display notification \\\"<text>\\\" with title \\\"<title>\\\"\""
-            _NOTIFY_ARG=$(echo $_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
+            _NOTIFY_ARG=$(echo -e $_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
         ;;
         Linux)  
             _NOTIFY_APP="notify-send"
-            _NOTIFY_ARG='<title> <text>'
-            _NOTIFY_ARG=$(echo $_NOTIFY_ARG | sed "s/<text>/\"$text\"/g" | sed "s/<title>/\"$title\"/g")
+            _NOTIFY_ARG="\"$title\" \"$text\""
+            [ "$level" == "-c" ] && _NOTIFY_ARG+=' -u critical'
+
         ;;
     esac
-    # echo "cmd: $_NOTIFY_APP $_NOTIFY_ARG"
+    echo -e "\ncmd: $_NOTIFY_APP $_NOTIFY_ARG\n"
     eval "$_NOTIFY_APP $_NOTIFY_ARG"
 }
 sys.notify(){ System.notification "$@"; }
