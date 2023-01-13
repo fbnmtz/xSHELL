@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/01/12 - 23:57:13
+ Last Modified: Friday, 2023/01/13 - 17:28:53
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.12.192
+ Version: 0.0.12.197
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -73,8 +73,9 @@ xrequirements echo
 
 # example: how to set args/actions
 xarg --section "Custom Args"
-xarg --id -p,--print --code "echo 'print test'" --desc "print some code"
-xarg --id -m,--math  --var expression+r         --desc "solve math expression" 
+xarg --id -p,--print  --code "echo 'print test'" --desc "print some code"
+xarg --id -n,--notify --var title+r,text+r       --desc "test notify system"
+xarg --id -m,--math   --var expression+r         --desc "solve math expression" 
 
 # after define args, pass all script params (var $@) to 'xrun' function 
 # xrun optional params:
@@ -88,6 +89,10 @@ xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 # code for -m/--math arg
 if [ -n "$expression" ] ; then
     echo $(($expression))
+fi
+
+if [ -n "$title" ]; then
+    sys.notify $title $text
 fi
 
 ```

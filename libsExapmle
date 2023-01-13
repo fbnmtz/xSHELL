@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 15:09:19
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 01:27:49
+# Last Modified: Friday, 2023/01/13 - 17:27:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.37
+# Version: 0.0.3.42
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -47,7 +47,7 @@ xrequirements echo
 # example: how to set args/actions
 xarg --section "Custom Args"
 xarg --id -p,--print  --code "echo 'print test'" --desc "print some code"
-xarg --id -n,--notify,-ns,note --var title+r,text+r       --desc "test notify system"
+xarg --id -n,--notify --var title+r,text+r       --desc "test notify system"
 xarg --id -m,--math   --var expression+r         --desc "solve math expression" 
 
 # after define args, pass all script params (var $@) to 'xrun' function 
@@ -58,11 +58,10 @@ xarg --id -m,--math   --var expression+r         --desc "solve math expression"
 xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 # code for -m/--math arg
-if [ ! -z "$expression" ] ; then
+if [ -n "$expression" ] ; then
     echo $(($expression))
 fi
 
 if [ -n "$title" ]; then
     sys.notify $title $text
-    # System.notification "$title" "$text"
 fi
