@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: shell (none)
+ Project: xshell (none)
  File...: readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Friday, 2023/01/13 - 17:28:53
+ Last Modified: Friday, 2023/01/13 - 19:20:23
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.12.197
+ Version: 0.0.12.199
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -28,22 +28,21 @@
 </p>
 
 
-
 <p align="center">
-    <img width="100px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
+    <img width="250px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
 </p>
 
 
 This repository contains some scripts and a simple library system for shell.
 
-## Install lib/scripts
+## Install 'xSHELL' library system and scripts
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install-shell | bash 
 
 ```
 
-## Using lib system
+## Using libs
 
 Bellow, an example showing how you can use this libs/funcions in your scripts:
 
@@ -104,17 +103,19 @@ The code above will generate this output
 libsExapmle -h
 
 usage:
-  libsExapmle [-p] [-m <expression>] [-h] [-v]
+  libsExapmle [-p] [-n <title> <text>] [-m <expression>] [-h] [-v]
 
 -> Custom Args:
-   -p,  --print             print some code
-   -m,  --math <expression> solve math expression
+   -p,  --print                 print some code
+   -n,  --notify <title> <text> test notify system
+   -m,  --math <expression>     solve math expression
 
 -> Information Options:
-   -h,  --help              show this help
-   -v,  --version           print version and exit
+   -h,  --help                  show this help
+   -v,  --version               print version and exit
 
-v0.0.1-rc1 - writen by @fbnmtz 2023
+v0.0.3-rc42 - writen by @fbnmtz 2023
+
 
 
 # using --math option
@@ -129,7 +130,7 @@ Options '--help' and '--version' are automatically generated
 
 1. [LIB&#39;s](./lib/readme.md)
 
-## Script's
+## List of important script's
 
 | name                    | description                                           |
 | ----------------------- | ----------------------------------------------------- |
