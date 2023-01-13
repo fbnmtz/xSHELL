@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: shell (none)
-# File...: lib/init
+# File...: src/lib/init
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 21:25:26
+# Last Modified: Thursday, 2023/01/12 - 21:56:58
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.202
+# Version: 0.1.6.203
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -80,8 +80,8 @@ use(){
       local locations=( 
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file" 
-        "$HOME/bin/lib/$lib_file" 
-        "$HOME/bin/lib/vendor/$lib_file" 
+        "$HOME/bin/src/lib/$lib_file" 
+        "$HOME/bin/src/lib/vendor/$lib_file" 
       )
       local included=''
 
