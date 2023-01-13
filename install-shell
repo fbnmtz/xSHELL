@@ -33,5 +33,5 @@ else
     # rm -rf ~/bin/scripts
     
     # Add scripts to your system $PATH
-    echo "export PATH=\"\$PATH:\$HOME/bin/src\"" >> ~/.profile
+    echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
 fi
