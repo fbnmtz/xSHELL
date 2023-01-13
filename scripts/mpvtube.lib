@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: shell (none)
-# File...: mpvtube.lib
+# File...: scripts/mpvtube.lib
 # Created: Friday, 2022/02/11 - 23:14:08
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 18:50:21
+# Last Modified: Thursday, 2023/01/12 - 21:26:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.663
+# Version: 0.1.7.678
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,9 +24,8 @@ _xLIB_MPVTUBE_=true
 
 # notify send
 _ns(){
-    alert "$1" "$2" "$3"
+    sys.notify "$1" "$2" "$3"
 }
-_notify(){ _ns "$@"; }
 
 # debug
 _debug(){
@@ -158,7 +157,7 @@ play(){
     else
         # Send notification
         icon=""
-        _ns "$icon YouTube $(echo $mode| xargs)" "$choice\n$link"
+        _ns "$icon YouTube $(echo $mode| command xargs)" "$choice\n$link"
 
         $mpvtube_player $run_args $link
     fi
@@ -296,12 +295,12 @@ createPlaylistForChannel(){
     # if this playlist dont exists, we will create 
     if [ ! -f $current_playlist ]; then
         # get all ChannelVideos by channel url
-        _notify "mpvtube" "create playslist from: $channel_name" -c
+        _ns "mpvtube" "create playslist from: $channel_name" -c
         ytinfo -cv $linktoplay > $current_playlist
         if [ "$(cat $current_playlist)" != "null" ]; then
-            _notify "mpvtube" "$channel_name playlist done." -c
+            _ns "mpvtube" "$channel_name playlist done." -c
         else
-            _notify "mpvtube FAIL" "$channel_name playlist not created." -c
+            _ns "mpvtube FAIL" "$channel_name playlist not created." -c
             rm $current_playlist
         fi
     else
@@ -309,7 +308,7 @@ createPlaylistForChannel(){
         if [ "$MPVTUBE_UPDATE" == "TRUE" ]; then
             lastSync=$(sed -n 1p $current_playlist | cut -d '@' -f1 | cut -d '=' -f2)
             
-            _notify "$APP update ($channel_name)" "lastsync: $lastSync" -c
+            _ns "$APP update ($channel_name)" "lastsync: $lastSync" -c
             # get new videos since lastsync
             # out=$(ytinfo -vd $(echo $lastSync) $linktoplay)
             ytinfo -vd $(echo $lastSync) $linktoplay > $MYTMP/${channel_name}-lastupdate.m3u
@@ -354,7 +353,7 @@ createPlaylistForChannel(){
                 firstLine=$(echo -e "$final" | head -n 3)
                 newVideos=$(echo -e "$final" | grep -v "updated=" |  wc -l)
                 # send notification to follow update process
-                _notify "$channel_name update: $newVideos new" "$firstLine\n..." -c
+                _ns "$channel_name update: $newVideos new" "$firstLine\n..." -c
 
                 # delete line with old lastsync date
                 sed -i "/updated=$lastSync/d" $current_playlist
@@ -362,7 +361,7 @@ createPlaylistForChannel(){
                 sed -i "1 i $update_date $outEscaped" $current_playlist
             else
                 # send notification to follow update process
-                _notify "$channel_name update fail" "$out" -c
+                _ns "$channel_name update fail" "$out" -c
             fi 
 
         fi
@@ -436,7 +435,7 @@ createPlaylistForChannel(){
         else
             # `answer` has more than one value?
             #  we create a list with this videos
-            _notify 'mpvtube' "$(echo "$answer" | wc -l) videos selected"
+            _ns 'mpvtube' "$(echo "$answer" | wc -l) videos selected"
             selected_videos_playlist="$MYHOME/watch/$channel_name-$(echo $userInput|tr -s ' ' '-')-$(echo -e "$answer" | wc -l)-selected.m3u"
             
             echo "# $current_playlist" > $selected_videos_playlist
@@ -459,7 +458,7 @@ createPlaylistForChannel(){
         if [[ -z "${video// }" ]]; then
             # print debug info if is active
             _debug "error: video empty! exiting;"
-            # _notify "error: video empty! exiting;"
+            # _ns "error: video empty! exiting;"
             exit 1
         fi
 
@@ -490,7 +489,7 @@ createPlaylistForChannel(){
             echo "link: $linktoplay"
             
             if [[ "$linktoplay" =~ "--shuffle" ]]; then
-                # _notify "rdm"
+                # _ns "rdm"
                 name="$channel_name.m3u"
                 cat $current_playlist | sed '1d' | shuf > $MYHOME/watch/ramdom/$name 
                 linktoplay=$MYHOME/watch/ramdom/$name
@@ -585,7 +584,7 @@ actionAddChannel(){
     local playlist_name=$(echo "$channel_name" | tr -s ' ' '-' | tr '[:upper:]' '[:lower:]' | tr -d '(' | tr -d ')' )
     local cmd="$category - $channel_name @$url @$playlist_name"
 
-    _notify "mpvtube add" "$cmd"
+    _ns "mpvtube add" "$cmd"
     echo "$cmd" >> $FILE
     echo "mpvtube - New entry on playlist: " "$cmd"
 
