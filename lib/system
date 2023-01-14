@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
+# Project: xshell (none)
 # File...: lib/system
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 21:15:49
+# Last Modified: Saturday, 2023/01/14 - 01:01:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.146
+# Version: 0.0.4.304
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,9 +18,11 @@
 #
 #!/usr/bin/bash
 
+source ~/bin/lib/init
+
 _xLIB_SYSTEM_=true
 
-use utils
+# use args utils
 
 _OS_=$(uname)
 _NOTIFY_APP=''
@@ -64,3 +66,31 @@ System.write(){
     echo "$@"
 }
 sys.write(){ System.write "$@"; }
+
+# manage System volume
+System.volume(){
+    # user param
+    action=$1
+
+    # test actions
+    [ "$action" == '--up'     ] && action="+"
+    [ "$action" == '--down'   ] && action="-"
+    # ----------------------------------------------------------------
+    
+    case $(sys.os) in
+        Darwin) 
+            _VOL_APP="verificar no macos"
+            _VOL_ARG="args do macos"
+            # _VOL_ARG=$(echo -e $_VOL_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
+        ;;
+        Linux)  
+            _VOL_APP="amixer"
+            _VOL_ARG="-q sset Master 5%$action"
+        ;;
+    esac
+# 
+    # echo -e "volume: $($_VOL_APP $_VOL_ARG)"
+    eval "$_VOL_APP $_VOL_ARG"
+    
+}
+sys.vol(){ System.volume "$@"; }
