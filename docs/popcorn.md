@@ -1,6 +1,6 @@
 # popcorn
 
-Easily search and wathc torrents via mpv
+Easily open a magnet link o search torrents and watch mpv
 
 ```
 popcorn -h
