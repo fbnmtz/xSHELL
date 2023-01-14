@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Friday, 2023/01/13 - 19:20:23
+ Last Modified: Saturday, 2023/01/14 - 00:57:05
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.12.199
+ Version: 0.0.12.201
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -139,5 +139,6 @@ Options '--help' and '--version' are automatically generated
 | [mpvtube](docs/mpvtube.md) | Watch videos from YouTube using rofi and mpv (no ads) |
 | [popcorn](docs/popcorn.md) | search torrents and watch via mpv                     |
 | [torctl](docs/torctl.md)   | Setup a tor-server and route all traffic to it        |
+| [xman](docs/xman.md)       | show man of a binary in a PDF              |
 | [ytdl](docs/ytdl.md)       | easily download video/audio from YouTube              |
 |                         |                                                       |
