@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm ((fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/14 - 00:30:50
+# Last Modified: Saturday, 2023/01/14 - 19:01:41
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.7.212
+# Version: 0.1.8.216
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -78,6 +78,7 @@ use(){
 
       local current_path=$(dirname "$0") 
       local locations=( 
+        "$current_path/xSHELL/lib/$lib_file" 
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file" 
         "$HOME/bin/lib/$lib_file" 
