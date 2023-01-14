@@ -1,0 +1,26 @@
+#!/usr/bin/ruby
+#
+# ############################################################################
+# Project: xshell (none)
+# File...: dmount
+# Created: Wednesday, 2021/01/27 - 06:46:30
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2023/01/14 - 02:48:35
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.0.3.38
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > dmenu script to mount disks on the system.
+# ############################################################################
+# HISTORY:
+#
+
+disk=`mdisk --unmounted  | \
+    dmenu -p "Qual disco vc quer montar?" | \
+    awk '{print $1}' `
+unless disk.empty?
+    msg=`udisksctl mount -b #{disk}`
+    `notify-send "Disk #{disk} foi montado em #{msg}"`
+end
