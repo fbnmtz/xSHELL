@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
+# Project: xshell (none)
 # File...: lib/init
 # Created: Thursday, 2021/05/20 - 13:18:34
-# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# Author.: @fbnmtz, fgm ((fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/01/13 - 17:15:48
+# Last Modified: Saturday, 2023/01/14 - 00:30:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.208
+# Version: 0.1.7.212
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -145,6 +145,3 @@ xrequirements(){
         fi
     done
 }
-
-# load default libs on all scripts
-use system
