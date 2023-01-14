@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/01/14 - 11:15:45
+ Last Modified: Saturday, 2023/01/14 - 19:22:17
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.12.202
+ Version: 0.0.12.210
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -27,11 +27,9 @@
     </a>
 </p>
 
-
 <p align="center">
     <img width="250px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
 </p>
-
 
 This repository contains some scripts and a simple library system for shell.
 
@@ -138,7 +136,12 @@ Options '--help' and '--version' are automatically generated
 | [mdate](docs/mdate.md)     | Date wrapper make easy to get some values             |
 | [mpvtube](docs/mpvtube.md) | Watch videos from YouTube using rofi and mpv (no ads) |
 | [popcorn](docs/popcorn.md) | search torrents and watch via mpv                     |
-| [torctl](docs/torctl.md)   | Setup a tor-server and route all traffic to it        |
-| [xman](docs/xman.md)       | show man of a binary in a PDF              |
+| [xman](docs/xman.md)       | show man of a binary in a PDF                         |
 | [ytdl](docs/ytdl.md)       | easily download video/audio from YouTube              |
 |                         |                                                       |
+
+# TODO List:
+
+* [ ] Create/integrate some library or system for Objetc Orientation (OO)
+* [ ] Adjust some libs and scripts to work on MacOs
+* [ ] Implent color system 
