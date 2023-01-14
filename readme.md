@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/01/14 - 00:57:05
+ Last Modified: Saturday, 2023/01/14 - 11:15:45
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.12.201
+ Version: 0.0.12.202
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -38,7 +38,7 @@ This repository contains some scripts and a simple library system for shell.
 ## Install 'xSHELL' library system and scripts
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install-shell | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install-xshell | bash 
 
 ```
 

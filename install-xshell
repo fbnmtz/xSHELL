@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
+# Project: xshell (none)
 # File...: install-shell
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/12 - 21:52:34
+# Last Modified: Saturday, 2023/01/14 - 11:14:12
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.5.50
+# Version: 0.0.6.53
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@ source ~/bin/lib/init
 use exceptions
 
 github=https://github.com
-repo=fbnmtz/shell
+repo=fbnmtz/xSHELL
 
 if [ -d ~/bin ]; then
     echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
@@ -29,8 +29,6 @@ if [ -d ~/bin ]; then
 else
     # clone this repo to your '/home'
     git clone "${github}/${repo}" ~/bin && \
-    # mv ~/bin/scripts/* ~/bin/ && \
-    # rm -rf ~/bin/scripts
     
     # Add scripts to your system $PATH
     echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
