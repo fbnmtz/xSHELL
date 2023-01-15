@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xshell (none)
-# File...: xSHELL.load
+# File...: initialize
 # Created: Saturday, 2023/01/14 - 17:11:24
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/14 - 18:36:33
+# Last Modified: Sunday, 2023/01/15 - 14:12:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.81
+# Version: 0.0.2.120
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,12 +18,18 @@
 #
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
-APP_DIR=$(dirname "$0")
+APP_DIR="$(dirname \"$0\")"
 
-[ "$1" == "--xdebug" ] && xDEBUG=true
+directories=("$APP_DIR/xSHELL/lib" "$APP_DIR/lib" "~/bin/lib")
 
-{ test -d "$APP_DIR"/xSHELL && debug_information='source "./xSHELL/lib/init"'; source "./xSHELL/lib/init" || debug_information+=" fail load init lib" ; } || \
-{ test -d "$APP_DIR"/lib    && debug_information='source "./lib/init"';        source "./lib/init"        || debug_information+=" fail load init lib" ; } || \
-{ test -d ~/bin/lib         && debug_information='source "./~/bin/lib"';       source "./~/bin/lib"       || debug_information+=" fail load init lib" ; } 
+for dir in "${directories[@]}" ; do 
+    if [ -d "${dir}" ]; then
+        debug_information="source \"${dir}\""
+        if source "${dir}"; then
+            break
+        fi
+    fi
+done
 
+# show debug information?
 [ -n "$xDEBUG" ] && echo "$debug_information"
