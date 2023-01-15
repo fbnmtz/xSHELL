@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 14:46:44
+# Last Modified: Sunday, 2023/01/15 - 15:06:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.58
+# Version: 0.0.8.63
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,7 +23,7 @@ repo=fbnmtz/xSHELL
 #local exception
 ExDirAlredyExists=10
 
-if [ -d ~/bin ] || [ -L ~bin ]; then
+if [ -d ~/bin/xSHELL ] || [ -L ~/bin/xSHELL ]; then
     echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
     exit $ExDirAlredyExists
 else
@@ -31,5 +31,7 @@ else
     git clone "${github}/${repo}" ~/bin/xSHELL && \
     
     # Add scripts to your system $PATH
-    echo "export PATH=\"\$PATH:\$HOME/bin/xSHELL\"" >> ~/.profile
+    if ! grep "\$PATH:\$HOME/bin/xSHELL" ~/.profile ; then
+        echo -e "\nexport PATH=\"\$PATH:\$HOME/bin/xSHELL\"" >> ~/.profile
+    fi 
 fi
