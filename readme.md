@@ -48,7 +48,7 @@ Bellow, an example showing how you can use this libs/funcions in your scripts:
 # script: libsExample
 
 # import lib system to your script
-source ~/bin/lib/init  
+source ~/bin/xSHELL/init  
 
 # load basic lib 'args'
 use args
@@ -125,20 +125,7 @@ libsExapmle --math "2*2"
 Options '--help' and '--version' are automatically generated
 
 ## Libraries
-
-1. [LIB&#39;s](./lib/readme.md)
-
-## List of important script's
-
-| name                    | description                                           |
-| ----------------------- | ----------------------------------------------------- |
-| [alert](docs/alert.md)     | wrapper to notificatin of system                      |
-| [mdate](docs/mdate.md)     | Date wrapper make easy to get some values             |
-| [mpvtube](docs/mpvtube.md) | Watch videos from YouTube using rofi and mpv (no ads) |
-| [popcorn](docs/popcorn.md) | search torrents and watch via mpv                     |
-| [xman](docs/xman.md)       | show man of a binary in a PDF                         |
-| [ytdl](docs/ytdl.md)       | easily download video/audio from YouTube              |
-|                         |                                                       |
+To update!!
 
 # TODO List:
 
