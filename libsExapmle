@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: libsExapmle
+# Created: Thursday, 2023/01/05 - 15:09:19
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2023/01/15 - 15:10:01
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.4.65
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+#!/usr/bin/bash
+
+    
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+# shellcheck disable=SC1090,SC2154    
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
+    
+# import lib system to your script
+source ~/bin/xSHELL/init  
+
+# load basic lib 'args'
+use args system
+
+# you can list/validade all binaries/tools needed by your script easily using 'requirements' function
+xrequirements echo
+
+# now, you can easily define args and usage info with 'xarg' function
+# params supported:
+#      * --id <shortflat,longflag>
+#            this param require two params 
+#                1. --var or --code
+#                2. --desc
+#          * --var <var1:varvalue,var2+r,var3+o>
+#          * --desc <description>
+# We have another param made to be used alone 
+#      * --section <group name>
+#            this param will group args defined after it
+
+# example: how to set args/actions
+xarg --section "Custom Args"
+xarg --id -p,--print   --code "echo 'print test'" --desc "print some code"
+xarg --id -n,--notify  --var title+r,text+r       --desc "test notify system"
+xarg --id -m,--math    --var expression+r         --desc "solve math expression" 
+xarg --id -V,--volume  --var option+r             --desc "volume option (up or down)" 
+
+# after define args, pass all script params (var $@) to 'xrun' function 
+# xrun optional params:
+#   * --xreject-unknow : throw error when receive an parameter not defined with 'xarg'
+#   * --xrequire-one...: throw error if no param given
+#   * --xversionrc.....: show full version with release candidate
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+
+# code for -m/--math arg
+if [ -n "$expression" ] ; then
+    echo $(($expression))
+fi
+
+if [ -n "$title" ]; then
+    sys.notify $title $text
+fi
+
+if [ -n "$option" ]; then
+    sys.vol "--$option"
+    sys.notify Volume "$option - $(sys.vol "--status")"
+fi
