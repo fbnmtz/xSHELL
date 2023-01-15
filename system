@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/14 - 01:01:36
+# Last Modified: Saturday, 2023/01/14 - 01:15:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.304
+# Version: 0.0.4.305
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -86,6 +86,12 @@ System.volume(){
         Linux)  
             _VOL_APP="amixer"
             _VOL_ARG="-q sset Master 5%$action"
+            if [ "$action" == '--status' ] ; then
+                 current_volume=$(amixer cget name="Master Playback Volume" | tail -n1 | cut -d '=' -f2 | cut -d ',' -f1)
+                _VOL_APP=calcVol
+                _VOL_ARG="$current_volume"
+            fi
+
         ;;
     esac
 # 
@@ -94,3 +100,11 @@ System.volume(){
     
 }
 sys.vol(){ System.volume "$@"; }
+
+calcVol(){
+    local val=$1
+    local max=62259
+#    echo $(( $val/$max*100 ))
+#    echo $(( $val/$max*100 ))
+   echo "$val/$max*100" | bc -l | cut -d '.' -f1
+}
