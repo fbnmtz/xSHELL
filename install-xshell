@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xshell (none)
-# File...: install-shell
+# Project: xSHELL (none)
+# File...: install-xshell
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/14 - 11:14:12
+# Last Modified: Sunday, 2023/01/15 - 14:43:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.53
+# Version: 0.0.6.55
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,13 +23,13 @@ use exceptions
 github=https://github.com
 repo=fbnmtz/xSHELL
 
-if [ -d ~/bin ]; then
+if [ -d ~/bin ] || [ -L ~bin ]; then
     echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
     exit $ExDirAlredyExists
 else
     # clone this repo to your '/home'
-    git clone "${github}/${repo}" ~/bin && \
+    git clone "${github}/${repo}" ~/bin/xSHELL && \
     
     # Add scripts to your system $PATH
-    echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
+    echo "export PATH=\"\$PATH:\$HOME/bin/xSHELL\"" >> ~/.profile
 fi
