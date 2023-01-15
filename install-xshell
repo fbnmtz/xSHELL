@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 14:43:14
+# Last Modified: Sunday, 2023/01/15 - 14:46:44
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.55
+# Version: 0.0.6.58
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,11 +17,11 @@
 # HISTORY:
 #
 
-source ~/bin/lib/init
-use exceptions
-
 github=https://github.com
 repo=fbnmtz/xSHELL
+
+#local exception
+ExDirAlredyExists=10
 
 if [ -d ~/bin ] || [ -L ~bin ]; then
     echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
