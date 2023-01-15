@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: install-xshell
+# File...: install
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 15:06:13
+# Last Modified: Sunday, 2023/01/15 - 15:22:06
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.8.63
+# Version: 0.0.9.65
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -31,7 +31,7 @@ else
     git clone "${github}/${repo}" ~/bin/xSHELL && \
     
     # Add scripts to your system $PATH
-    if ! grep "\$PATH:\$HOME/bin/xSHELL" ~/.profile ; then
+    if ! grep "\$PATH:\$HOME/bin/xSHELL" ~/.profile  1> /dev/null  ; then
         echo -e "\nexport PATH=\"\$PATH:\$HOME/bin/xSHELL\"" >> ~/.profile
     fi 
 fi

@@ -36,7 +36,7 @@ This repository contains some scripts and a simple library system for shell.
 ## Install 'xSHELL' library system and scripts
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install-xshell | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
 
 ```
 
@@ -125,10 +125,11 @@ libsExapmle --math "2*2"
 Options '--help' and '--version' are automatically generated
 
 ## Libraries
+
 To update!!
 
 # TODO List:
 
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
-* [ ] Implent color system 
+* [ ] Implent color system
