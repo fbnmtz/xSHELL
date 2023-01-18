@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 15:09:19
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 15:10:01
+# Last Modified: Wednesday, 2023/01/18 - 01:23:41
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.65
+# Version: 0.0.5.70
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,7 +27,7 @@
 source ~/bin/xSHELL/init  
 
 # load basic lib 'args'
-use args system
+use args
 
 # you can list/validade all binaries/tools needed by your script easily using 'requirements' function
 xrequirements echo
@@ -63,11 +63,13 @@ if [ -n "$expression" ] ; then
     echo $(($expression))
 fi
 
+# test notification function on lib/system 
 if [ -n "$title" ]; then
-    sys.notify $title $text
+    xsys.notify $title $text
 fi
 
+# test volume function on lib/system
 if [ -n "$option" ]; then
-    sys.vol "--$option"
-    sys.notify Volume "$option - $(sys.vol "--status")"
+    xsys.vol "--$option"
+    xsys.notify Volume "$option - $(sys.vol "--status")"
 fi
