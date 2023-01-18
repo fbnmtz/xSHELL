@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/01/17 - 19:19:59
+# Last Modified: Wednesday, 2023/01/18 - 01:21:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.5.309
+# Version: 0.0.6.393
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,50 +21,59 @@ _xLIB_SYSTEM_=true
 
 # declare variables
 _OS_=$(uname)
-_NOTIFY_APP=''
-_NOTIFY_ARG=''
+_xSYS_NOTIFY_APP=''
+_xSYS_NOTIFY_ARG=''
 
 # return current OS
-System.OS(){
+xsys.os(){   
     echo "${_OS_}"
 }
-sys.os(){ System.OS "$@"; }
 
 # call system notifyer
-System.notification(){
+xsys.notify(){
     local title="$1" 
     local text="$2" 
     local level="$3";
 
-    echo -e "\nsys.notify: title: $title; text:$text; level:$level\n";
+    # echo -e "\nsys.notify: title: $title; text:$text; level:$level\n";
     
     # case sys.os in
-    case $(sys.os) in
+    case $(xsys.os) in
         Darwin) 
-            _NOTIFY_APP="osascript -e"
-            _NOTIFY_ARG="\"display notification \\\"<text>\\\" with title \\\"<title>\\\"\""
-            _NOTIFY_ARG=$(echo -e $_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
+            _xSYS_NOTIFY_APP="osascript -e"
+            _xSYS_NOTIFY_ARG="\"display notification \\\"<text>\\\" with title \\\"<title>\\\"\""
+            _xSYS_NOTIFY_ARG=$(echo -e $_xSYS_NOTIFY_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
         ;;
         Linux)  
-            _NOTIFY_APP="notify-send"
-            _NOTIFY_ARG="\"$title\" \"$text\""
-            [ "$level" == "-c" ] && _NOTIFY_ARG+=' -u critical'
+            _xSYS_NOTIFY_APP=notify-send
+            _xSYS_NOTIFY_ARG="\"$title\" \"$(echo ${text# })\""
+            [ "$level" == "-c" ] && _xSYS_NOTIFY_ARG+=' -u critical'
 
         ;;
     esac
-    echo -e "\ncmd: $_NOTIFY_APP $_NOTIFY_ARG\n"
-    eval "$_NOTIFY_APP $_NOTIFY_ARG"
+    
+    
+    if [ -n "$_xLASTUSER_" ] && [ "$_xLASTUSER_" != "$USER" ]; then
+        # echo -e '\ncmd: su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"\"\' '
+        # su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"; bash\"'"
+        su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \" echo \"$_xSYS_NOTIFY_ARG\" && sleep 10 \"'"
+    else
+        echo -e "\ncmd: $_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG\n"
+        "$_xSYS_NOTIFY_APP" "$_xSYS_NOTIFY_ARG"
+    fi
+
+    
+    # eval "$_xSYS_NOTIFY_APP" "$_xSYS_NOTIFY_ARG"
+    # eval "$_xSYS_NOTIFY_APP" "$(echo ${_xSYS_NOTIFY_ARG} | sed 's/^ //')"
 }
-sys.notify(){ System.notification "$@"; }
 
 # write contents on terminal
-System.write(){
+xsys.write(){
     echo "$@"
 }
-sys.write(){ System.write "$@"; }
 
 # manage System volume
-System.volume(){
+xsys.vol(){
     # user param
     action=$1
 
@@ -73,7 +82,7 @@ System.volume(){
     [ "$action" == '--down'   ] && action="-"
     # ----------------------------------------------------------------
     
-    case $(sys.os) in
+    case $(xsys.os) in
         Darwin) 
             _VOL_APP="verificar no macos"
             _VOL_ARG="args do macos"
@@ -87,7 +96,6 @@ System.volume(){
                 _VOL_APP=calcVol
                 _VOL_ARG="$current_volume"
             fi
-
         ;;
     esac
 # 
@@ -95,12 +103,11 @@ System.volume(){
     eval "$_VOL_APP $_VOL_ARG"
     
 }
-sys.vol(){ System.volume "$@"; }
 
-calcVol(){
-    local val=$1
-    local max=62259
-#    echo $(( $val/$max*100 ))
-#    echo $(( $val/$max*100 ))
-   echo "$val/$max*100" | bc -l | cut -d '.' -f1
-}
+# calcVol(){
+#     local val=$1
+#     local max=62259
+# #    echo $(( $val/$max*100 ))
+# #    echo $(( $val/$max*100 ))
+#    echo "$val/$max*100" | bc -l | cut -d '.' -f1
+# }
