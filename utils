@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
-# File...: lib/utils
+# Project: xSHELL (none)
+# File...: utils
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/01/10 - 05:27:40
+# Last Modified: Wednesday, 2023/01/18 - 01:18:34
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.8.405
+# Version: 1.0.9.410
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -72,6 +72,9 @@ isROOT?(){
 
 # function to require ROOT user
 requireROOT(){
+    
+    _xLASTUSER_=$(last | head -n1 | awk '{print $1}')
+    
     if [ $UID = 0 ] ; then 
         return 0 
     else
