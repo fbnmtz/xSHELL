@@ -17,9 +17,9 @@
 -->
 
 <p align="center">
-    <!-- <a href="https://www.codefactor.io/repository/github/fbnmtz/xSHELL/">
+    <a href="https://www.codefactor.io/repository/github/fbnmtz/xSHELL/">
         <img src="https://www.codefactor.io/repository/github/fbnmtz/xSHELL/badge">
-    </a> -->
+    </a>
     <a href="https://github.com/fbnmtz/shell/issues">
         <img src="https://img.shields.io/github/issues/fbnmtz/shell.svg">
     </a>

@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-__xLIB_UTILS_=true;
+_xLIB_UTILS_=true;
 
 # using A && B || C
 # # running cmds create a block {} and use 'true'; inside.
@@ -31,7 +31,7 @@ __xLIB_UTILS_=true;
 
 getPath(){
     for tool in "$@"; do
-        if which "$tool" 2>&1 > /dev/null; then
+        if which "$tool" &> /dev/null; then
             which "$tool"
             return 0
         fi
@@ -50,7 +50,7 @@ basepath(){
 # prints a table with supported colors
 rainbow(){
     for (( i = 0; i < 8; i++ )); do 
-        echo -e "\033[0;3"$i"m FG: (0;3$i); \033[1;3"$i"m FG-Light: (1;3$i) -> \033[0;4"$i"m BG: (0;4$i); \033[1;4"$i"m BG-Light: (1;4$i) \033[0m "
+        echo -e "\033[0;3${i}m FG: (0;3$i); \033[1;3${i}m FG-Light: (1;3$i) -> \033[0;4${i}m BG: (0;4$i); \033[1;4${i}m BG-Light: (1;4$i) \033[0m "
     done
 }
 

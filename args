@@ -135,7 +135,6 @@ xusage(){
         for h in $(
                 Hash.all main_params | \
                 sed 's/^-/:-/g' | \
-                # sed 's/,/:/g' | \
                 sed 's/ /./g'  
             ); do
             b=$(echo $h | cut -d '+' -f2)

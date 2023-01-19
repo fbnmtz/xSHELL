@@ -55,14 +55,14 @@ alias Hash.val='Hash.get'
 # @param $1 -> hash_name
 # @return <keys>
 Hash.keys(){
-    cat "$_hash_filename_" | cut -d ':' -f1
+    cut -d ':' -f1 < "$_hash_filename_"
 }
 
 # get all `values` from a  Hash
 # @param $1 -> hash_name
 # @return <values>
 Hash.values(){
-    cat "$_hash_filename_" 2>/dev/null | cut -d ':' -f2
+    cut -d ':' -f2 < "$_hash_filename_"
 }
 
 # get all pairs `key/value` from a Hash
