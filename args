@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xshell (none)
-# File...: lib/args
+# Project: bin (none)
+# File...: xSHELL/args
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/14 - 00:41:51
+# Last Modified: Thursday, 2023/01/19 - 16:36:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.7.955
+# Version: 0.2.8.1022
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,7 +24,7 @@ use system hashs args.utils
 Hash.new main_params
 
 block=''
-# update text used in function 'usage'
+# update text used in function 'xusage'
     # @param $1 -> string to customize each text of help sections. Use this pattern:
         # -<option>="<text>"
     # <options> identify a section and it can be:
@@ -79,10 +79,9 @@ xhelp(){
         __HELP_USAGE__+="[OPTIONS] "
     fi
 }
-setHelp(){ xhelp "$@"; }
 
 
-usage(){
+xusage(){
     # generate default help text if user not difined one
     [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
     
@@ -117,6 +116,7 @@ usage(){
             __usage_msg="" 
         ;;
     esac
+    
     # prints initial help text
     echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
 
@@ -172,7 +172,7 @@ usage(){
 }
 
 
-# setARGS: id="-h,--help" var=variable:value
+# xarg: id="-h,--help" var=variable:value
     #   --> dynamic create ARGs/actions
     # @param $1: ARGs keys. Use comma (,) to separete multiple keys to same action
     #   --> id="-h,--help"
@@ -186,11 +186,17 @@ usage(){
     #       create a var 'myVar1' and require another param as value. If next arg was empyt raise a error.
     # @param $3: description to generate help for this arg/action
 #   --> desc="text" 
-
-xargs(){
+xarg(){
     #TODO: refactor code below
     while [ "$1" != "" ]; do
         case $1 in
+            # planning a new feature
+            # --value)
+            #     # echo ''
+            #     method=value
+            #     value=$2
+
+            # ;;
             -i| --id) 
                 key=$1; shift
                 option_key=$(echo "$1" | tr -s ',' '|')
@@ -235,7 +241,7 @@ xargs(){
                             case "$current_rule" in
                                 # 'r' means 'required'
                                 r)  
-                                    option_rule+=" shift; requireARG \"\$1\" \"$var_name\" ;" 
+                                    option_rule+=" shift; xflag_require_value \"\$1\" \"$var_name\" ;" 
                                     desc_var+=" <$var_name>" 
                                     if [ -z "$var_value" ]; then
                                         assign_vars=" $var_name=\"\$1\" "
@@ -275,50 +281,55 @@ xargs(){
             -b|--block|-g|--group|-s|--section)
                 method=block
                 block="$2"
-
+            ;;
         esac
         shift
     done
 
+    # if [ "$method" != "block" ] && [ "$method" != "value" ] ; then
+    
     # bypass first arg to reject unknow/undefined args
-    if [ "$method" != "block" ]; then
-        # "--id <desc_var>+description+block"
-        setHelp --param="${option_default}${desc_var}+${description}+${block}"
+    if [ "$method" != "block" ] ; then
+        xhelp --param="${option_default}${desc_var}+${description}+${block}"
     fi
 
     # generate output
     case $method in
-        var ) __runARGS_case_options+=" $option_key) $action_vars ;; \n" ;;
+        var ) __runARGS_case_options+=" $option_key) $action_vars    ;; \n" ;;
         code) __runARGS_case_options+=" $option_key) $option_content ;; \n" ;;
-        # --reject-unknow) __runARGS_case_options+="*) usage -r \$1 ;; \n" ;;
+        # --reject-unknow) __runARGS_case_options+="*) xusage -r \$1 ;; \n" ;;
     esac
 }
-xarg(){ xargs "$@"; }
 
-# runARGS "$@"
-# generates a loop with case struct to evaluate all ARGs defined using `setARGS`
+# xrun "$@"
+# generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xrun(){
-    xRunUsage(){
-        echo -e "'lib/args' main functions (xargs, xrun)
-        \n1) xargs -> set args to be validate in 'xrun' function
-        \nusage: xargs [OPTION] <VALUE>\
+    xHelpRun(){
+        echo -e "'lib/args' main functions (xarg, xrun)
+        \n1) xarg -> set args to be validate in 'xrun' function
+        \nusage: xarg [OPTION] <VALUE>\
         \n\nAvailable options:\
         "
         echo -e "\
-        \n  --id    <VALUE>; short and long key. ex: '-h,--help'\
-        \n  --code  <VALUE>; shell code to run by 'eval'\
-        \n  --var   <VALUE>; define vars\
-        \n  --desc  <TEXT>; description to this 'arg'\
-        \n  --block <VALUE>;\
+        \n  -i, --id    <VALUE>; short and long key. ex: '-h,--help'\
+        \n  -c, --code  <VALUE>; shell code to run by 'eval'\
+        \n  -v, --var   <VALUE>; define vars\
+        \n  -d, --desc  <TEXT>; description to this 'arg'\
+        \n
+        \n # Grouping options #
+        \n  -b, --block   <VALUE> or\
+        \n  -g, --group   <VALUE> or\
+        \n  -s, --section <VALUE> or\
+        \
         " | column -t -s ';'
         
         echo -e "\
         \nExamples:\
-        \n  xargs --id -h,--help --code 'usage --help'  --desc 'run function \"usage\"'\
-        \n  xargs --id -v,--var  --var  var:value,url+r --desc 'equivalent to \"var=value; read url\"'\
-        \n  xargs --block 'new block'\
+        \n  xarg --id -h,--help --code 'xusage --help'  --desc 'run function \"xusage\"'\
+        \n  xarg --id -v,--var  --var  var:value,url+r --desc 'equivalent to \"var=value; read url\"'\
+        \n  xarg --block 'new block'\
         
-        \n2) xrun -> create 'case struct/validate args' defined via 'function xargs' for your application\
+        \n2) xrun -> create 'case struct/validate args' defined via 'function xarg' for your application\
         \n\nusage: xrun [OPTIONS] \"\$@\"\
         \n\nAvailable options:\
         "
@@ -339,15 +350,15 @@ xrun(){
         exit 0
     }
     generateCase(){
-         # fill case with options (setARGS)
+         # fill case with options (xarg)
         __runARGS_case_='case $1 in \n'
         __runARGS_case_+=$__runARGS_case_options
         __runARGS_case_+='esac'
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_DEBUG"    ] && echo -e "$__runARGS_case_\n" ;
-        [ -n "$_ARGS_REQUIRED" ] && requireOne "$1" && unset _ARGS_REQUIRED;
+        [ -n "$_ARGS_DEBUG"    ] && echo -e "# function to force script to receive at last one param/argrunARGS_case_\n" ;
+        [ -n "$_ARGS_REQUIRED" ] && xrequire_one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
         while [ "$1" != "" ]; do
@@ -357,28 +368,31 @@ xrun(){
         done
     }
 
-    # Hash.all | grep -Ei '\+[a-zA-Z]' | wc -l
     # set default grouping (has more than zero entries with groups? user defined)
     if [ "$(Hash.all | grep -Ei '\+[a-z]' | wc -l)" -gt 0 ]; then
-        xargs --block "Information Options"
+        xarg --block "Information Options"
     else
         # no user group? use this for all options
-        xargs --block "Available Options"
+        xarg --block "Available Options"
     fi
     # set default args for any script
     _CURRENT_VERSION_=$_VERSION_
-    xargs --id -h,--help    --code "usage --help" --desc "show this help"
-    xargs --id -v,--version --code "echo \"\$_CURRENT_VERSION_\"; exit" --desc "print version and exit"
+    xarg --id -h,--help    --code "xusage --help" --desc "show this help"
+    xarg --id -v,--version --code "echo \"\$_CURRENT_VERSION_\"; exit" --desc "print version and exit"
+    
+    # store arguments to be passed to the script
+    _xSCRIPT_ARGS=()
     
     # search for xrun args 
-    for i in "$@"; do
-        case "$i" in
-            --xrequire-one | --requireOne | --require-one | --notNull)  
+     while [ "$1" != "" ]; do
+        case "$1" in
+        # function to force script to receive at last one param/arg
+            --xrequire-one | --xrequire_one | --require-one | --notNull)  
                 shift; _ARGS_REQUIRED=true
             ;;
             --xreject-unknow | --reject-unknow)
                 shift
-                __runARGS_case_options+=" *) usage --reject-unknow \$1 ;; \n"
+                __runARGS_case_options+=" *) xusage --reject-unknow \$1 ;; \n"
             ;;
             --xdebug) 
                 shift; _ARGS_DEBUG=true; 
@@ -387,23 +401,26 @@ xrun(){
                 shift; _CURRENT_VERSION_=$_VERSIONRC_
             ;;
             --xhelp)
-                shift; xRunUsage
-            ;; 
+                shift; xHelpRun
+            ;;
+            *)
+                _xSCRIPT_ARGS+=("$1")
+                shift
         esac
     done
-    generateCase "$@"
+    generateCase "${_xSCRIPT_ARGS[@]}"
 }
-runARGS(){ xrun "$@"; } 
 
-# check if a ARG was given. Else quit
-# @param $1 -> arg to null check
-# @param $2 -> field name to error mensage when $1 empty
-requireARG(){
-    # $1 is empty? call usage with field name to get a error msg
-    test -z "$1" && { usage --field-error "$2"; } 
+# check if one flag is set and require a value for it
+# @param $1 -> flag to be checked (cant be null)
+# @param $2 -> field name to throw an error when flag is not set
+xflag_require_value(){
+    # $1 is empty? call xusage with field name to get a error msg
+    test -z "$1" && { xusage --field-error "$2"; } 
         # || { true; } #echo "1"; -r}
 }
 
-requireOne(){
-    test -z "$1" && usage --missing-param; 
+# function to force script to receive at last one param/arg
+xrequire_one(){
+    test -z "$1" && xusage --missing-param; 
 }
