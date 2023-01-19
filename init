@@ -9,7 +9,7 @@
 # Last Modified: Sunday, 2023/01/15 - 16:07:42
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.220
+# Version: 0.1.10.220
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -35,7 +35,7 @@ APP_HOME=""
 # ex: setHome {dir1, dir2}
 xsetHome(){
     APP_HOME=~/.fbnmtz/$APP
-    mkdir -p "$APP_HOME"/"$@"
+    mkdir -p "$APP_HOME"/"$*"
 }
 
 # check if some lib already loaded
@@ -70,7 +70,7 @@ checkLibLoaded(){
 # import/use some library
 use(){
 
-  [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$@'\n"
+  [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$*'\n"
   
   for lib_file in "$@"; do
     
@@ -130,7 +130,7 @@ xrequirements(){
         if [[ "$tool" =~ ":" ]]; then
             local found=''
             for t in ${tool//\:/ }; do 
-                if check $t; then
+                if check "$t"; then
                     found=true
                     break;
                 else
@@ -139,8 +139,8 @@ xrequirements(){
             done
             [ "$found" != 'true' ] && fail "$tool"
         else
-            if ! check $tool; then
-                fail $tool
+            if ! check "$tool"; then
+                fail "$tool"
             fi
         fi
     done
