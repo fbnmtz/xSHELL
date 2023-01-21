@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
-# File...: lib/args.utils
+# Project: xSHELL (none)
+# File...: args.utils
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/01/09 - 22:08:35
+# Last Modified: Friday, 2023/01/20 - 23:45:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.8.402
+# Version: 1.0.9.421
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -39,6 +39,9 @@ xcreated(){
         cut -d '-' -f1 | \
         cut -d '/' -f1\
     )"
+    # not found date in header comments, try filestats
+    [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(stat "$0" | grep Birth | cut -d ' ' -f3-4 | cut -d '.' -f1  )"
+    # still null? set as unknown, to be filed later
     [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
 }
 
@@ -50,5 +53,10 @@ xauthor(){
         cut -d ',' -f1 |\
         cut -c2-
     )
+     # not found author in header comments, try get by git config
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config author.name)
+    # still null? try by $USER variable
+    [ -z "$_AUTHOR_" ] && _AUTHOR_="$USER"
+    # null? set as unknown, to be filled in later
     [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknow>'
 }
