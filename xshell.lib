@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: xshell.lib
+# Created: Sunday, 2022/02/20 - 18:44:18
+# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2023/01/22 - 19:31:48
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.2.52
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+_xLIB_XSHELL_=true
+
+templateHeader(){
+    echo -e "#\
+    \n# #############################################################\
+    \n# Project: bin (none)\
+    \n# File...: $1\
+    \n# Created: $(mdate --header-en)\
+    \n# Author.: $author_name, $USER ($author_mail)  ($USER@$HOSTNAME)\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~\
+    \n# Last Modified: $(mdate --header-en)\
+    \n# Modified By..: $author_name, $USER ($author_mail)\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~\
+    \n# Version: 0.1.1.0\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~\
+    \n# Description: \
+    \n#  >\
+    \n# ############################################################################\
+    \n# HISTORY:\
+    \n#\
+    \n# #############################################################\
+    "
+}
+
+templateScript(){
+    echo -e "
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
+    \n# shellcheck disable=SC1090,SC2154\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
+    \n\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
+    \n# initialize lib system\
+    \nsource ~/bin/xSHELL/init\
+    \n\
+    \n# import/use libs\
+    \nuse args \
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
+    \n\
+    \n# xrequirements cut ls\
+    \n\
+    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
+    \nxarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"\
+    \nxarg --id -s,--sum     --var expression+r          --desc \"expression to sum\" \
+    \n\
+    \n# pass main args (\$@) to 'xrun' method. it will check then with ARGS you've defined above\
+    \nxrun --xreject-unknow --xrequire-one \"\$@\"\
+    \n\
+    \n# example of case to check vars defined by xargs/xrun\
+    \n# case \"\$action\" in\
+    \n#     version) echo -e \"\${VERSION}\" ;;\
+    \n#     help)    echo -e \"action:\$action\"; usage ;;\
+    \n# esac\
+    \n\
+    \n# your code below\
+    "
+}
+
+templateLib(){
+    # replace '.' for '_'
+    local name=${1//./_}
+    # remove word 'lib' from filename
+    name=${name//lib/}
+    # convert lib name to upercase {^^}
+    echo -e  "\n_xLIB_${name^^}_=true\n"
+}

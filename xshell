@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: xshell
+# Created: Thursday, 2020/02/18 - 20:44:58
+# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2023/01/22 - 19:31:04
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.8.168
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# shellcheck disable=SC1090
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+source ~/bin/xSHELL/init
+use args shgen.lib utils
+
+xrequirements touch chmod mdate
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# set default editor
+editor=$(getPath code micro nano vim)
+# scripts path
+scripts=$HOME/bin
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+
+xarg --id -f,--filename  --var name+r   --desc "filename for new script"
+xarg --id -l,--lib       --var lib:true --desc "define script as a LIB"
+xarg --id -e,--editor    --var editor+r --desc "define editor to open script"
+
+xrun --xreject-unknow --xrequire-one "$@"
+
+# author info
+author_name="@fbnmtz"
+author_mail="fabiano.matoz@gmail.com"
+
+if [ -n "$name" ]; then
+    filename="$scripts/$name"
+fi
+
+# exit if exist a script with this name
+if [ -f $filename ]; then 
+    echo "quiting: script already exists!" 
+    exit 1
+fi
+
+# print contents to file
+{ 
+    echo -e "#!/usr/bin/bash"
+    # templateHeader $name 
+    [ "$lib" == 'true' ] && templateLib $name || templateScript 
+} > $filename
+
+# set x permission
+chmod +x $filename
+
+# open script in default editor
+$editor $filename 
