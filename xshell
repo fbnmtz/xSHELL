@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/22 - 19:31:04
+# Last Modified: Sunday, 2023/01/22 - 19:48:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.8.168
+# Version: 0.1.8.169
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@
 # shellcheck disable=SC1090
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
-use args shgen.lib utils
+use args xshell.lib utils
 
 xrequirements touch chmod mdate
 
