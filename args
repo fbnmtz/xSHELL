@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/19 - 16:36:37
+# Last Modified: Friday, 2023/01/27 - 23:30:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.8.1022
+# Version: 0.2.8.1030
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -356,7 +356,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_DEBUG"    ] && echo -e "# function to force script to receive at last one param/argrunARGS_case_\n" ;
+        [ -n "$_ARGS_DEBUG"    ] && echo -e "# show debug information:\n\n $__runARGS_case_\n" ;
         [ -n "$_ARGS_REQUIRED" ] && xrequire_one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
@@ -391,7 +391,7 @@ xrun(){
             ;;
             --xreject-unknow | --reject-unknow)
                 shift
-                __runARGS_case_options+=" *) xusage --reject-unknow \$1 ;; \n"
+                __runARGS_case_options+="*) xusage --reject-unknow \$1 ;; \n"
             ;;
             --xdebug) 
                 shift; _ARGS_DEBUG=true; 
