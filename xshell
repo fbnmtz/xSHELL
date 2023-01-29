@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
-# File...: xshell
+# Project: bin (none)
+# File...: xSHELL/xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/29 - 11:16:17
+# Last Modified: Sunday, 2023/01/29 - 13:32:22
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.192
+# Version: 0.1.9.193
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,7 +23,7 @@
 source ~/bin/xSHELL/init
 use args xshell.lib utils
 
-xrequirements touch chmod mdate
+xrequirements touch chmod date
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # set default editor
@@ -38,10 +38,6 @@ xarg --id -H,--header    --var _xHEADER_:true --desc "enable default header on t
 xarg --id -e,--editor    --var editor+r       --desc "define editor to open script"
 
 xrun --xreject-unknow --xrequire-one "$@"
-
-# author info
-author_name="@fbnmtz"
-author_mail="fabiano.matoz@gmail.com"
 
 if [ -n "$name" ]; then
     filename="$scripts/$name"
