@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/29 - 11:06:03
+# Last Modified: Sunday, 2023/01/29 - 11:16:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.181
+# Version: 0.1.9.192
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -53,18 +53,21 @@ if [ -f $filename ]; then
     exit 1
 fi
 
-# print contents to file
+# open a block and print everything to $filename
 { 
-    echo -e "#!/usr/bin/bash"
-    # templateHeader $name 
-    [ "$_xLIB_" == 'true' ] && templateLib $name || {
-        [ "$_xHEADER_" == 'true' ] && templateHeader $name;
-        templateScript 
-    } 
+    # add shebang (get by env)
+    echo -e "#!/usr/bin/env bash"
+    
+    # add default header information (if requested) 
+    [ "$_xHEADER_" == 'true' ] && templateHeader
+    
+    # finally, create the new script OR library 
+    [ "$_xLIB_" == 'true' ] && templateLib $name || templateScript 
+
 } > $filename
 
-# set x permission
+# set executable permissions
 chmod +x $filename
 
-# open script in default editor
+# open script on a selected editor (by user with --editor or by function getPath)
 $editor $filename 
