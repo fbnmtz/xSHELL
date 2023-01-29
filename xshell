@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/29 - 13:32:22
+# Last Modified: Sunday, 2023/01/29 - 16:08:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.193
+# Version: 0.1.9.197
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@
 # shellcheck disable=SC1090
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
-use args xshell.lib utils
+use args utils xshell.lib
 
 xrequirements touch chmod date
 
@@ -44,7 +44,7 @@ if [ -n "$name" ]; then
 fi
 
 # exit if exist a script with this name
-if [ -f $filename ]; then 
+if [ -f "$filename" ]; then 
     echo "quiting: script already exists!" 
     exit 1
 fi
@@ -58,12 +58,12 @@ fi
     [ "$_xHEADER_" == 'true' ] && templateHeader
     
     # finally, create the new script OR library 
-    [ "$_xLIB_" == 'true' ] && templateLib $name || templateScript 
+    [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 
 
-} > $filename
+} > "$filename"
 
 # set executable permissions
-chmod +x $filename
+chmod +x "$filename"
 
 # open script on a selected editor (by user with --editor or by function getPath)
-$editor $filename 
+$editor "$filename" 
