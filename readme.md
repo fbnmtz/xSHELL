@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: bin (none)
- File...: xSHELL/readme.md
+ Project: xSHELL (none)
+ File...: readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/01/19 - 16:56:09
+ Last Modified: Sunday, 2023/01/29 - 11:28:25
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.13.248
+ Version: 0.0.14.252
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -46,18 +46,41 @@
 
 <p align="center">
     <img width="250px" src="./docs/logo.jpg" align="center" alt="GitHub Readme Stats" />
+    </br></br></br>xSHELL is a simple library system for bash/shell.</br></br></br>
 </p>
 
-This repository contains some scripts and a simple library system for shell.
-
-## Install 'xSHELL' library system and scripts
+## Install `xSHELL` library system
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
 
 ```
 
-## Using libs
+After run install command, you will have xSHELL on your home and added to your system `$PATH`
+
+* `~/bin/xSHELL`
+
+Within this library, comes `xshell` tool used create new scripts;
+
+```
+xshell -h
+
+usage:
+  xshell [-f <name>] [-l] [-H] [-e <editor>] [-h] [-v]
+
+-> Available Options:
+   -f,  --filename <name> filename for new script
+   -l,  --lib             define script as a LIB
+   -H,  --header          enable default header on the new script
+   -e,  --editor <editor> define editor to open script
+   -h,  --help            show this help
+   -v,  --version         print version and exit
+
+v0.1.9 - writen by @fbnmtz 2020
+
+```
+
+## Example of a script using xSHELL lib system
 
 Bellow, an example showing how you can use this libs/funcions in your scripts:
 
@@ -136,7 +159,7 @@ usage:
    -h,  --help                  show this help
    -v,  --version               print version and exit
 
-v0.0.6-rc81 - writen by @fbnmtz 2023****
+v0.0.6-rc81 - writen by @fbnmtz 2023
 
 # using --math option
 libsExapmle --math "2*2"
@@ -144,19 +167,23 @@ libsExapmle --math "2*2"
 
 ```
 
-### Note:
+### Note about lib/args:
 
-1. Some options are automatically generated:
+1. using `xarg` function, two options are automatically generated (`--help `and `--version`):
+
    1. --help
 
-      `create a usage information basedo on defined parameters with function 'xarg'`
+      `create a usage information based on defined parameters with function 'xarg'`
    2. --version
 
       `show de version defined by variable ${_CURRENT_VERSION_`}
-2. some values come from the header information. If you don't use the same header, please define this variables:
-   1. \_AUTHOR\_="YourNme"
-   2. \_CREATED_AT\_="year"
-   3. \_CURRENT_VERSION\_="X.X.X"
+2. some values come from the header information. If you don't use the same header, please define this variables before call `xrun` function:
+
+   ```bash
+   _AUTHOR_="YourNme"
+   _CREATED_AT_="year"
+   _CURRENT_VERSION_="X.X.X"
+   ```
 
 ## Libraries
 
