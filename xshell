@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/22 - 19:48:17
+# Last Modified: Sunday, 2023/01/29 - 11:06:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.8.169
+# Version: 0.1.9.181
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,9 +32,10 @@ editor=$(getPath code micro nano vim)
 scripts=$HOME/bin
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 
-xarg --id -f,--filename  --var name+r   --desc "filename for new script"
-xarg --id -l,--lib       --var lib:true --desc "define script as a LIB"
-xarg --id -e,--editor    --var editor+r --desc "define editor to open script"
+xarg --id -f,--filename  --var name+r         --desc "filename for new script"
+xarg --id -l,--lib       --var _xLIB_:true    --desc "define script as a LIB"
+xarg --id -H,--header    --var _xHEADER_:true --desc "enable default header on the new script"
+xarg --id -e,--editor    --var editor+r       --desc "define editor to open script"
 
 xrun --xreject-unknow --xrequire-one "$@"
 
@@ -56,7 +57,10 @@ fi
 { 
     echo -e "#!/usr/bin/bash"
     # templateHeader $name 
-    [ "$lib" == 'true' ] && templateLib $name || templateScript 
+    [ "$_xLIB_" == 'true' ] && templateLib $name || {
+        [ "$_xHEADER_" == 'true' ] && templateHeader $name;
+        templateScript 
+    } 
 } > $filename
 
 # set x permission
