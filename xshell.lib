@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/29 - 14:39:42
+# Last Modified: Monday, 2023/01/30 - 02:45:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.2.58
+# Version: 0.1.3.85
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,17 +18,23 @@
 #
 _xLIB_XSHELL_=true
 
-# author name
-[ -z "$author_name" ] && author_name=$(git config author.name)
-# still null? try by $USER variable
-[ -z "$author_name" ] && author_name="$USER"
-# null? set as unknown, to be filled in later
-[ -z "$author_name" ] && author_name='<unknow>'
+# fill author name
+for name in "$(git config author.name)" "$USER" '<unknow>' ; do
+    if [ -z "$author_name" ]; then
+        author_name="$name"
+    else
+        break
+    fi 
+done
 
-# author email
-[ -z "$author_mail" ] && author_mail=$(git config author.email)
-# null? set as unknown, to be filled in later
-[ -z "$author_mail" ] && author_mail='<unknow>'
+# fill author email
+for email in "$(git config author.email)" "$USER" '<unknow>' ; do
+    if [ -z "$author_mail" ]; then
+        author_mail="$email"
+    else
+        break
+    fi 
+done
 
 templateHeader(){
     # get current date/time (force locale to US format on date)
@@ -38,7 +44,7 @@ templateHeader(){
     echo -e "#
 # ############################################################################
 # Project: ~/bin
-# File...: $APP
+# File...: $(echo $filename | rev | cut -d '/' -f1 | rev)
 # Created: $today
 # Author.: $author_name, ($author_mail)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -54,37 +60,36 @@ templateHeader(){
 #"
 }
 
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# shellcheck disable=SC1090,SC2154
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 templateScript(){
     echo -e "
-    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
-    \n# shellcheck disable=SC1090,SC2154\
-    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
-    \n\
-    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
-    \n# initialize lib system\
-    \nsource ~/bin/xSHELL/init\
-    \n\
-    \n# import/use libs\
-    \nuse args \
-    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
-    \n\
-    \n# xrequirements cut ls\
-    \n\
-    \n# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~\
-    \nxarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"\
-    \nxarg --id -s,--sum     --var expression+r          --desc \"expression to sum\" \
-    \n\
-    \n# pass main args (\$@) to 'xrun' method. it will check then with ARGS you've defined above\
-    \nxrun --xreject-unknow --xrequire-one \"\$@\"\
-    \n\
-    \n# example of case to check vars defined by xargs/xrun\
-    \n# case \"\$action\" in\
-    \n#     version) echo -e \"\${VERSION}\" ;;\
-    \n#     help)    echo -e \"action:\$action\"; usage ;;\
-    \n# esac\
-    \n\
-    \n# your code below\
-    "
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# shellcheck disable=SC1090,SC2154
+#   * SC1090: Can't follow non-constant source. Use a directive to specify location.
+#       -> cant follow or source usage
+#   * SC2154: var is referenced but not assigned.
+#       -> variables created by or library system (don't worry)
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+source ~/bin/xSHELL/init
+use args
+# xrequirements some_binary
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+xarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"
+xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
+
+# xrun function will validate the arguments defined above
+xrun --xreject-unknow --xrequire-one \"\$@\"
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# case \"\$action\" in
+#     version) echo -e \"\${VERSION}\" ;;
+#     help)    echo -e \"action:\$action\"; usage ;;
+# esac
+"
 }
 
 templateLib(){
