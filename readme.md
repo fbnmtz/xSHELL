@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: xSHELL (none)
- File...: readme.md
+ Project: bin (none)
+ File...: xSHELL/readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/01/29 - 11:28:25
+ Last Modified: Tuesday, 2023/01/31 - 00:58:40
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.14.252
+ Version: 0.0.15.269
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -49,7 +49,23 @@
     </br></br></br>xSHELL is a simple library system for bash/shell.</br></br></br>
 </p>
 
-## Install `xSHELL` library system
+## Table of Contents
+1. [Install](#Install)
+2. [Example of Usage](#Example-of-Usage)
+<!-- 2. [Plugin Management](#plugin-management)
+3. [Colors](#colors)
+4. [Tools](#tools)
+5. [Language Specific](#language-specific)
+6. [Framework Specific](#framework-specific)
+7. [Distributions](#distributions)
+8. [Websites](#websites)
+9. [Contributing](#contributing)
+10. [License](#license) -->
+
+---
+
+## Install
+Steps to install`xSHELL` library system
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
@@ -80,7 +96,7 @@ v0.1.9 - writen by @fbnmtz 2020
 
 ```
 
-## Example of a script using xSHELL lib system
+## Example of Usage
 
 Bellow, an example showing how you can use this libs/funcions in your scripts:
 
