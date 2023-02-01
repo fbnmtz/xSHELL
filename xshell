@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/01/31 - 23:40:53
+# Last Modified: Wednesday, 2023/02/01 - 00:34:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.11.215
+# Version: 0.1.12.232
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -61,7 +61,7 @@ fi
     echo -e "#!/usr/bin/env bash"
     
     # add default header information (if requested) 
-    [ "$_xHEADER_" == 'true' ] && templateHeader
+    [ "$_xHEADER_" == 'true' ] && templateHeader || templateInfo
     
     # finally, create the new script OR library 
     [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 
