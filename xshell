@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
-# File...: xSHELL/xshell
+# Project: xSHELL (none)
+# File...: xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
-# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/01/30 - 02:45:19
+# Last Modified: Tuesday, 2023/01/31 - 23:40:53
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.10.199
+# Version: 0.1.11.215
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -33,18 +33,20 @@ xrequirements touch chmod date
 # set default editor
 editor=$(getPath code micro nano vim)
 # scripts path
-scripts=$HOME/bin
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+scripts_path=$HOME/bin
+# libs path
+libs_path=$HOME/bin/xSHELL
 
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xarg --id -f,--filename  --var name+r         --desc "filename for new script"
-xarg --id -l,--lib       --var _xLIB_:true    --desc "define script as a LIB"
-xarg --id -H,--header    --var _xHEADER_:true --desc "enable default header on the new script"
-xarg --id -e,--editor    --var editor+r       --desc "define editor to open script"
+xarg --id -l,--lib       --var _xLIB_:true    --desc "define new script as a LIB type"
+xarg --id -H,--header    --var _xHEADER_:true --desc "enable default our header on the new script"
+xarg --id -e,--editor    --var editor+r       --desc "define <editor> to open script"
 
 xrun --xreject-unknow --xrequire-one "$@"
 
 if [ -n "$name" ]; then
-    filename="$scripts/$name"
+    [ "$_xLIB_" == 'true' ] && filename="$libs_path/$name" || filename="$scripts_path/$name"
 fi
 
 # exit if exist a script with this name
