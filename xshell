@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/02/01 - 00:34:51
+# Last Modified: Wednesday, 2023/02/01 - 00:40:58
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.12.232
+# Version: 0.1.13.238
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -51,7 +51,10 @@ fi
 
 # exit if exist a script with this name
 if [ -f "$filename" ]; then 
-    echo "quiting: script already exists!" 
+    echo -n "script already exists! Open it on <editor> (y/n)?: "
+    read -r choice
+    # convert answer to UPPERCASE
+    [ "${choice^^}" == "Y" ] && $editor "$filename"
     exit 1
 fi
 
