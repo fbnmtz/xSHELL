@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: bin (none)
-# File...: xSHELL/args
+# Project: xSHELL (none)
+# File...: args
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/01/27 - 23:30:43
+# Last Modified: Wednesday, 2023/02/01 - 01:45:02
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.8.1030
+# Version: 0.2.9.1065
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -281,14 +281,16 @@ xarg(){
                 method=block
                 block="$2"
             ;;
+            -n|--longflag-nodash)
+                method=longflags
+                _xARGS_NO_DAHS=true
+            ;;
         esac
         shift
     done
 
-    # if [ "$method" != "block" ] && [ "$method" != "value" ] ; then
-    
-    # bypass first arg to reject unknow/undefined args
-    if [ "$method" != "block" ] ; then
+    # bypass when no arguments has been defined
+    if [ "$method" != "block" ] && [ "$method" != "longflags" ] ; then
         xhelp --param="${option_default}${desc_var}+${description}+${block}"
     fi
 
@@ -376,8 +378,21 @@ xrun(){
     fi
     # set default args for any script
     _CURRENT_VERSION_=$_VERSION_
-    xarg --id -h,--help    --code "xusage --help" --desc "show this help"
-    xarg --id -v,--version --code "echo \"\$_CURRENT_VERSION_\"; exit" --desc "print version and exit"
+
+    # add support to logflags without '--' prefix
+    if [ -z "$_xARGS_NO_DAHS"  ]; then 
+        _arg_prefix_="--"
+    fi
+
+    # gen default help argument
+    xarg --id "-h,${_arg_prefix_}help"    \
+         --code "xusage --help" \
+         --desc "show this help"
+         
+    # gen default version argument
+    xarg --id "-v,${_arg_prefix_}version" \
+         --code "echo \"\$_CURRENT_VERSION_\"; exit" \
+         --desc "print version and exit"
     
     # store arguments to be passed to the script
     _xSCRIPT_ARGS=()
