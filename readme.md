@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: bin (none)
- File...: xSHELL/readme.md
+ Project: xSHELL (none)
+ File...: readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Tuesday, 2023/01/31 - 00:58:40
+ Last Modified: Thursday, 2023/02/02 - 19:59:25
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.15.269
+ Version: 0.0.16.284
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -50,8 +50,12 @@
 </p>
 
 ## Table of Contents
-1. [Install](#Install)
-2. [Example of Usage](#Example-of-Usage)
+- [Table of Contents](#table-of-contents)
+- [Install](#install)
+- [Example of Usage](#example-of-usage)
+  - [Note about lib/args:](#note-about-libargs)
+- [Libraries](#libraries)
+  - [TODO List:](#todo-list)
 <!-- 2. [Plugin Management](#plugin-management)
 3. [Colors](#colors)
 4. [Tools](#tools)
@@ -99,6 +103,8 @@ v0.1.9 - writen by @fbnmtz 2020
 ## Example of Usage
 
 Bellow, an example showing how you can use this libs/funcions in your scripts:
+
+<details close="true">
 
 ```bash
 # script: libsExample
@@ -183,6 +189,8 @@ libsExapmle --math "2*2"
 
 ```
 
+</details>
+</br>
 ### Note about lib/args:
 
 1. using `xarg` function, two options are automatically generated (`--help `and `--version`):
@@ -203,10 +211,21 @@ libsExapmle --math "2*2"
 
 ## Libraries
 
-To update!!
+* init
+* args
+* system
+* utils
+  
+### TODO List:
 
-# TODO List:
-
+* [ ] Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 * [ ] Implent color system
+
+---
+
+
+Contributions are welcome! &lt;3
+
+Made with :heart: and shellscript.
