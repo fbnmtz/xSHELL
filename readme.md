@@ -8,7 +8,7 @@
  Last Modified: Thursday, 2023/02/02 - 20:42:47
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.16.286
+ Version: 0.0.18.286
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -49,8 +49,7 @@
     </br></br></br>xSHELL is a simple library system for bash/shell.</br></br></br>
 </p>
 
-## Table of Contents
-- [Table of Contents](#table-of-contents)
+## Index
 - [Install](#install)
 - [Example of Usage](#example-of-usage)
   - [Note about lib/args:](#note-about-libargs)
@@ -99,6 +98,7 @@ usage:
 v0.1.9 - writen by @fbnmtz 2020
 
 ```
+[Go Back](#index)
 
 ## Example of Usage
 
@@ -196,6 +196,8 @@ libsExapmle --math "2*2"
 </details>
 </br>
 
+[Go Back](#index)
+
 ### Note about lib/args:
 
 1. using `xarg` function, two options are automatically generated (`--help `and `--version`):
@@ -213,6 +215,7 @@ libsExapmle --math "2*2"
    _CREATED_AT_="year"
    _CURRENT_VERSION_="X.X.X"
    ```
+[Go Back](#index)
 
 ## Libraries
 
@@ -221,6 +224,8 @@ libsExapmle --math "2*2"
 * system
 * utils
   
+[Go Back](#index)
+
 ### TODO List:
 
 * [ ] Implements joint flags (ex: -lsaf)
