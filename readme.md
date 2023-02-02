@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/02/02 - 20:29:48
+ Last Modified: Thursday, 2023/02/02 - 20:42:47
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.16.285
+ Version: 0.0.16.286
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -108,6 +108,10 @@ Bellow, an example showing how you can use this libs/funcions in your scripts:
 
 ```bash
 # script: libsExample
+
+_AUTHOR_="@fbnmtz"
+_CREATED_AT_="2023"
+_CURRENT_VERSION_="0.0.6-rc81"
 
 ## import lib system to your script
 source ~/bin/xSHELL/init  
