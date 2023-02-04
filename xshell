@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/02/01 - 00:40:58
+# Last Modified: Saturday, 2023/02/04 - 18:36:24
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.13.238
+# Version: 0.1.14.250
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,7 +26,6 @@
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
 use args utils xshell.lib
-
 xrequirements touch chmod date
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
@@ -38,15 +37,19 @@ scripts_path=$HOME/bin
 libs_path=$HOME/bin/xSHELL
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-xarg --id -f,--filename  --var name+r         --desc "filename for new script"
-xarg --id -l,--lib       --var _xLIB_:true    --desc "define new script as a LIB type"
-xarg --id -H,--header    --var _xHEADER_:true --desc "enable default our header on the new script"
 xarg --id -e,--editor    --var editor+r       --desc "define <editor> to open script"
+xarg --id -f,--filename  --var name+r         --desc "filename for new script"
+xarg --id -H,--header    --var _xHEADER_:true --desc "enable default our header on the new script"
+xarg --id -l,--lib       --var _xLIB_:true    --desc "define new script as a LIB type"
 
-xrun --xreject-unknow --xrequire-one "$@"
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 if [ -n "$name" ]; then
     [ "$_xLIB_" == 'true' ] && filename="$libs_path/$name" || filename="$scripts_path/$name"
+else 
+    echo "Error: You must specify <filename> with -f option"
+    xusage
+    exit 2
 fi
 
 # exit if exist a script with this name
