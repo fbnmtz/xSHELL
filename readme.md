@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/02/02 - 20:42:47
+ Last Modified: Saturday, 2023/02/04 - 15:07:06
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.18.286
+ Version: 0.0.19.288
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -50,11 +50,16 @@
 </p>
 
 ## Index
+- [Index](#index)
 - [Install](#install)
 - [Example of Usage](#example-of-usage)
   - [Note about lib/args:](#note-about-libargs)
 - [Libraries](#libraries)
-  - [TODO List:](#todo-list)
+  - [init](#init)
+  - [args](#args)
+  - [system](#system)
+  - [utils](#utils)
+- [TODO List:](#todo-list)
 <!-- 2. [Plugin Management](#plugin-management)
 3. [Colors](#colors)
 4. [Tools](#tools)
@@ -68,7 +73,7 @@
 ---
 
 ## Install
-Steps to install`xSHELL` library system
+Steps to install `xSHELL` library system
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
@@ -219,19 +224,21 @@ libsExapmle --math "2*2"
 
 ## Libraries
 
-* init
-* args
-* system
-* utils
+* ### init
+* ### args
+* ### system
+* ### utils
   
 [Go Back](#index)
 
-### TODO List:
+### TODO List
 
 * [ ] Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 * [ ] Implent color system
+
+[Go Back](#index)
 
 ---
 
