@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/02/04 - 15:07:06
+ Last Modified: Sunday, 2023/02/05 - 00:04:48
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.19.288
+ Version: 0.0.19.329
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -52,23 +52,16 @@
 ## Index
 - [Index](#index)
 - [Install](#install)
-- [Example of Usage](#example-of-usage)
-  - [Note about lib/args:](#note-about-libargs)
+- [`xshell` Command](#xshell-command)
+  - [Example of Usage](#example-of-usage)
+    - [Code gerenated](#code-gerenated)
+    - [Adding custom code](#adding-custom-code)
+    - [libsExample output](#libsexample-output)
 - [Libraries](#libraries)
-  - [init](#init)
-  - [args](#args)
-  - [system](#system)
-  - [utils](#utils)
-- [TODO List:](#todo-list)
-<!-- 2. [Plugin Management](#plugin-management)
-3. [Colors](#colors)
-4. [Tools](#tools)
-5. [Language Specific](#language-specific)
-6. [Framework Specific](#framework-specific)
-7. [Distributions](#distributions)
-8. [Websites](#websites)
-9. [Contributing](#contributing)
-10. [License](#license) -->
+    - [init](#init)
+    - [args](#args)
+    - [system](#system)
+- [TODO List](#todo-list)
 
 ---
 
@@ -84,50 +77,48 @@ After run install command, you will have xSHELL on your home and added to your s
 
 * `~/bin/xSHELL`
 
+---
+
+## `xshell` Command
 Within this library, comes `xshell` tool used create new scripts;
 
 ```
 xshell -h
 
 usage:
-  xshell [-f <name>] [-l] [-H] [-e <editor>] [-h] [-v]
+  xshell [-a <arguments>] [-e <editor>] [-f <name>] [-H] [-l] [-h] [-v]
 
 -> Available Options:
-   -f,  --filename <name> filename for new script
-   -l,  --lib             define script as a LIB
-   -H,  --header          enable default header on the new script
-   -e,  --editor <editor> define editor to open script
-   -h,  --help            show this help
-   -v,  --version         print version and exit
+   -a,  --args <arguments> define <arguments> for new script
+   -e,  --editor <editor>  define <editor> to open script
+   -f,  --filename <name>  filename for new script
+   -H,  --header           enable our default header on the new script
+   -l,  --lib              define new script as a our LIB type (can be loaded with 'use' function)
+   -h,  --help             show this help
+   -v,  --version          print version and exit
 
-v0.1.9 - writen by @fbnmtz 2020
+v0.1.15-rc300 - writen by @fbnmtz 2020
+
 
 ```
 [Go Back](#index)
 
-## Example of Usage
+### Example of Usage
 
-Bellow, an example showing how you can use this libs/funcions in your scripts:
+You can create your new script using `xshell` tool:
 
-<details close="true">
 
 ```bash
-# script: libsExample
+xshell -f libsExample \
+    -e nano \
+    --args "
+    id=-p,--print;code='echo.print.test';desc='print-some-code' 
+    id=-n,--notify;var=title+r,text+r;desc='test.notify.system' 
+    id=-m,--math;var=expression+r;desc='solve.math.expression'  
+    id=-V,--volume;var=option+r;desc='volume.option.(up.or.down)'"
+```
 
-_AUTHOR_="@fbnmtz"
-_CREATED_AT_="2023"
-_CURRENT_VERSION_="0.0.6-rc81"
-
-## import lib system to your script
-source ~/bin/xSHELL/init  
-
-# load basic lib 'args'
-use args
-
-# you can list/validade all binaries/tools needed by your script easily using 'requirements' function
-xrequirements echo
-
-# now, you can easily define args and usage info with 'xarg' function
+<!-- # now, you can easily define args and usage info with 'xarg' function
 # params supported:
 #      * --id <shortflat,longflag>
 #            this param require two params 
@@ -137,16 +128,49 @@ xrequirements echo
 #          * --desc <description>
 # We have another param made to be used alone 
 #      * --section <group name>
-#            this param will group args defined after it
+#            this param will group args defined after it -->
 
-# example: how to set args/actions
-xarg --section "Custom Args"
-xarg --id -p,--print   --code "echo 'print test'" --desc "print some code"
-xarg --id -n,--notify  --var title+r,text+r       --desc "test notify system"
-xarg --id -m,--math    --var expression+r         --desc "solve math expression" 
-xarg --id -V,--volume  --var option+r             --desc "volume option (up or down)" 
+#### Code gerenated
 
-# after define args, pass all script params (var $@) to 'xrun' function 
+`xshell` command above will generate this code below and open the new file on defined editor:
+<details close="true">
+
+```bash
+# script: libsExample
+
+#!/usr/bin/env bash
+
+_AUTHOR_="fabiano.matoz@gmail.com"
+_CREATED_AT_="2023"
+_CURRENT_VERSION_="0.0.1"
+
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# shellcheck disable=SC1090,SC2154
+#   * SC1090: Can't follow non-constant source. Use a directive to specify location.
+#       -> cant follow or source usage
+#   * SC2154: var is referenced but not assigned.
+#       -> variables created by or library system (don't worry)
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+source ~/bin/xSHELL/init
+use args
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+
+xarg --id -p,--print --code 'echo print test' --desc 'print-some-code'
+xarg --id -n,--notify --var title+r,text+r --desc 'test notify system'
+xarg --id -m,--math --var expression+r --desc 'solve math expression'
+xarg --id -V,--volume --var option+r --desc 'volume option (up or down)'
+```
+
+
+#### Adding custom code
+
+After it, you can create all your code using args defined earlier.
+
+Example:
+
+```bash
 # xrun optional params:
 #   * --xreject-unknow : throw error when receive an parameter not defined with 'xarg'
 #   * --xrequire-one...: throw error if no param given
@@ -170,6 +194,8 @@ if [ -n "$option" ]; then
 fi
 
 ```
+
+#### libsExample output
 
 The code above will generate this output
 
@@ -203,7 +229,7 @@ libsExapmle --math "2*2"
 
 [Go Back](#index)
 
-### Note about lib/args:
+<!-- ### Note about lib/args:
 
 1. using `xarg` function, two options are automatically generated (`--help `and `--version`):
 
@@ -220,18 +246,18 @@ libsExapmle --math "2*2"
    _CREATED_AT_="year"
    _CURRENT_VERSION_="X.X.X"
    ```
-[Go Back](#index)
+[Go Back](#index) -->
 
 ## Libraries
 
-* ### init
-* ### args
-* ### system
+#### init
+#### args
+#### system
 * ### utils
   
 [Go Back](#index)
 
-### TODO List
+## TODO List
 
 * [ ] Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
