@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/02/05 - 10:57:07
+ Last Modified: Sunday, 2023/02/05 - 13:51:02
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.20.344
+ Version: 0.0.20.388
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -280,6 +280,39 @@ libsExapmle --math "2*2"
 </details>
 
 #### args
+
+<details close="true">
+
+* Functions
+  * `xarg`
+    * used to define arguments: 
+ 
+```
+# params supported:
+  * --id <shortflat,longflag>
+    * should be used with '--var' or '--code' 
+      1. --var <var1:varvalue,var2+r,+o>
+        1.1. `var:value` means this arg will set a var `var=value`
+        1.2. `var+r` means this arg will require a new arg and i (can't be null)
+        1.3. `var+o` means this arg accepts another argument (but can be null)
+      2. --code <shell commands>
+        2.1. this arg will run arg received with `eval` function
+  * --desc <description>
+    * define description for this argument (will be used in help/usage information)
+
+# Examples of usage of 'xarg' function:
+
+xarg --id "-h,--help"    --code "xusage --help"                      --desc "show this help"
+xarg --id "-v,--version" --code "echo "$_CURRENT_VERSION_"; exit" --desc "print version and exit"
+
+```
+  * `xrun`
+  * `xhelp`
+  * `xusage`
+  * `xflag_require_value`
+  * `xrequire_one`
+
+</details>
 
 #### system
 
