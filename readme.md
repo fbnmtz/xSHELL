@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/02/05 - 00:04:48
+ Last Modified: Sunday, 2023/02/05 - 10:57:07
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.19.329
+ Version: 0.0.20.344
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -50,6 +50,7 @@
 </p>
 
 ## Index
+
 - [Index](#index)
 - [Install](#install)
 - [`xshell` Command](#xshell-command)
@@ -61,11 +62,13 @@
     - [init](#init)
     - [args](#args)
     - [system](#system)
+    - [utils](#utils)
 - [TODO List](#todo-list)
 
 ---
 
 ## Install
+
 Steps to install `xSHELL` library system
 
 ```bash
@@ -80,6 +83,7 @@ After run install command, you will have xSHELL on your home and added to your s
 ---
 
 ## `xshell` Command
+
 Within this library, comes `xshell` tool used create new scripts;
 
 ```
@@ -101,12 +105,12 @@ v0.1.15-rc300 - writen by @fbnmtz 2020
 
 
 ```
+
 [Go Back](#index)
 
 ### Example of Usage
 
 You can create your new script using `xshell` tool:
-
 
 ```bash
 xshell -f libsExample \
@@ -133,6 +137,7 @@ xshell -f libsExample \
 #### Code gerenated
 
 `xshell` command above will generate this code below and open the new file on defined editor:
+
 <details close="true">
 
 ```bash
@@ -162,7 +167,6 @@ xarg --id -n,--notify --var title+r,text+r --desc 'test notify system'
 xarg --id -m,--math --var expression+r --desc 'solve math expression'
 xarg --id -V,--volume --var option+r --desc 'volume option (up or down)'
 ```
-
 
 #### Adding custom code
 
@@ -248,18 +252,47 @@ libsExapmle --math "2*2"
    ```
 [Go Back](#index) -->
 
+---
+
 ## Libraries
 
 #### init
+
+<details close="true">
+
+* Variables
+
+  * `$APP`
+    * Store current script name
+  * `$APP_DIR`
+    * Store current script path
+  * `$APP_HOME`
+    * Default location to script save configs and related files
+* Functions
+
+  * `xsetHome {dir1, dir2}`
+    * Create `$APP_HOME` directory. Default localtion is `$HOME/.fbnmtz/$APP`
+  * `use lib1 lib2 lib3`
+    * function to easily load libraries into your script
+  * `xrequirements binary1 binary2`
+    * function to check if a binary exists on your system. Pass program names separeted by spaces. Throw an error and exit if not found.
+    * you can test conditional binarys using this syntax: `xrequirements bin1:bin2` (that means bin1 or bin2)
+</details>
+
 #### args
+
 #### system
-* ### utils
-  
+
+#### utils
+
 [Go Back](#index)
+
+---
 
 ## TODO List
 
-* [ ] Implements joint flags (ex: -lsaf)
+* [x] xshell: add support for define args for new scripts
+* [ ] lib/arbs: Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 * [ ] Implent color system
@@ -268,7 +301,6 @@ libsExapmle --math "2*2"
 
 ---
 
-
 Contributions are welcome! &lt;3
 
-Made with :heart: and shellscript.
+Made with ❤️ and shellscript.
