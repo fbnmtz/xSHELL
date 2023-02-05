@@ -4,12 +4,12 @@
 # Project: xSHELL (none)
 # File...: xshell.lib
 # Created: Sunday, 2022/02/20 - 18:44:18
-# Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/04 - 23:34:35
+# Last Modified: Sunday, 2023/02/05 - 00:14:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.180
+# Version: 0.1.7.192
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -41,7 +41,7 @@ unset name email
 xshell_init(){
     # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
     # set default editor
-    editor=$(getPath code micro nano vim)
+    editor=$(getPath code micro nano vim neovim ne emacs mcedit tilde atom gedit gvim pico)
     # scripts path
     scripts_path=$HOME/bin
     # libs path
@@ -121,8 +121,8 @@ templateScript(){
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
 use args
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-"
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~"
 [ -n "$arguments" ] && \
     parse_args "$arguments" || \
     echo "# define your arguments with 'xarg' function. Example below:
