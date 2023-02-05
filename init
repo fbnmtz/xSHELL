@@ -4,12 +4,12 @@
 # Project: xSHELL (none)
 # File...: init
 # Created: Thursday, 2021/05/20 - 13:18:34
-# Author.: @fbnmtz, fgm ((fabiano.matoz@gmail.com)
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 16:07:42
+# Last Modified: Sunday, 2023/02/05 - 08:25:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.10.220
+# Version: 0.1.11.231
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -38,37 +38,37 @@ xsetHome(){
     mkdir -p "$APP_HOME"/"$*"
 }
 
-# check if some lib already loaded
-checkLibLoaded(){
-  # convert fist arg to UPCASE 
-  local name=${1^^}
-
-  # replace '.' for '_'
-  name=${name//./_}
-  
-  # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
-  name=${name//LIB/}
-  
-  # Const for mark lib as loaded
-  lib_const="_xLIB_${name}"
-
-  # check last char (needs to be equal '_' underline)
-  if [[ ! "${lib_const:(-1)}" == "_" ]]; then
-    lib_const+="_"
-  fi
-
-  # check if load lib has a defined var __LIB_NAME and its not null
-  if eval "test -z \"\$${lib_const}\"" ; then
-    [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' not loaded. (const '$lib_const' not found.)"
-    return 1
-  else
-    [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' already loaded (skipping)"
-    return 0
-  fi
-}
-
 # import/use some library
+# ex: use args utils mycustomlib
 use(){
+    # check if some lib already loaded
+    checkLibLoaded(){
+        # convert fist arg to UPCASE 
+        local name=${1^^}
+
+        # replace '.' for '_'
+        name=${name//./_}
+        
+        # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
+        name=${name//LIB/}
+        
+        # Const for mark lib as loaded
+        lib_const="_xLIB_${name}"
+
+        # check last char (needs to be equal '_' underline)
+        if [[ ! "${lib_const:(-1)}" == "_" ]]; then
+            lib_const+="_"
+        fi
+
+        # check if load lib has a defined var __LIB_NAME and its not null
+        if eval "test -z \"\$${lib_const}\"" ; then
+            [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' not loaded. (const '$lib_const' not found.)"
+            return 1
+        else
+            [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' already loaded (skipping)"
+            return 0
+        fi
+    }
 
   [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$*'\n"
   
@@ -115,6 +115,7 @@ alias load=use
 alias unit=use
 
 # validade requirements
+# ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
     fail(){
         local tool=$1
@@ -123,8 +124,10 @@ xrequirements(){
         alert "$0" "$error_msg"
         exit 10
     }
+    # check if a package exists on the system
+    # ex; check bin1
     check(){
-        (which "$1" >/dev/null) 2> /dev/null
+        which "$1" &> /dev/null
     }
     for tool in "$@"; do
         if [[ "$tool" =~ ":" ]]; then
