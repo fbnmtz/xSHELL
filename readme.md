@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/02/05 - 13:51:02
+ Last Modified: Sunday, 2023/02/05 - 17:47:55
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.20.388
+ Version: 0.0.20.390
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -110,16 +110,17 @@ v0.1.15-rc300 - writen by @fbnmtz 2020
 
 ### Example of Usage
 
-You can create your new script using `xshell` tool:
+You can create your new script (default location `$HOME/bin`) using `xshell` tool:
 
 ```bash
 xshell -f libsExample \
     -e nano \
     --args "
-    id=-p,--print;code='echo.print.test';desc='print-some-code' 
-    id=-n,--notify;var=title+r,text+r;desc='test.notify.system' 
-    id=-m,--math;var=expression+r;desc='solve.math.expression'  
-    id=-V,--volume;var=option+r;desc='volume.option.(up.or.down)'"
+        id=-p,--print;code='echo.print.test';desc='print-some-code' 
+        id=-n,--notify;var=title+r,text+r;desc='test.notify.system' 
+        id=-m,--math;var=expression+r;desc='solve.math.expression'  
+        id=-V,--volume;var=option+r;desc='volume.option.(up.or.down)'
+    "
 ```
 
 <!-- # now, you can easily define args and usage info with 'xarg' function
