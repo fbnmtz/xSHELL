@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, fgm (devel.fgm@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/04 - 18:18:58
+# Last Modified: Saturday, 2023/02/04 - 23:34:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.105
+# Version: 0.1.6.180
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -37,6 +37,40 @@ for email in "$(git config author.email)" "$USER" '<unknow>' ; do
 done
 # unset variables to avoid errors
 unset name email
+
+xshell_init(){
+    # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+    # set default editor
+    editor=$(getPath code micro nano vim)
+    # scripts path
+    scripts_path=$HOME/bin
+    # libs path
+    libs_path=$HOME/bin/xSHELL
+}
+
+parse_args(){
+    # shellcheck disable=SC2068
+    for arg_line in $@; do
+        
+        for arg_item in ${arg_line//;/ }; do
+            
+            key=$(echo "$arg_item" | cut -d '=' -f1)
+            val=$(echo "$arg_item" | cut -d '=' -f2)
+
+            case "$key" in
+                i | id  ) id_value=$val   ;;
+                v | var ) method_value="--var $val"  ;;
+                c | code) method_value="--code $val" ;;
+                d | desc) desc_value=$val ;;
+                *) echo "error parsing arguments!" >>/dev/stderr; exit 2 ;;
+            esac
+        done
+        
+        # generate xarg call
+        echo "xarg --id $id_value ${method_value//./ } --desc ${desc_value//./ }"
+        unset id_value method_value desc_value 
+    done
+}
 
 # add some iformations to script without our default header
 templateInfo(){
@@ -87,22 +121,26 @@ templateScript(){
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
 use args
-# xrequirements some_binary
-
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-xarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"
-xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
-
-# xrun function will validate the arguments defined above
-xrun --xreject-unknow --xrequire-one \"\$@\"
-
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-# case \"\$action\" in
-#     version) echo -e \"\${VERSION}\" ;;
-#     help)    echo -e \"action:\$action\"; usage ;;
-# esac
+"
+[ -n "$arguments" ] && \
+    parse_args "$arguments" || \
+    echo "# define your arguments with 'xarg' function. Example below:
+# xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
 "
 }
+# # xrequirements some_binary
+# xarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"
+# xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
+
+# # xrun function will validate the arguments defined above
+# xrun --xreject-unknow --xrequire-one \"\$@\"
+
+# # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# # case \"\$action\" in
+# #     version) echo -e \"\${VERSION}\" ;;
+# #     help)    echo -e \"action:\$action\"; usage ;;
+# # esac
 
 templateLib(){
     # replace '.' for '_'
