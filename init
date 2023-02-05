@@ -6,16 +6,67 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/05 - 08:25:43
+# Last Modified: Sunday, 2023/02/05 - 09:38:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.11.231
+# Version: 0.1.12.268
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
 # ############################################################################
 # HISTORY:
 #
+# Sunday, 2023/02/05 - 09:33:12: (@fbnmtz)
+#  -> updatet lib/init
+    # * chage scope of function 'checkLibLoaded' to inside 'use' function
+    # * update 'check' function (internal of 'xrequirements'
+    
+# Thuesday, 2023/01/19 - 17:12:50: (@fbnmtz)
+#  -> solve some 'shelcheck' alerts
+
+# Sunday, 2023/01/15 - 16:07:58: (@fbnmtz)
+#  -> 'lib/init' - adjust locations of libs
+
+# Sunday, 2023/01/15 - 14:52:23: (@fbnmtz)
+#  -> reorganize files (to publish on github)
+    # * this repo will contain only lib files for now on
+    
+# Thuesday, 2022/12/29 - 09:29:22: (@fbnmtz)
+#  ->  lib/init - change lib_const used to identify loaded files
+    # * add new alias 'unit' for 'use' function
+
+# Wednesday, 2022/11/09 - 23:14:51: (@fbnmtz)
+#  -> lib/init - adjust debug information
+
+# Monday, 2022/04/25 - 19:54:42: (@fbnmtz)
+#  -> lib/init - implements debuf info via '_INT_DEBUG_' variable
+
+# Wednesday, 2022/02/16 - 18:16:49: (@fbnmtz)
+#  -> lib updade
+
+    # * move some files
+    # * init - new default location; implement check to avoid load same lib twice
+    # * utils - new function tern
+    # * args - fix bug when assing vars; list multiple vars in usage cmd; help for xrun
+
+# Friday, 2022/02/11 - 21:49:18: (@fbnmtz)
+#  -> new feature - not load same lib twice (var '__LIB_<NAME>' in each library)
+
+    # * args - new lib (move args functions)
+    # * init - update load to search in one more dir; refactor code;  chec
+    # * utils - remove some functions
+
+    # update scritps using lib
+    
+# Wednesday, 2021/06/23 - 21:49:18: (@fbnmtz)
+#  -> update libs (refactor and new functions)
+
+# Sunday, 2021/05/30 - 19:03:45: (@fbnmtz)
+#  -> update my lib
+
+# Saturday, 2021/05/22 - 16:11:21: (@fbnmtz)
+#  -> my custom lib (fucntions to make easy to create new apps/bins)
+
 
 # shellcheck disable=SC1090,2155
 # _INIT_DEBUG_=false

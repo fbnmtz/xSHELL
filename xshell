@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/04 - 23:29:43
+# Last Modified: Sunday, 2023/02/05 - 18:37:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.15.300
+# Version: 0.1.15.301
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -60,7 +60,7 @@ fi
 # open a block and print everything to $filename
 { 
     # add shebang (get by env)
-    echo -e "#!/usr/bin/env bash"
+    echo -e "#!/usr/bin/env bash\n# script: $filename"
     
     # add default header information (if requested) 
     [ "$_xHEADER_" == 'true' ] && templateHeader || templateInfo
