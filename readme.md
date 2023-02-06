@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/02/05 - 17:47:55
+ Last Modified: Sunday, 2023/02/05 - 22:12:53
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.20.390
+ Version: 0.0.20.394
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -142,14 +142,12 @@ xshell -f libsExample \
 <details close="true">
 
 ```bash
-# script: libsExample
-
 #!/usr/bin/env bash
+# script: libsExample
 
 _AUTHOR_="fabiano.matoz@gmail.com"
 _CREATED_AT_="2023"
 _CURRENT_VERSION_="0.0.1"
-
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # shellcheck disable=SC1090,SC2154
@@ -161,12 +159,23 @@ _CURRENT_VERSION_="0.0.1"
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
 use args
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xarg --id -p,--print --code 'echo print test' --desc 'print-some-code'
 xarg --id -n,--notify --var title+r,text+r --desc 'test notify system'
 xarg --id -m,--math --var expression+r --desc 'solve math expression'
 xarg --id -V,--volume --var option+r --desc 'volume option (up or down)'
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# initilizae values before xrun (if you need to)
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# arguments will be checked/validated here (use --xhelp arg for more info)
+xrun --xreject-unknow --xrequire-one "$@"
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+# now put your code below
+
+
 ```
 
 #### Adding custom code
@@ -176,12 +185,6 @@ After it, you can create all your code using args defined earlier.
 Example:
 
 ```bash
-# xrun optional params:
-#   * --xreject-unknow : throw error when receive an parameter not defined with 'xarg'
-#   * --xrequire-one...: throw error if no param given
-#   * --xversionrc.....: show full version with release candidate
-xrun --xreject-unknow --xrequire-one --xversionrc "$@"
-
 # code for -m/--math arg
 if [ -n "$expression" ] ; then
     echo $(($expression))
