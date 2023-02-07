@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Monday, 2023/02/06 - 21:42:19
+ Last Modified: Monday, 2023/02/06 - 23:53:45
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.400
+ Version: 0.0.21.452
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -54,7 +54,7 @@
 - [Index](#index)
 - [Install](#install)
 - [`xshell` Command](#xshell-command)
-  - [Example of Usage](#example-of-usage)
+  - [Example of Usage (libsExample script)](#example-of-usage-libsexample-script)
     - [Code gerenated](#code-gerenated)
     - [Adding custom code](#adding-custom-code)
     - [libsExample output](#libsexample-output)
@@ -109,7 +109,7 @@ v0.1.15-rc300 - writen by @fbnmtz 2020
 
 [Go Back](#index)
 
-### Example of Usage
+### Example of Usage (libsExample script)
 
 You can create your new script (default location `$HOME/bin`) using `xshell` tool:
 
@@ -155,7 +155,7 @@ _CURRENT_VERSION_="0.0.1"
 #   * SC1090: Can't follow non-constant source. Use a directive to specify location.
 #       -> cant follow or source usage
 #   * SC2154: var is referenced but not assigned.
-#       -> variables created by or library system (don't worry)
+#       -> variables will be created by or library system (don't worry)
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source ~/bin/xSHELL/init
@@ -263,6 +263,8 @@ libsExapmle --math "2*2"
 
 #### init
 
+    Basic library to initialize our framework/system.
+
 <details close="true">
 
 * Variables
@@ -283,46 +285,74 @@ libsExapmle --math "2*2"
     * function to check if a binary exists on your system. Pass program names separeted by spaces. Throw an error and exit if not found.
     * you can test conditional binarys using this syntax: `xrequirements bin1:bin2` (that means bin1 or bin2)
 </details>
+</br>
 
 #### args
+    This library is used to manage/generate/validate the command line arguments of a script.
 
 <details close="true">
 
-* Functions
-  * `xarg`
-    * used to define arguments: 
+Functions
+* `xarg`
+  * used to define arguments: 
  
-```
-# params supported:
-  * --id <shortflat,longflag>
-    * should be used with '--var' or '--code' 
-      1. --var <var1:varvalue,var2+r,+o>
-        1.1. `var:value` means this arg will set a var `var=value`
-        1.2. `var+r` means this arg will require a new arg and i (can't be null)
-        1.3. `var+o` means this arg accepts another argument (but can be null)
-      2. --code <shell commands>
-        2.1. this arg will run arg received with `eval` function
-  * --desc <description>
-    * define description for this argument (will be used in help/usage information)
+  ```
+  # params supported:
+    * --id <shortflat,longflag>
+      * should be used with '--var' or '--code' 
+        1. --var <var1:varvalue,var2+r,+o>
+          1.1. `var:value` means this arg will set a var `var=value`
+          1.2. `var+r` means this arg will require a new arg and i (can't be null)
+          1.3. `var+o` means this arg accepts another argument (but can be null)
+        2. --code <shell commands>
+          2.1. this arg will run arg received with `eval` function
+    * --desc <description>
+      * define description for this argument (will be used in help/usage information)
 
-# Examples of usage of 'xarg' function:
+  # Examples of usage of 'xarg' function:
 
-xarg --id "-h,--help"    --code "xusage --help"                      --desc "show this help"
-xarg --id "-v,--version" --code "echo "$_CURRENT_VERSION_"; exit" --desc "print version and exit"
+  xarg --id "-h,--help"    --code "xusage --help"                      --desc "show this help"
+  xarg --id "-v,--version" --code "echo "$_CURRENT_VERSION_"; exit" --desc "print version and exit"
 
-```
-  * `xrun`
-  * `xhelp`
-  * `xusage`
-  * `xflag_require_value`
-  * `xrequire_one`
+  ```
+* `xrun`
+  * validates arguments 
+  ```
+  # params to define validations:
+    * --xrequire-one
+    * --xreject-unknow
+    
+  # set version format to use release candidate version:
+    * --xversionrc
+
+  # help / information 
+    * --xdebug 
+    * --xhelp
+  ```
+* `xhelp`
+  * set help information to the script. Mostly used internally but you can use it to set header and footer information. 
+
+  ```
+  # usable argumnets
+    * --header=<value>
+    * --footer=<value>
+  ```
+
+* `xusage`
+* `xflag_require_value`
+* `xrequire_one`
 
 </details>
+</br>
 
 #### system
+    Library to by an interface between your scritp and Operation System, providin some basic functions.
 
 #### colors
-This library set variables with ANSI color codes
+    This library set variables with ANSI codes allowing you to use colors on your script. 
+
+<details close="true">
+
 * Variables
   * RESET
   * BOLD
@@ -339,7 +369,13 @@ This library set variables with ANSI color codes
   * MAGENTA
   * CYAN
   * WHITE
+  
+</details>
+</br>
+
 #### utils
+    A collection of auxiliary functions.
+</br>
 
 [Go Back](#index)
 
@@ -348,10 +384,10 @@ This library set variables with ANSI color codes
 ## TODO List
 
 * [x] xshell: add support for define args for new scripts
+* [x] Implent color system (draft)
 * [ ] lib/arbs: Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
-* [ ] Implent color system
 
 [Go Back](#index)
 
