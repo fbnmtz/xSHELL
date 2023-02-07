@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Monday, 2023/02/06 - 23:53:45
+ Last Modified: Tuesday, 2023/02/07 - 18:26:06
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.452
+ Version: 0.0.21.463
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -146,7 +146,7 @@ xshell -f libsExample \
 #!/usr/bin/env bash
 # script: libsExample
 
-_AUTHOR_="fabiano.matoz@gmail.com"
+_AUTHOR_="@fbnmtz"
 _CREATED_AT_="2023"
 _CURRENT_VERSION_="0.0.1"
 
@@ -354,27 +354,45 @@ Functions
 <details close="true">
 
 * Variables
-  * RESET
-  * BOLD
-  * DIM
-  * UNDERLINED
-  * BLINK
-  * REVERSE
-  * HIDDEN
-  * BLACK
-  * RED
-  * GREEN
-  * YELLOW
-  * BLUE
-  * MAGENTA
-  * CYAN
-  * WHITE
+  ```bash
+  # reset ansi escaping
+  $RESET
+  # styles
+  $BOLD
+  $DIM
+  $UNDERLINED
+  $BLINK
+  $REVERSE
+  $HIDDEN
+  # foreground colors
+  $BLACK
+  $RED
+  $GREEN
+  $YELLOW
+  $BLUE
+  $MAGENTA
+  $CYAN
+  $WHITE
+  # background colors
+  $BGBLACK
+  $BGRED
+  $BGGREEN
+  $BGYELLOW
+  $BGBLUE
+  $BGMAGENTA
+  $BGCYAN
+  $BGWHITE
+  ```
   
 </details>
 </br>
 
 #### utils
     A collection of auxiliary functions.
+
+<details close="true">
+
+</details>
 </br>
 
 [Go Back](#index)
