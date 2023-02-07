@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2023/02/05 - 22:12:53
+ Last Modified: Monday, 2023/02/06 - 21:42:19
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.20.394
+ Version: 0.0.21.400
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -62,6 +62,7 @@
     - [init](#init)
     - [args](#args)
     - [system](#system)
+    - [colors](#colors)
     - [utils](#utils)
 - [TODO List](#todo-list)
 
@@ -320,6 +321,24 @@ xarg --id "-v,--version" --code "echo "$_CURRENT_VERSION_"; exit" --desc "print 
 
 #### system
 
+#### colors
+This library set variables with ANSI color codes
+* Variables
+  * RESET
+  * BOLD
+  * DIM
+  * UNDERLINED
+  * BLINK
+  * REVERSE
+  * HIDDEN
+  * BLACK
+  * RED
+  * GREEN
+  * YELLOW
+  * BLUE
+  * MAGENTA
+  * CYAN
+  * WHITE
 #### utils
 
 [Go Back](#index)
