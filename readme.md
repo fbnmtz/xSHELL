@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Tuesday, 2023/02/07 - 18:26:06
+ Last Modified: Wednesday, 2023/02/08 - 19:47:04
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.463
+ Version: 0.0.21.468
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -215,13 +215,12 @@ libsExapmle -h
 usage:
   libsExapmle [-p] [-n <title> <text>] [-m <expression>] [-V <option>] [-h] [-v]
 
--> Custom Args:
+-> Information Options:
    -p,  --print                 print some code
    -n,  --notify <title> <text> test notify system
    -m,  --math <expression>     solve math expression
    -V,  --volume <option>       volume option (up or down)
 
--> Information Options:
    -h,  --help                  show this help
    -v,  --version               print version and exit
 
@@ -301,9 +300,9 @@ Functions
     * --id <shortflat,longflag>
       * should be used with '--var' or '--code' 
         1. --var <var1:varvalue,var2+r,+o>
-          1.1. `var:value` means this arg will set a var `var=value`
-          1.2. `var+r` means this arg will require a new arg and i (can't be null)
-          1.3. `var+o` means this arg accepts another argument (but can be null)
+          1.1. `var:value`: this arg will set a var `var=value`
+          1.2. `var+r`: (+r=required) this arg will require a new arg and i (can't be null)
+          1.3. `var+o`: (+o=optional) this arg accepts another argument (but can be null)
         2. --code <shell commands>
           2.1. this arg will run arg received with `eval` function
     * --desc <description>
