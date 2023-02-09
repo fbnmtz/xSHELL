@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Wednesday, 2023/02/08 - 19:47:04
+ Last Modified: Thursday, 2023/02/09 - 20:50:54
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.468
+ Version: 0.0.21.482
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -391,6 +391,27 @@ Functions
 
 <details close="true">
 
+Functions
+* getPath
+  * retunr full path of a first binary of all received via arguments
+  ```
+    # usage; Get path of first text editor found
+    getPath nano vim micro emacs
+  ```
+* basePath
+  * return base path of a file
+  ```
+  # if you pass file /etc/passwd, function will return /etc
+  basepath /etc/passwd
+  ```
+* tern
+* isROOT?
+* requireROOT
+* dots
+  ```
+  
+  ```
+  
 </details>
 </br>
 
