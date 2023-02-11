@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/05 - 18:37:35
+# Last Modified: Saturday, 2023/02/11 - 13:14:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.15.301
+# Version: 0.1.16.306
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -60,10 +60,14 @@ fi
 # open a block and print everything to $filename
 { 
     # add shebang (get by env)
-    echo -e "#!/usr/bin/env bash\n# script: $filename"
+    echo -e "#!/usr/bin/env bash"
     
     # add default header information (if requested) 
-    [ "$_xHEADER_" == 'true' ] && templateHeader || templateInfo
+    [ "$_xHEADER_" == 'true' ] && templateHeader || \
+        {
+            echo -e "\n# script: $filename"
+            templateInfo
+        }
     
     # finally, create the new script OR library 
     [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 

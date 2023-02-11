@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/05 - 22:06:04
+# Last Modified: Saturday, 2023/02/11 - 13:14:47
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.208
+# Version: 0.1.10.218
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,8 @@
 _xLIB_XSHELL_=true
 
 # fill author name
-for name in "$(git config author.name)" "$USER" '<unknow>' ; do
+for name in "$(git config --global user.name)" "$(git config --global author.name)" "$USER" '<unknow>' ; do
+    author_name=$name
     if [ -z "$author_name" ]; then
         author_name="$name"
     else
@@ -28,7 +29,8 @@ for name in "$(git config author.name)" "$USER" '<unknow>' ; do
 done
 
 # fill author email
-for email in "$(git config author.email)" "$USER" '<unknow>' ; do
+for email in "$(git config --global user.email)" "$(git config --global author.email)" "$USER" '<unknow>' ; do
+    author_mail=$email
     if [ -z "$author_mail" ]; then
         author_mail="$email"
     else
@@ -75,7 +77,7 @@ parse_args(){
 # add some iformations to script without our default header
 templateInfo(){
     echo -e "
-_AUTHOR_=\"$author_mail\"
+_AUTHOR_=\"$author_name\"
 _CREATED_AT_=\"$(date '+%Y')\"
 _CURRENT_VERSION_=\"0.0.1\""
 }
