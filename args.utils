@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/01/20 - 23:45:39
+# Last Modified: Saturday, 2023/02/11 - 12:21:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.9.421
+# Version: 1.0.10.452
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,16 +19,28 @@
 
 _xLIB_ARGS_UTILS_=true
 
+# define version of script
 xversion(){
     # set app version (dynamic from header comments or static)
-    _VERSION_="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f1-3)"
-    # if [ "$1" == '--full' ]; then 
-    local release="$(head -n 20 "$0" | grep '# Version:' -m1 | tr -d ' ' | cut -d ':' -f2 | cut -d '.' -f4)"
-    _VERSIONRC_="$_VERSION_-rc$release"
-    # fi
+    _VERSION_="$(head -n 20 "$0" | \
+        grep '# Version:' -m1 | \
+        tr -d ' ' | \
+        cut -d ':' -f2 | \
+        cut -d '.' -f1-3 \
+    )"
+    # get release candidate 
+    local release_candidate="$(head -n 20 "$0" | \
+        grep '# Version:' -m1 | \
+        tr -d ' ' | \
+        cut -d ':' -f2 | \
+        cut -d '.' -f4 \
+    )"
+
+    _VERSIONRC_="$_VERSION_-rc$release_candidate"
     [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
 }
 
+# define when script was created
 xcreated(){
     # set app version (dynamic from header comments or static)
     _CREATED_AT_="$(head -n 20 "$0" | \
@@ -37,14 +49,21 @@ xcreated(){
         cut -d ':' -f2 | \
         cut -d ',' -f2 | \
         cut -d '-' -f1 | \
-        cut -d '/' -f1\
+        cut -d '/' -f1 \
     )"
     # not found date in header comments, try filestats
-    [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(stat "$0" | grep Birth | cut -d ' ' -f3-4 | cut -d '.' -f1  )"
+    [ -z "$_CREATED_AT_" ] && \
+        _CREATED_AT_="$(stat "$0" | \
+            grep Birth  | \
+            cut -d ' ' -f3 | \
+            cut -d '.' -f1 | \
+            cut -d '-' -f1 \
+        )"
     # still null? set as unknown, to be filed later
     [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
 }
 
+# define author of script
 xauthor(){
     _AUTHOR_=$(
         head -n 20 "$0" | \
@@ -53,8 +72,11 @@ xauthor(){
         cut -d ',' -f1 |\
         cut -c2-
     )
-     # not found author in header comments, try get by git config
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config author.name)
+    # not found author in header comments, try get by git config
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global user.name)
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global user.email)
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global author.name)
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global author.email)
     # still null? try by $USER variable
     [ -z "$_AUTHOR_" ] && _AUTHOR_="$USER"
     # null? set as unknown, to be filled in later
