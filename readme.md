@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/02/09 - 20:50:54
+ Last Modified: Friday, 2023/02/10 - 22:13:41
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.482
+ Version: 0.0.21.497
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -393,24 +393,30 @@ Functions
 
 Functions
 * getPath
-  * retunr full path of a first binary of all received via arguments
-  ```
-    # usage; Get path of first text editor found
+  * return full path of a first binary of all received via arguments
+  ```bash
+    # usage
     getPath nano vim micro emacs
   ```
 * basePath
   * return base path of a file
-  ```
-  # if you pass file /etc/passwd, function will return /etc
+  ```bash
+  # return /etc
   basepath /etc/passwd
   ```
 * tern
+  * ternary command
+  ```bash
+    tern "expr" "true value" "false value"
+  ```
 * isROOT?
+  * check if current user is root
 * requireROOT
-* dots
+  * require root to continue script (non root users? exit)
+<!-- * dots
   ```
   
-  ```
+  ``` -->
   
 </details>
 </br>
