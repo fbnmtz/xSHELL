@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/02/01 - 01:45:02
+# Last Modified: Sunday, 2023/02/12 - 20:07:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.9.1065
+# Version: 0.2.10.1108
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -89,18 +89,18 @@ xusage(){
         -f|--field-error)
             xhelp --long-usage
             __exit_code=3 
-            __usage_msg="Error! empty value for '$2' param.\n\n" 
+            __usage_msg="${RED}Error!${RESET} empty value for ${YELLOW}'$2'${RESET} param.${RESET}\n\n" 
         ;;
 
         -m|--missing-param)
             xhelp --long-usage
             __exit_code=1 
-            __usage_msg="Error! Missing required param.\n\n" 
+            __usage_msg="${RED}Error!${RESET} Missing required param.${RESET}\n\n" 
         ;;
         -r|--reject-unknow)
             xhelp --long-usage
             __exit_code=2 
-            __usage_msg="Error! invalid option ($2).\n\n" 
+            __usage_msg="${RED}Error!${RESET} invalid option ${YELLOW}($2)${RESET}.${RESET}\n\n" 
         ;;
         -c|--custom)
             xhelp --long-usage
@@ -305,41 +305,42 @@ xarg(){
 # xrun "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xrun(){
-    xHelpRun(){
-        echo -e "'lib/args' main functions (xarg, xrun)
-        \n1) xarg -> set args to be validate in 'xrun' function
-        \nusage: xarg [OPTION] <VALUE>\
+    xrunHelp(){
+        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
+        \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
+        \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
         \n\nAvailable options:\
         "
         echo -e "\
-        \n  -i, --id    <VALUE>; short and long key. ex: '-h,--help'\
-        \n  -c, --code  <VALUE>; shell code to run by 'eval'\
-        \n  -v, --var   <VALUE>; define vars\
-        \n  -d, --desc  <TEXT>; description to this 'arg'\
+        \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
+        \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
+        \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
+        \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
         \n
         \n # Grouping options #
-        \n  -b, --block   <VALUE> or\
-        \n  -g, --group   <VALUE> or\
-        \n  -s, --section <VALUE> or\
+        \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
+        \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
+        \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
         \
         " | column -t -s ';'
         
         echo -e "\
         \nExamples:\
-        \n  xarg --id -h,--help --code 'xusage --help'  --desc 'run function \"xusage\"'\
-        \n  xarg --id -v,--var  --var  var:value,url+r --desc 'equivalent to \"var=value; read url\"'\
-        \n  xarg --block 'new block'\
+        \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
+        \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
+        \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
         
-        \n2) xrun -> create 'case struct/validate args' defined via 'function xarg' for your application\
-        \n\nusage: xrun [OPTIONS] \"\$@\"\
+        \n${YELLOW}2) xrun${RESET} -> create 'case struct/validate args' defined via 'function xarg' for your application\
+        \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
         \n\nAvailable options:\
         "
         echo -e "
-        \n  --xrequire-one;script will require at least one argument\
-        \n  --xreject-unknow;raise an error if your script receives args not defined\
-        \n  --xversionrc;use full version with rc (release candidate)
-        \n  --xdebug;prints generated case with args for inspection\
-        \n  --xhelp;prints this message
+        \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
+        \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
+        \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
+        \n  ${CYAN}--xcolors${RESET};enable color support\
+        \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
+        \n  ${CYAN}--xhelp${RESET};prints this message
         " | column -t -s ';' 
 
         # echo -e "\n[!] ATENTION:\
@@ -358,7 +359,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_DEBUG"    ] && echo -e "# show debug information:\n\n $__runARGS_case_\n" ;
+        [ -n "$_ARGS_DEBUG"    ] && echo -e "#${RED} show debug information${RESET}:\n\n$__runARGS_case_\n" ;
         [ -n "$_ARGS_REQUIRED" ] && xrequire_one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
@@ -371,6 +372,7 @@ xrun(){
 
     # set default grouping (has more than zero entries with groups? user defined)
     if [ "$(Hash.all | grep -Ei '\+[a-z]' | wc -l)" -gt 0 ]; then
+        # create this group for --help and --version options
         xarg --block "Information Options"
     else
         # no user group? use this for all options
@@ -394,8 +396,8 @@ xrun(){
          --code "echo \"\$_CURRENT_VERSION_\"; exit" \
          --desc "print version and exit"
     
-    # store arguments to be passed to the script
-    _xSCRIPT_ARGS=()
+    # store arguments/params to be passed to the script
+    _PARAMS_=()
     
     # search for xrun args 
      while [ "$1" != "" ]; do
@@ -414,15 +416,20 @@ xrun(){
             --xversion-full | --xversionrc)
                 shift; _CURRENT_VERSION_=$_VERSIONRC_
             ;;
+            --xcolors)
+                shift; use colors;
+            ;;
             --xhelp)
-                shift; xHelpRun
+                use utils
+                local _help_viewer=$(getPath bat less)
+                shift; xrunHelp | $_help_viewer
             ;;
             *)
-                _xSCRIPT_ARGS+=("$1")
+                _PARAMS_+=("$1")
                 shift
         esac
     done
-    generateCase "${_xSCRIPT_ARGS[@]}"
+    generateCase "${_PARAMS_[@]}"
 }
 
 # check if one flag is set and require a value for it
