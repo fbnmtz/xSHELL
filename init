@@ -6,122 +6,76 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/05 - 09:38:48
+# Last Modified: Monday, 2023/02/13 - 00:42:22
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.12.268
+# Version: 0.1.13.352
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
 # ############################################################################
 # HISTORY:
 #
-# Sunday, 2023/02/05 - 09:33:12: (@fbnmtz)
-#  -> updatet lib/init
-    # * chage scope of function 'checkLibLoaded' to inside 'use' function
-    # * update 'check' function (internal of 'xrequirements'
-    
-# Thuesday, 2023/01/19 - 17:12:50: (@fbnmtz)
-#  -> solve some 'shelcheck' alerts
 
-# Sunday, 2023/01/15 - 16:07:58: (@fbnmtz)
-#  -> 'lib/init' - adjust locations of libs
-
-# Sunday, 2023/01/15 - 14:52:23: (@fbnmtz)
-#  -> reorganize files (to publish on github)
-    # * this repo will contain only lib files for now on
-    
-# Thuesday, 2022/12/29 - 09:29:22: (@fbnmtz)
-#  ->  lib/init - change lib_const used to identify loaded files
-    # * add new alias 'unit' for 'use' function
-
-# Wednesday, 2022/11/09 - 23:14:51: (@fbnmtz)
-#  -> lib/init - adjust debug information
-
-# Monday, 2022/04/25 - 19:54:42: (@fbnmtz)
-#  -> lib/init - implements debuf info via '_INT_DEBUG_' variable
-
-# Wednesday, 2022/02/16 - 18:16:49: (@fbnmtz)
-#  -> lib updade
-
-    # * move some files
-    # * init - new default location; implement check to avoid load same lib twice
-    # * utils - new function tern
-    # * args - fix bug when assing vars; list multiple vars in usage cmd; help for xrun
-
-# Friday, 2022/02/11 - 21:49:18: (@fbnmtz)
-#  -> new feature - not load same lib twice (var '__LIB_<NAME>' in each library)
-
-    # * args - new lib (move args functions)
-    # * init - update load to search in one more dir; refactor code;  chec
-    # * utils - remove some functions
-
-    # update scritps using lib
-    
-# Wednesday, 2021/06/23 - 21:49:18: (@fbnmtz)
-#  -> update libs (refactor and new functions)
-
-# Sunday, 2021/05/30 - 19:03:45: (@fbnmtz)
-#  -> update my lib
-
-# Saturday, 2021/05/22 - 16:11:21: (@fbnmtz)
-#  -> my custom lib (fucntions to make easy to create new apps/bins)
-
-
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # shellcheck disable=SC1090,2155
-# _INIT_DEBUG_=false
-# _INIT_DEBUG_=true
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# create constants
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# debug var
+# _INIT_DEBUG_=false      # set to true if false
 
-# application name
-APP=$(basename "$0")
-APP_DIR=$(dirname "$0")
-APP_HOME=""
+#  autoload 'colors' if in DEBUG mode
+[ "$_INIT_DEBUG_" == 'true' ] && source ~/bin/xSHELL/colors
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+APP=$(basename "$0")      # application name
+APP_DIR=$(dirname "$0")   # application current directory
+APP_HOME=""               # application home (store data)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
 # function to set $APP_HOME
 # ex: setHome {dir1, dir2}
 xsetHome(){
-    APP_HOME=~/.fbnmtz/$APP
-    mkdir -p "$APP_HOME"/"$*"
+  APP_HOME=~/.fbnmtz/$APP
+  mkdir -p "$APP_HOME"/"$*"
 }
 
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
-    # check if some lib already loaded
-    checkLibLoaded(){
-        # convert fist arg to UPCASE 
-        local name=${1^^}
+  # check if some lib already loaded
+  checkLibLoaded(){
+    # convert fist arg to UPCASE 
+    local name=${1^^}
 
-        # replace '.' for '_'
-        name=${name//./_}
-        
-        # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
-        name=${name//LIB/}
-        
-        # Const for mark lib as loaded
-        lib_const="_xLIB_${name}"
+    # replace '.' for '_'
+    name=${name//./_}
+    
+    # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
+    name=${name//LIB/}
+    
+    # Const for mark lib as loaded
+    lib_const="_xLIB_${name}"
 
-        # check last char (needs to be equal '_' underline)
-        if [[ ! "${lib_const:(-1)}" == "_" ]]; then
-            lib_const+="_"
-        fi
+    # check last char (needs to be equal '_' underline)
+    if [[ ! "${lib_const:(-1)}" == "_" ]]; then
+      lib_const+="_"
+    fi
 
-        # check if load lib has a defined var __LIB_NAME and its not null
-        if eval "test -z \"\$${lib_const}\"" ; then
-            [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' not loaded. (const '$lib_const' not found.)"
-            return 1
-        else
-            [ "$_INIT_DEBUG_" == 'true' ] && echo "lib '${1}' already loaded (skipping)"
-            return 0
-        fi
-    }
+    # check if load lib has a defined var __LIB_NAME and its not null
+    if eval "test -z \"\$${lib_const}\"" ; then
+      [ "$_INIT_DEBUG_" == 'true' ] && { 
+        echo -e "${RED}\`-> lib '${1}' not loaded. (const '${BGRED}${BLACK}$lib_const${RESET}${RED}' not found.)${RESET}"
+      }
+      return 1
+    else
+      [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${YELLOW}\`-> lib '${1}' already loaded (skipping)${RESET}"
+      return 0
+    fi
+  }
 
-  [ "$_INIT_DEBUG_" == 'true' ] && echo -e "call 'use' from 'from $0' with args '$*'\n"
+  [ "$_INIT_DEBUG_" == 'true' ] && \
+    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$0'${RESET}"
   
   for lib_file in "$@"; do
     
@@ -129,10 +83,14 @@ use(){
 
       local current_path=$(dirname "$0") 
       local locations=( 
+        # search libs on path of current script
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file" 
-        "$HOME/bin/xSHELL/$lib_file" 
-        "$HOME/bin/lib/vendor/$lib_file" 
+        #  search on xSHELL directory 
+        "$HOME/bin/xSHELL/$lib_file"
+        # tyr to load third party libraries  
+        "$HOME/bin/xSHELL/vendor/$lib_file" 
+        "$HOME/bin/vendor/$lib_file" 
       )
       local included=''
 
@@ -142,7 +100,10 @@ use(){
 
         if source "$lib" 2> /dev/null ; then
           # success? set a flag; break loop
-          [ "$_INIT_DEBUG_" == 'true' ] && echo "load '${locations[$li]}' - location: $li)"
+          [ "$_INIT_DEBUG_" == 'true' ] && { 
+            echo -en "${GREEN}  \`-> loaded '${locations[$li]}'${RESET} - " 
+            echo -e  "${CYAN}location: $((li+1))/${#locations[@]}${RESET})"
+          }
           included="true"
           break
         fi
@@ -153,7 +114,7 @@ use(){
     fi
 
     # not included with success? raise a error 
-    test -z "$included" && { echo "Error importing lib: $lib_file"; exit 1; }
+    test -z "$included" && { echo "${RED}Error importing lib: $lib_file${RESET}"; exit 1; }
   
   done
 }
@@ -168,34 +129,34 @@ alias unit=use
 # validade requirements
 # ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
-    fail(){
-        local tool=$1
-        local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
-        echo -e "$error_msg"
-        alert "$0" "$error_msg"
-        exit 10
-    }
-    # check if a package exists on the system
-    # ex; check bin1
-    check(){
-        which "$1" &> /dev/null
-    }
-    for tool in "$@"; do
-        if [[ "$tool" =~ ":" ]]; then
-            local found=''
-            for t in ${tool//\:/ }; do 
-                if check "$t"; then
-                    found=true
-                    break;
-                else
-                    found=false
-                fi
-            done
-            [ "$found" != 'true' ] && fail "$tool"
+  fail(){
+    local tool=$1
+    local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
+    echo -e "$error_msg"
+    alert "$0" "$error_msg"
+    exit 10
+  }
+  # check if a package exists on the system
+  # ex; check bin1
+  check(){
+    which "$1" &> /dev/null
+  }
+  for tool in "$@"; do
+    if [[ "$tool" =~ ":" ]]; then
+      local found=''
+      for t in ${tool//\:/ }; do 
+        if check "$t"; then
+          found=true
+          break;
         else
-            if ! check "$tool"; then
-                fail "$tool"
-            fi
+          found=false
         fi
-    done
+      done
+      [ "$found" != 'true' ] && fail "$tool"
+    else
+      if ! check "$tool"; then
+        fail "$tool"
+      fi
+    fi
+  done
 }
