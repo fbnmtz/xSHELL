@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/13 - 00:42:22
+# Last Modified: Monday, 2023/02/13 - 23:46:55
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.13.352
+# Version: 0.1.14.420
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,7 +22,7 @@
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # debug var
-# _INIT_DEBUG_=false      # set to true if false
+# _INIT_DEBUG_=false      # set to true or false
 
 #  autoload 'colors' if in DEBUG mode
 [ "$_INIT_DEBUG_" == 'true' ] && source ~/bin/xSHELL/colors
@@ -62,14 +62,18 @@ use(){
       lib_const+="_"
     fi
 
-    # check if load lib has a defined var __LIB_NAME and its not null
+    # check if load lib has a defined var _xLIB_NAME_ and its not null
     if eval "test -z \"\$${lib_const}\"" ; then
       [ "$_INIT_DEBUG_" == 'true' ] && { 
-        echo -e "${RED}\`-> lib '${1}' not loaded. (const '${BGRED}${BLACK}$lib_const${RESET}${RED}' not found.)${RESET}"
+        echo -en "${RED}\`-> lib '${1}' not loaded. (const "
+        echo -e  "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"
       }
       return 1
     else
-      [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${YELLOW}\`-> lib '${1}' already loaded (skipping)${RESET}"
+      [ "$_INIT_DEBUG_" == 'true' ] && {
+        echo -en "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. ("
+        echo -e  "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"
+      }
       return 0
     fi
   }
@@ -83,13 +87,14 @@ use(){
 
       local current_path=$(dirname "$0") 
       local locations=( 
-        # search libs on path of current script
-        "$current_path/$lib_file" 
-        "$current_path/lib/$lib_file" 
         #  search on xSHELL directory 
         "$HOME/bin/xSHELL/$lib_file"
-        # tyr to load third party libraries  
+        # try to load third party libraries  
         "$HOME/bin/xSHELL/vendor/$lib_file" 
+        # search libs on path of current script
+        "$current_path/$lib_file" 
+        "$current_path/lib/$lib_file"
+        # search on $HOME/bin/vendor (for third party libraries)
         "$HOME/bin/vendor/$lib_file" 
       )
       local included=''
@@ -101,8 +106,8 @@ use(){
         if source "$lib" 2> /dev/null ; then
           # success? set a flag; break loop
           [ "$_INIT_DEBUG_" == 'true' ] && { 
-            echo -en "${GREEN}  \`-> loaded '${locations[$li]}'${RESET} - " 
-            echo -e  "${CYAN}location: $((li+1))/${#locations[@]}${RESET})"
+            echo -e "${GREEN}  \`-> loading '${locations[$li]}'${RESET} - "\
+              "${CYAN}location: $((li+1))/${#locations[@]}${RESET})"
           }
           included="true"
           break
@@ -114,7 +119,16 @@ use(){
     fi
 
     # not included with success? raise a error 
-    test -z "$included" && { echo "${RED}Error importing lib: $lib_file${RESET}"; exit 1; }
+    test -z "$included" && { 
+      echo -e "\n${RED}Error importing lib '$lib_file'"\
+        " - NOT_FOUND!${RESET}"
+      [ "$_INIT_DEBUG_" == 'true' ] && { 
+            echo -e "${RED} \`-> searched on locations:\n   *"\
+              "$(echo ${locations[@]} | sed 's/ /\\n\   * /g')"\
+              "${RESET}"
+          }
+      exit 1
+    }
   
   done
 }
@@ -137,7 +151,7 @@ xrequirements(){
     exit 10
   }
   # check if a package exists on the system
-  # ex; check bin1
+  # ex: check bin1
   check(){
     which "$1" &> /dev/null
   }
