@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/06 - 20:40:14
+# Last Modified: Wednesday, 2023/02/15 - 00:06:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.21
+# Version: 0.0.2.46
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,34 +19,52 @@
 
 _xLIB_COLORS_=true
 
-# Reset all attributes
-RESET='\033[0m'
+# shellcheck disable=SC2034
+# `-> ignore alert about declared variables but not used
 
-# Style attributes
-BOLD='\033[1m'
-DIM='\033[2m'
-UNDERLINED='\033[4m'
-BLINK='\033[5m'
-REVERSE='\033[7m'
-HIDDEN='\033[8m'
+# setup colors (define variables)
+xSetColors(){
 
-# Foreground colors
-BLACK='\033[30m'
-RED='\033[31m'
-GREEN='\033[32m'
-YELLOW='\033[33m'
-BLUE='\033[34m'
-MAGENTA='\033[35m'
-CYAN='\033[36m'
-WHITE='\033[37m'
+  # Reset all attributes
+  RESET='\033[0m'
 
-# Background colors
-BGBLACK='\033[40m'
-BGRED='\033[41m'
-BGGREEN='\033[42m'
-BGYELLOW='\033[43m'
-BGBLUE='\033[44m'
-BGMAGENTA='\033[45m'
-BGCYAN='\033[46m'
-BGWHITE='\033[47m'
+  # Style attributes
+  BOLD='\033[1m'
+  DIM='\033[2m'
+  UNDERLINED='\033[4m'
+  BLINK='\033[5m'
+  REVERSE='\033[7m'
+  HIDDEN='\033[8m'
 
+  # Foreground colors
+  BLACK='\033[30m'
+  RED='\033[31m'
+  GREEN='\033[32m'
+  YELLOW='\033[33m'
+  BLUE='\033[34m'
+  MAGENTA='\033[35m'
+  CYAN='\033[36m'
+  WHITE='\033[37m'
+
+  # Background colors
+  BGBLACK='\033[40m'
+  BGRED='\033[41m'
+  BGGREEN='\033[42m'
+  BGYELLOW='\033[43m'
+  BGBLUE='\033[44m'
+  BGMAGENTA='\033[45m'
+  BGCYAN='\033[46m'
+  BGWHITE='\033[47m'  
+}
+
+# unset colors 
+xUnsetColors(){
+  for var in RESET BOLD DIM UNDERLINE BLINK REVERSE HIDDEN \
+    BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE\
+    BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE; do 
+    unset $var
+  done
+}
+
+# enable colors by default
+xSetColors
