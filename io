@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
-# File...: lib/io
+# Project: xSHELL (none)
+# File...: io
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/01/05 - 00:37:48
+# Last Modified: Thursday, 2023/02/16 - 02:08:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.1.30
+# Version: 0.1.2.147
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,12 +19,31 @@
 
 _xLIB_IO_=true;
 
+# check requiments of this library
+xrequirements xrandr grep tput cut stty printf
+
+# vars to store cursor position (x -> line; y -> column)
+whereX=''
+whereY=''
+
+# update current cursor position
+getXY() { 
+  local v=() t=$(stty -g)
+  stty -echo
+  printf "\033[6n"
+  IFS='[;' read -ra v -d R
+  stty $t
+  CPos=(${v[@]:1})
+
+  whereX=${CPos[0]}
+  whereY=${CPos[1]}
+}
+
+# echo wrapper
 write(){ echo -e "$@"; }
 
-# list of screens
-function get_screens(){
-    xrandr | grep "Screen" 
-}
+# list of screens (monitors)
+function get_screens(){ xrandr | grep "Screen" ; }
 
 # get resolution a screen
 # @param $1 -> screen name
