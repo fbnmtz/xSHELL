@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/12 - 20:07:23
+# Last Modified: Thursday, 2023/02/16 - 02:11:40
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.10.1108
+# Version: 0.2.11.1121
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 _xLIB_ARGS_=true;
 
-use system hashs args.utils
+use args.utils system hashs
 # hash to save app params
 Hash.new main_params
 
@@ -285,12 +285,22 @@ xarg(){
                 method=longflags
                 _xARGS_NO_DAHS=true
             ;;
+            -h|--header)
+                method=header
+                xflag_require_value "$1" "$2"
+                xhelp --header="$2"
+            ;;
+            -f|--footer)
+                method=footer
+                xflag_require_value "$1" "$2"
+                xhelp --footer="$2"
+            ;;
         esac
         shift
     done
 
     # bypass when no arguments has been defined
-    if [ "$method" != "block" ] && [ "$method" != "longflags" ] ; then
+    if [ "$method" != "block" ] && [ "$method" != "longflags" ] && [ "$method" != "footer" ]; then
         xhelp --param="${option_default}${desc_var}+${description}+${block}"
     fi
 
