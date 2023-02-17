@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/02/17 - 00:40:39
+# Last Modified: Friday, 2023/02/17 - 18:32:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.3.152
+# Version: 0.1.4.159
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -39,7 +39,20 @@ getXY() {
   whereY=${CPos[1]}
 }
 
+# alternative functions (not working)
+# whereX(){ tput col 2> /dev/null;  }
+# whereY(){ tput line 2> /dev/null; }
+
 getScreenSize(){ echo `tput lines`x`tput cols` ; }
+
+# move cursor to X,Y coordinates
+gotoXY(){
+  if [ -n "$1" ] && [ -n "$2" ]; then
+    tput cup "$1" "$2"
+  else
+    tput cup "$whereX" "$whereY"
+ fi
+}
 
 # echo wrapper
 write(){ echo -e "$@"; }
