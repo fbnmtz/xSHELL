@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/01/15 - 15:22:06
+# Last Modified: Friday, 2023/02/17 - 00:40:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.65
+# Version: 0.0.9.67
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,7 +28,7 @@ if [ -d ~/bin/xSHELL ] || [ -L ~/bin/xSHELL ]; then
     exit $ExDirAlredyExists
 else
     # clone this repo to your '/home'
-    git clone "${github}/${repo}" ~/bin/xSHELL && \
+    git clone "${github}/${repo}" ~/bin/xSHELL
     
     # Add scripts to your system $PATH
     if ! grep "\$PATH:\$HOME/bin/xSHELL" ~/.profile  1> /dev/null  ; then

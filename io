@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/02/16 - 02:08:32
+# Last Modified: Friday, 2023/02/17 - 00:40:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.2.147
+# Version: 0.1.3.152
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -39,8 +39,11 @@ getXY() {
   whereY=${CPos[1]}
 }
 
+getScreenSize(){ echo `tput lines`x`tput cols` ; }
+
 # echo wrapper
 write(){ echo -e "$@"; }
+puts(){ write "$@"; }
 
 # list of screens (monitors)
 function get_screens(){ xrandr | grep "Screen" ; }
