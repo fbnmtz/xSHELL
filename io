@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/02/17 - 18:32:43
+# Last Modified: Saturday, 2023/02/18 - 19:31:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.159
+# Version: 0.1.5.161
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -54,7 +54,21 @@ gotoXY(){
  fi
 }
 
-# echo wrapper
+# write text on X,Y coordinates
+wxy(){
+  local x=$1; shift # line
+  local y=$1; shift # column
+  # update current position
+  getXY
+  # go to new position
+  gotoXY "$x" "$y"
+  # write text
+  write "$@"
+  # return to original position
+  gotoXY 
+}
+
+# wrapper for echo
 write(){ echo -e "$@"; }
 puts(){ write "$@"; }
 
