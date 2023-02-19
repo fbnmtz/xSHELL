@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/13 - 23:46:55
+# Last Modified: Sunday, 2023/02/19 - 16:51:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.14.420
+# Version: 0.1.15.530
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,19 +18,17 @@
 #
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# shellcheck disable=SC1090,2155
+# _INIT_DEBUG_=false      # set to true or false to DEBUG
+
+# shellcheck disable=SC1090   #warning on 'source' usage
+[ "$_INIT_DEBUG_" == 'true' ] \
+  && source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# debug var
-# _INIT_DEBUG_=false      # set to true or false
-
-#  autoload 'colors' if in DEBUG mode
-[ "$_INIT_DEBUG_" == 'true' ] && source ~/bin/xSHELL/colors
-
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-APP=$(basename "$0")      # application name
-APP_DIR=$(dirname "$0")   # application current directory
-APP_HOME=""               # application home (store data)
+APP=$(basename "$0")          # application name
+# shellcheck disable=SC2034   # unused variable warning
+APP_DIR=$(dirname "$0")       # application current directory
+APP_HOME=""                   # application home (store data)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
 # function to set $APP_HOME
@@ -45,22 +43,13 @@ xsetHome(){
 use(){
   # check if some lib already loaded
   checkLibLoaded(){
-    # convert fist arg to UPCASE 
-    local name=${1^^}
+    local libname=${1^^}                # convert fist arg to UPCASE 
+    libname=${libname//./_}             # replace '.' for '_'
+    libname=${libname//LIB/}            # remove word 'lib' from filename 
+    local lib_const="_xLIB_${libname}"  # Const for mark lib as loaded
 
-    # replace '.' for '_'
-    name=${name//./_}
-    
-    # remove word 'lib' from filename (# name=$(sed "s/LIB//" <<< $name))
-    name=${name//LIB/}
-    
-    # Const for mark lib as loaded
-    lib_const="_xLIB_${name}"
-
-    # check last char (needs to be equal '_' underline)
-    if [[ ! "${lib_const:(-1)}" == "_" ]]; then
-      lib_const+="_"
-    fi
+    # check last char (needs to be equal '_' underline) 
+    test ! "${lib_const:-1}" == "_"  && lib_const+="_"
 
     # check if load lib has a defined var _xLIB_NAME_ and its not null
     if eval "test -z \"\$${lib_const}\"" ; then
@@ -85,29 +74,26 @@ use(){
     
     if ! checkLibLoaded "$lib_file"; then
 
+      # shellcheck disable=SC2155         # warning - declare and assign separate
       local current_path=$(dirname "$0") 
-      local locations=( 
-        #  search on xSHELL directory 
+      local lib_dirs=( 
         "$HOME/bin/xSHELL/$lib_file"
-        # try to load third party libraries  
         "$HOME/bin/xSHELL/vendor/$lib_file" 
-        # search libs on path of current script
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file"
-        # search on $HOME/bin/vendor (for third party libraries)
         "$HOME/bin/vendor/$lib_file" 
       )
       local included=''
 
       # search file in default destinations
-      li=0
-      for lib in "${locations[@]}"; do
+      local li=0
+      for lib in "${lib_dirs[@]}"; do
 
         if source "$lib" 2> /dev/null ; then
           # success? set a flag; break loop
           [ "$_INIT_DEBUG_" == 'true' ] && { 
-            echo -e "${GREEN}  \`-> loading '${locations[$li]}'${RESET} - "\
-              "${CYAN}location: $((li+1))/${#locations[@]}${RESET})"
+            echo -e "${GREEN}  \`-> loading '${lib_dirs[$li]}'${RESET} - "\
+              "${CYAN}directory: $((li+1))/${#lib_dirs[@]}${RESET})"
           }
           included="true"
           break
@@ -121,12 +107,13 @@ use(){
     # not included with success? raise a error 
     test -z "$included" && { 
       echo -e "\n${RED}Error importing lib '$lib_file'"\
-        " - NOT_FOUND!${RESET}"
+        "- NOT_FOUND!${RESET}"
       [ "$_INIT_DEBUG_" == 'true' ] && { 
-            echo -e "${RED} \`-> searched on locations:\n   *"\
-              "$(echo ${locations[@]} | sed 's/ /\\n\   * /g')"\
-              "${RESET}"
-          }
+          local all_dirs=${lib_dirs[*]}
+          echo -e "${RED} \`-> searched on dir's:\n   *"\
+            "${all_dirs// /\\n   \* }"\
+            "${RESET}"
+        }
       exit 1
     }
   
@@ -140,7 +127,7 @@ alias require=use
 alias load=use
 alias unit=use
 
-# validade requirements
+# validade required binaries
 # ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
   fail(){
@@ -152,9 +139,8 @@ xrequirements(){
   }
   # check if a package exists on the system
   # ex: check bin1
-  check(){
-    which "$1" &> /dev/null
-  }
+  check(){ which "$1" &> /dev/null; }
+  
   for tool in "$@"; do
     if [[ "$tool" =~ ":" ]]; then
       local found=''
