@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/11 - 13:14:47
+# Last Modified: Monday, 2023/02/20 - 16:37:26
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.10.218
+# Version: 0.1.11.225
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -41,13 +41,10 @@ done
 unset name email
 
 xshell_init(){
-    # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
     # set default editor
     editor=$(getPath code micro nano vim neovim ne emacs mcedit tilde atom gedit gvim pico)
-    # scripts path
-    scripts_path=$HOME/bin
-    # libs path
-    libs_path=$HOME/bin/xSHELL
+    # set default scripts output directory
+    [ -z "$output" ] && output=$HOME/bin
 }
 
 parse_args(){
