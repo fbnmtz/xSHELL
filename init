@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/19 - 16:51:17
+# Last Modified: Monday, 2023/02/20 - 18:51:06
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.15.530
+# Version: 0.1.16.541
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,8 +21,8 @@
 # _INIT_DEBUG_=false      # set to true or false to DEBUG
 
 # shellcheck disable=SC1090   #warning on 'source' usage
-[ "$_INIT_DEBUG_" == 'true' ] \
-  && source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
+[ "$_INIT_DEBUG_" == 'true' ] && \
+  source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 APP=$(basename "$0")          # application name
@@ -43,25 +43,25 @@ xsetHome(){
 use(){
   # check if some lib already loaded
   checkLibLoaded(){
-    local libname=${1^^}                # convert fist arg to UPCASE 
-    libname=${libname//./_}             # replace '.' for '_'
-    libname=${libname//LIB/}            # remove word 'lib' from filename 
-    local lib_const="_xLIB_${libname}"  # Const for mark lib as loaded
+    local lib_const=${1^^}          # convert fist arg to UPCASE 
+    lib_const=${lib_const//./_}     # replace '.' for '_'
+    lib_const=${lib_const//LIB/}    # remove word 'lib' from filename 
+    lib_const="_xLIB_${lib_const}"  # Const for mark lib as loaded
 
     # check last char (needs to be equal '_' underline) 
-    test ! "${lib_const:-1}" == "_"  && lib_const+="_"
+    [ ! "${lib_const:-1}" == "_" ]  && lib_const+="_"
 
     # check if load lib has a defined var _xLIB_NAME_ and its not null
-    if eval "test -z \"\$${lib_const}\"" ; then
+    if eval "[ -z \"\$${lib_const}\" ]" ; then
       [ "$_INIT_DEBUG_" == 'true' ] && { 
-        echo -en "${RED}\`-> lib '${1}' not loaded. (const "
-        echo -e  "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"
+        echo -e "${RED}\`-> lib '${1}' not loaded. (const "\
+          "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"
       }
       return 1
     else
       [ "$_INIT_DEBUG_" == 'true' ] && {
-        echo -en "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. ("
-        echo -e  "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"
+        echo -e "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. ("\
+          "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"
       }
       return 0
     fi
