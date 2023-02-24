@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/02/16 - 02:11:40
+# Last Modified: Wednesday, 2023/02/22 - 23:29:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.11.1121
+# Version: 0.2.11.1228
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -65,7 +65,7 @@ xhelp(){
     #   --> tr replace breaklines '\n' for a space ' ' . 
     # result: all shortkeys in one line
     # __HELP_USAGE__="usage: \n  $APP $(Hash.keys main_params | sed 's/,--.[a-z]*//g' | tr -s '\n' ' ')" 
-    __HELP_USAGE__="usage: \n  $APP "
+    __HELP_USAGE__="usage: \n  ${GREEN}$APP${RESET} "
     if [ $(Hash.count main_params) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
         __HELP_USAGE__+="$(
             Hash.keys main_params | \
@@ -75,6 +75,13 @@ xhelp(){
             sed 's/$/]/g' | \
             tr -s '\n' ' '
         )" 
+
+        if [ -n "$RED" ]; then 
+            # apply colors
+            __HELP_USAGE__=${__HELP_USAGE__//-/${MAGENTA}-}
+            __HELP_USAGE__=${__HELP_USAGE__//</${YELLOW}<}
+            __HELP_USAGE__=${__HELP_USAGE__//\]/${RESET}\]}
+        fi
     else
         __HELP_USAGE__+="[OPTIONS] "
     fi
@@ -133,30 +140,46 @@ xusage(){
 
         __HELP_OPTIONS_DESCRIPTION__=''
         for h in $(
-                Hash.all main_params | \
-                sed 's/^-/:-/g' | \
-                sed 's/ /./g'  
+                Hash.all main_params |      # get all hashes \
+                sed "s/:/:/g" |             # add blue color to options description':'\
+                sed "s/^-/:-/g" |           # add color to options/flags \
+                # sed "s/:/\\${BLUE}:/g" |            # add blue color to options description':'\
+                # sed "s/^-/:\\${MAGENTA}-/g" |       # add color to options/flags \
+                # sed "s/</\\${YELLOW}</g" |          # add color to values/params \
+                # sed "s/>/>\\${RESET}\\${BLUE}/g" |  # add color to values/params  \
+                sed 's/ /./g'                       # replace ' ' with '.'  
             ); do
-            b=$(echo $h | cut -d '+' -f2)
+            b=$(echo -e $h | cut -d '+' -f2)
             # echo "'$b' - '$block'"
             if [ -n "${b// }" ]; then 
-                [ "${b}" != "${block// /.}" ] && block="${b}" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+                [ "${b}" != "${block// /.}" ] && block="${b}" \
+                    && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
                 # echo
             else 
                 if [ -z "$outblock" ];then
-                    block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+                    block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
                     outblock=true
                 fi
                 # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
             fi
-            __HELP_OPTIONS_DESCRIPTION__+="$(echo ${h//./ } | cut -d '+' -f1)\n" 
+            __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
+
+             if [ -n "$RED" ]; then 
+                # apply colors
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//^-/${MAGENTA}-}
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
+            fi
+
         done
 
         # echo -e "$____HELP_OPTIONS_DESCRIPTION" | column -t -s ':' | sed 's/;/:/g'
-        echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+        __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
             column -L -t -s ':' -o ' ' | \
-            sed 's/;/:/g' | \
-            sed 's/,/,  /g' 
+            sed "s/;/:/g" | \
+            sed 's/,/,  /g' )
+        echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
             # sed '/^#/ s/ \{1,\}/ /g' | \
         
         # not null? prints footer 
