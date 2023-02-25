@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
+# Project: xSHELL (vundefined)
 # File...: utils
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/18 - 01:18:34
+# Last Modified: Saturday, 2023/02/25 - 18:40:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.9.410
+# Version: 1.0.10.459
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -88,4 +88,16 @@ dots() {
     local pad=$(printf "%0.1s" "."{1..60})
     printf " * %s%*.*s" "$1" 0 $((60-${#1})) "$pad"
     return 0
+}
+
+# search and return a git config (local or global)
+# getGit user.name author.name
+getGit(){
+    local git_cmd="git config" _git_config
+    for c in "$@" ; do
+        _git_config=$($git_cmd "$c")
+        [ -n "$_git_config" ] && { echo "$_git_config" ; break; }
+        _git_config=$($git_cmd --global "$c")
+        [ -n "$_git_config" ] && { echo "$_git_config" ; break; }
+    done
 }
