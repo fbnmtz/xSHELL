@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/02/25 - 18:31:15
+ Last Modified: Saturday, 2023/02/25 - 18:46:02
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.505
+ Version: 0.0.21.506
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -91,17 +91,20 @@ Within this library, comes `xshell` tool used create new scripts;
 xshell -h
 
 usage:
-  libsExample [-p] [-n <title> <text>] [-m <expression>] [-V <option>] [-V <option>] [-h] [-v]
+  xshell [-a <arguments>] [-e <editor>] [-f <name>] [-H] [-l] [-o <output>] [-h] [-v]
 
 -> Available Options:
-   -p,  --print                 print some code
-   -n,  --notify <title> <text> test notify system
-   -m,  --math <expression>     solve math expression
-   -V,  --volume <option>       volume option (up or down)
-   -h,  --help                  show this help
-   -v,  --version               print version and exit
+   -a,  --args <arguments> define <arguments> for new script
+   -e,  --editor <editor>  define <editor> to open script
+   -f,  --filename <name>  filename for new script
+   -H,  --header           enable our default header on the new script
+   -l,  --lib              define new script as a our LIB type (can be loaded with 'use' function)
+   -o,  --output <output>  setup <output> directory for new script
+   -h,  --help             show this help
+   -v,  --version          print version and exit
 
-v0.0.1 - writen by fbnmtz 2023
+v0.1.17-rc316 - writen by @fbnmtz 2020
+
 
 
 
