@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: xSHELL (none)
+ Project: xSHELL (vundefined)
  File...: readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Friday, 2023/02/10 - 22:13:41
+ Last Modified: Friday, 2023/02/24 - 21:50:55
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.497
+ Version: 0.0.21.504
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -91,18 +91,18 @@ Within this library, comes `xshell` tool used create new scripts;
 xshell -h
 
 usage:
-  xshell [-a <arguments>] [-e <editor>] [-f <name>] [-H] [-l] [-h] [-v]
+  libsExample [-p] [-n <title> <text>] [-m <expression>] [-V <option>] [-V <option>] [-h] [-v]
 
 -> Available Options:
-   -a,  --args <arguments> define <arguments> for new script
-   -e,  --editor <editor>  define <editor> to open script
-   -f,  --filename <name>  filename for new script
-   -H,  --header           enable our default header on the new script
-   -l,  --lib              define new script as a our LIB type (can be loaded with 'use' function)
-   -h,  --help             show this help
-   -v,  --version          print version and exit
+   -p,  --print                 print some code
+   -n,  --notify <title> <text> test notify system
+   -m,  --math <expression>     solve math expression
+   -V,  --volume <option>       volume option (up or down)
+   -h,  --help                  show this help
+   -v,  --version               print version and exit
 
-v0.1.15-rc300 - writen by @fbnmtz 2020
+v0.0.1 - writen by fbnmtz 2023
+
 
 
 ```
@@ -117,7 +117,7 @@ You can create your new script (default location `$HOME/bin`) using `xshell` too
 xshell -f libsExample \
     -e nano \
     --args "
-        id=-p,--print;code='echo.print.test';desc='print-some-code' 
+        id=-p,--print;code='echo.print.test';desc='print.some.code' 
         id=-n,--notify;var=title+r,text+r;desc='test.notify.system' 
         id=-m,--math;var=expression+r;desc='solve.math.expression'  
         id=-V,--volume;var=option+r;desc='volume.option.(up.or.down)'
@@ -162,7 +162,7 @@ source ~/bin/xSHELL/init
 use args
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-xarg --id -p,--print --code 'echo print test' --desc 'print-some-code'
+xarg --id -p,--print --code 'echo print test' --desc 'print some code'
 xarg --id -n,--notify --var title+r,text+r --desc 'test notify system'
 xarg --id -m,--math --var expression+r --desc 'solve math expression'
 xarg --id -V,--volume --var option+r --desc 'volume option (up or down)'
@@ -220,7 +220,6 @@ usage:
    -n,  --notify <title> <text> test notify system
    -m,  --math <expression>     solve math expression
    -V,  --volume <option>       volume option (up or down)
-
    -h,  --help                  show this help
    -v,  --version               print version and exit
 
