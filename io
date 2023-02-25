@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
+# Project: xSHELL (vundefined)
 # File...: io
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/18 - 19:31:23
+# Last Modified: Saturday, 2023/02/25 - 18:38:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.161
+# Version: 0.1.6.188
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,12 +28,14 @@ whereY=''
 
 # update current cursor position
 getXY() { 
+  # shellcheck disable=SC2155
   local v=() t=$(stty -g)
   stty -echo
   printf "\033[6n"
+  # shellcheck disable=SC2034
   IFS='[;' read -ra v -d R
-  stty $t
-  CPos=(${v[@]:1})
+  stty "$t"
+  local CPos=("${v[@]:1}")
 
   whereX=${CPos[0]}
   whereY=${CPos[1]}
@@ -43,7 +45,7 @@ getXY() {
 # whereX(){ tput col 2> /dev/null;  }
 # whereY(){ tput line 2> /dev/null; }
 
-getScreenSize(){ echo `tput lines`x`tput cols` ; }
+getScreenSize(){ echo "$(tput lines)"x"$(tput cols)" ; }
 
 # move cursor to X,Y coordinates
 gotoXY(){
@@ -67,6 +69,27 @@ wxy(){
   # return to original position
   gotoXY 
 }
+
+# read a variable on X,Y coordinates
+rxy(){
+  local x=$1; shift   # line
+  local y=$1; shift   # column
+  local var=$1; shift # column
+  # update current position
+  getXY
+  write "$2"
+  # go to new position
+  gotoXY "$x" "$y"
+  # read var
+  read -er "${var?}"
+  write "$3"
+
+  # return to original position
+  gotoXY 
+}
+
+# wait until one key is pressed
+keyPressed(){ read -rp "Press key to continue.. " -n1 -s; }
 
 # wrapper for echo
 write(){ echo -e "$@"; }
@@ -109,7 +132,10 @@ redirect_output(){
     set -o errexit
 
     # $1 not null? use as filename. Else? set a default name
-    [ -n "$1" ] && LOG_FILE="$1" || readonly LOG_FILE="/tmp/${APP}-output.log"
+    if [ -n "$1" ]
+      then LOG_FILE="$1"
+      else readonly LOG_FILE="/tmp/${APP}-output.log"
+    fi
 
     # Create the destination log file that we can
     # inspect later if something goes wrong with the
