@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
+# Project: xSHELL (vundefined)
 # File...: xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/20 - 16:37:17
+# Last Modified: Monday, 2023/02/27 - 03:16:26
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.17.316
+# Version: 0.1.18.329
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -38,7 +38,7 @@ xarg --id -H,--header    --var _xHEADER_:true  --desc "enable our default header
 xarg --id -l,--lib       --var _xLIB_:true     --desc "define new script as a our LIB type (can be loaded with 'use' function)"
 xarg --id -o,--output    --var output+r        --desc "setup <output> directory for new script"
 
-xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+xrun --xreject-unknow --xrequire-one --xversionrc --xcolors "$@"
 
 if [ -n "$name" ]; then
     filename="$output/$name"
@@ -50,7 +50,7 @@ fi
 
 # exit if exist a script with this name
 if [ -f "$filename" ]; then 
-    echo -n "script already exists! Open it on <editor> (y/n)?: "
+    echo -n "script '$filename' already exists! Open it on default editor: '$editor' (y/n)? "
     read -r choice
     # convert answer to UPPERCASE
     [ "${choice^^}" == "Y" ] && $editor "$filename"
