@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
+# Project: xSHELL (vundefined)
 # File...: init
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/20 - 18:51:06
+# Last Modified: Monday, 2023/02/27 - 03:10:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.16.541
+# Version: 0.1.17.607
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -29,6 +29,10 @@ APP=$(basename "$0")          # application name
 # shellcheck disable=SC2034   # unused variable warning
 APP_DIR=$(dirname "$0")       # application current directory
 APP_HOME=""                   # application home (store data)
+
+declare -A _xLIB_DIRS_
+_CALLER_=''
+_USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
 # function to set $APP_HOME
@@ -41,6 +45,7 @@ xsetHome(){
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
+  _USE_COUNT_+=1
   # check if some lib already loaded
   checkLibLoaded(){
     local lib_const=${1^^}          # convert fist arg to UPCASE 
@@ -67,8 +72,17 @@ use(){
     fi
   }
 
+  # trackback function caller
+  if [ "$_USE_COUNT_" -eq 1 ]; then 
+    _CALLER_="$0" ; _LIB_=$1
+  else
+    [ "$_CALLER_" == "$_LIB_" ] && { 
+      _CALLER_="$0";
+    } || _CALLER_=$_LIB_
+  fi
+  
   [ "$_INIT_DEBUG_" == 'true' ] && \
-    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$0'${RESET}"
+    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"
   
   for lib_file in "$@"; do
     
@@ -84,18 +98,22 @@ use(){
         "$HOME/bin/vendor/$lib_file" 
       )
       local included=''
-
+      
       # search file in default destinations
       local li=0
       for lib in "${lib_dirs[@]}"; do
 
         if source "$lib" 2> /dev/null ; then
+          _CALLER_=$lib
           # success? set a flag; break loop
           [ "$_INIT_DEBUG_" == 'true' ] && { 
             echo -e "${GREEN}  \`-> loading '${lib_dirs[$li]}'${RESET} - "\
               "${CYAN}directory: $((li+1))/${#lib_dirs[@]}${RESET})"
           }
           included="true"
+          
+          _xLIB_DIRS_[$lib_file]="${lib}"
+
           break
         fi
         li=$((li+1))
@@ -118,6 +136,7 @@ use(){
     }
   
   done
+  _USE_COUNT_=0
 }
 
 # create some aliases for use/import libraries
