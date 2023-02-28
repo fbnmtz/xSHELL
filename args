@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/26 - 01:51:21
+# Last Modified: Sunday, 2023/02/26 - 19:13:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.12.1232
+# Version: 0.2.12.1248
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -143,10 +143,6 @@ xusage(){
                 Hash.all main_params |      # get all hashes \
                 sed "s/:/:/g" |             # add blue color to options description':'\
                 sed "s/^-/:-/g" |           # add color to options/flags \
-                # sed "s/:/\\${BLUE}:/g" |            # add blue color to options description':'\
-                # sed "s/^-/:\\${MAGENTA}-/g" |       # add color to options/flags \
-                # sed "s/</\\${YELLOW}</g" |          # add color to values/params \
-                # sed "s/>/>\\${RESET}\\${BLUE}/g" |  # add color to values/params  \
                 sed 's/ /./g'                       # replace ' ' with '.'  
             ); do
             b=$(echo -e $h | cut -d '+' -f2)
@@ -185,7 +181,7 @@ xusage(){
         
         # not null? prints footer 
         [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
-        echo -e "v${_CURRENT_VERSION_} - writen by ${_AUTHOR_} ${_CREATED_AT_}"
+        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_} ${YELLOW}${_CREATED_AT_}${RESET}"
     
     else
         echo -e ""
