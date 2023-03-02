@@ -6,10 +6,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/27 - 03:16:26
+# Last Modified: Thursday, 2023/03/02 - 02:08:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.329
+# Version: 0.1.19.344
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -31,12 +31,19 @@ xrequirements touch chmod date
 xshell_init
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
+xarg --block "Script's Generation"
 xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
 xarg --id -e,--editor    --var editor+r        --desc "define <editor> to open script"
 xarg --id -f,--filename  --var name+r          --desc "filename for new script"
 xarg --id -H,--header    --var _xHEADER_:true  --desc "enable our default header on the new script"
 xarg --id -l,--lib       --var _xLIB_:true     --desc "define new script as a our LIB type (can be loaded with 'use' function)"
 xarg --id -o,--output    --var output+r        --desc "setup <output> directory for new script"
+
+# TODO: planning new features
+# xarg --block "xSHELL Packages"
+# xarg --id -i,--install   --var package+r        --desc "install a xSHELL <package>"
+# xarg --id -r,--remove    --var package+r        --desc "remove a xSHELL <package>"
+# xarg --id -s,--search    --var package+r        --desc "search <package> on xSHELL repository"
 
 xrun --xreject-unknow --xrequire-one --xversionrc --xcolors "$@"
 
