@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (none)
+# Project: xSHELL (vundefined)
 # File...: xshell.lib
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/20 - 16:37:26
+# Last Modified: Sunday, 2023/03/12 - 17:37:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.11.225
+# Version: 0.1.12.236
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -156,6 +156,10 @@ templateLib(){
     local name=${1//./_}
     # remove word 'lib' from filename
     name=${name//lib/}
+    # get last character
+    local lastchar="$(echo "$name" | rev | cut -c1)"
+    # check if it is a 'underscore' character
+    [ "${lastchar}" != "_" ]  && name+="_"
     # convert lib name to upercase {^^}
-    echo -e  "\n_xLIB_${name^^}_=true\n"
+    echo -e  "\n_xLIB_${name^^}=true\n"
 }
