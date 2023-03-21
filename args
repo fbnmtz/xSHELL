@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/02/26 - 19:13:25
+# Last Modified: Tuesday, 2023/03/21 - 20:28:40
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.12.1248
+# Version: 0.2.13.1251
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -320,7 +320,7 @@ xarg(){
     done
 
     # bypass when no arguments has been defined
-    if [ "$method" != "block" ] && [ "$method" != "longflags" ] && [ "$method" != "footer" ]; then
+    if [ "$method" != "block" ] && [ "$method" != "longflags" ] && [ "$method" != "footer" ] && [ "$method" != "header" ]; then
         xhelp --param="${option_default}${desc_var}+${description}+${block}"
     fi
 
