@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/03/21 - 20:28:40
+# Last Modified: Saturday, 2023/03/25 - 20:47:24
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.13.1251
+# Version: 0.2.14.1253
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -125,7 +125,7 @@ xusage(){
     esac
     
     # prints initial help text
-    echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
+    echo -e "${BLUE}${__HELP_HEADER__}${RESET}\n${__usage_msg}${__HELP_USAGE__}"
 
     if [ -n "$__usage_full" ]; then
         # help body text (before params/args)
