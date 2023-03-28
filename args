@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (vundefined)
+# Project: xSHELL (none)
 # File...: args
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/03/25 - 20:47:24
+# Last Modified: Monday, 2023/03/27 - 22:21:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.14.1253
+# Version: 0.2.15.1257
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -270,7 +270,7 @@ xarg(){
                                 # 'o' for 'optional'
                                 o)  
                                     option_rule+=" " 
-                                    desc_var+=" <$var_name>" 
+                                    desc_var+=" [$var_name]" 
                                     if [ -z "$var_value" ]; then
                                         assign_vars=" [ -n \"\$2\" ] && { shift ; $var_name=\"\$1\" ;  } "
                                     fi
