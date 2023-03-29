@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (vundefined)
+# Project: xSHELL (none)
 # File...: io
 # Created: Thursday, 2021/05/20 - 19:42:14
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/25 - 18:38:23
+# Last Modified: Wednesday, 2023/03/29 - 00:15:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.188
+# Version: 0.1.6.194
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -155,4 +155,23 @@ redirect_output(){
     # standard error ends up going to wherever standard
     # out goes (the file).
     exec 2>&1
+}
+
+
+# function to handle PIPE args / data
+declare -a PIPE_DATA=("$@")
+get_pipe_data(){
+  while read -rt .02 arg;do
+      PIPE_DATA+=($arg)
+  done
+
+  # join all args to pass everything to xclip
+  for arg in "${PIPE_DATA[@]}" ; do
+      if [ "$arg" == "--xclip-silent" ]; then
+          NO_ALERT=true
+      else
+          output+="$arg "
+      fi
+  done
+  echo "${PIPE_DATA[@]}"
 }
