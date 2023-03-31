@@ -1,14 +1,14 @@
 <!--
  ############################################################################
- Project: xSHELL (vundefined)
+ Project: xSHELL (none)
  File...: readme.md
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2023/02/25 - 18:46:02
+ Last Modified: Thursday, 2023/03/30 - 23:03:02
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.21.506
+ Version: 0.0.22.508
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -120,10 +120,10 @@ You can create your new script (default location `$HOME/bin`) using `xshell` too
 xshell -f libsExample \
     -e nano \
     --args "
-        id=-p,--print;code='echo.print.test';desc='print.some.code' 
-        id=-n,--notify;var=title+r,text+r;desc='test.notify.system' 
-        id=-m,--math;var=expression+r;desc='solve.math.expression'  
-        id=-V,--volume;var=option+r;desc='volume.option.(up.or.down)'
+        -p,--print;code='echo.print.test';desc='print.some.code' 
+        -n,--notify;var=title+r,text+r;desc='test.notify.system' 
+        -m,--math;var=expression+r;desc='solve.math.expression'  
+        -V,--volume;var=option+r;desc='volume.option.(up.or.down)'
     "
 ```
 
