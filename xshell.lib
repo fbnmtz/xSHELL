@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (vundefined)
+# Project: xSHELL (none)
 # File...: xshell.lib
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2023/03/12 - 17:37:56
+# Last Modified: Thursday, 2023/03/30 - 22:19:33
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.12.236
+# Version: 0.1.13.248
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -55,6 +55,10 @@ parse_args(){
             
             key=$(echo "$arg_item" | cut -d '=' -f1)
             val=$(echo "$arg_item" | cut -d '=' -f2)
+
+            if [[  "$val" == *"-"* ]]; then
+                key='id'
+            fi
 
             case "$key" in
                 i | id  ) id_value=$val   ;;
