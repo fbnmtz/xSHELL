@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/04 - 23:30:21
+# Last Modified: Tuesday, 2023/04/04 - 23:42:01
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.395
+# Version: 0.0.8.398
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -78,12 +78,13 @@ xsys.vol(){
     action=$1
 
     # test actions
-    [ "$action" == '--up'     ] && action="+"
-    [ "$action" == '--down'   ] && action="-"
+    [ "$action" == '--up'   ] && action="+"
+    [ "$action" == '--down' ] && action="-"
     # ----------------------------------------------------------------
     
     case $(xsys.os) in
         Darwin) 
+            # TODO: check how to handle volume via terminal on Mac OS
             _VOL_APP="verificar no macos"
             _VOL_ARG="args do macos"
             # _VOL_ARG=$(echo -e $_VOL_ARG | sed "s/<text>/$text/" | sed "s/<title>/$title/")
