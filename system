@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/18 - 01:21:23
+# Last Modified: Tuesday, 2023/04/04 - 23:30:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.393
+# Version: 0.0.7.395
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -59,7 +59,7 @@ xsys.notify(){
         su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \" echo \"$_xSYS_NOTIFY_ARG\" && sleep 10 \"'"
     else
         echo -e "\ncmd: $_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG\n"
-        "$_xSYS_NOTIFY_APP" "$_xSYS_NOTIFY_ARG"
+        eval "$_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG"
     fi
 
     
