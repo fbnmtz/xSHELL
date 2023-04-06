@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (vundefined)
+# Project: xSHELL (none)
 # File...: init
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/02/27 - 03:10:51
+# Last Modified: Wednesday, 2023/04/05 - 22:23:27
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.17.607
+# Version: 0.1.18.610
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -153,7 +153,7 @@ xrequirements(){
     local tool=$1
     local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
     echo -e "$error_msg"
-    alert "$0" "$error_msg"
+    notify-send "$0" "$error_msg"
     exit 10
   }
   # check if a package exists on the system
