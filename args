@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/03/27 - 22:21:56
+# Last Modified: Tuesday, 2023/04/11 - 00:01:47
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.15.1257
+# Version: 0.2.16.1309
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -81,6 +81,9 @@ xhelp(){
             __HELP_USAGE__=${__HELP_USAGE__//-/${MAGENTA}-}
             __HELP_USAGE__=${__HELP_USAGE__//</${YELLOW}<}
             __HELP_USAGE__=${__HELP_USAGE__//\]/${RESET}\]}
+            
+            # TODO: optional arguments highlighting
+            __HELP_USAGE__=${__HELP_USAGE__//'{'/${YELLOW}'{'}
         fi
     else
         __HELP_USAGE__+="[OPTIONS] "
@@ -160,13 +163,22 @@ xusage(){
             fi
             __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
 
+            # apply colors
              if [ -n "$RED" ]; then 
-                # apply colors
+                # arguments description highlighting
                 __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
+                # flags highlighting
                 __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//-/${MAGENTA}-}
+                # block highlighting
                 __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//->/${BLUE}->}
+                # required arguments highlighting
                 __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
+                # required arguments closing 
                 __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
+
+                # TODO: optional arguments highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
+
             fi
 
         done
@@ -270,7 +282,7 @@ xarg(){
                                 # 'o' for 'optional'
                                 o)  
                                     option_rule+=" " 
-                                    desc_var+=" [$var_name]" 
+                                    desc_var+=" {$var_name}" 
                                     if [ -z "$var_value" ]; then
                                         assign_vars=" [ -n \"\$2\" ] && { shift ; $var_name=\"\$1\" ;  } "
                                     fi
