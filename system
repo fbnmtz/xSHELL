@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/25 - 22:29:21
+# Last Modified: Tuesday, 2023/04/25 - 22:32:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.416
+# Version: 0.0.9.419
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -137,7 +137,7 @@ xsys.menu(){
         ;;
         Linux)  
             _xSYS_CLIP_CMD="rofi"
-            _xSYS_CLIP_ARG="-p '$1'"
+            _xSYS_CLIP_ARG="-no-config -dmenu -fuzzy -p '$1'"
         ;;
     esac
     eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
