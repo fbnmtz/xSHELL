@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/25 - 21:55:29
+# Last Modified: Tuesday, 2023/04/25 - 22:29:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.411
+# Version: 0.0.9.416
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -123,6 +123,21 @@ xsys.clipboard(){
         Linux)  
             _xSYS_CLIP_CMD="xclip-cmd"
             _xSYS_CLIP_ARG=""
+        ;;
+    esac
+    eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
+}
+
+xsys.menu(){
+    # case sys.os in
+    case $(xsys.os) in
+        Darwin) 
+            _xSYS_CLIP_CMD="choose"
+            _xSYS_CLIP_ARG=""
+        ;;
+        Linux)  
+            _xSYS_CLIP_CMD="rofi"
+            _xSYS_CLIP_ARG="-p '$1'"
         ;;
     esac
     eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
