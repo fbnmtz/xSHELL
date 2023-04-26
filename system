@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/04 - 23:42:01
+# Last Modified: Tuesday, 2023/04/25 - 21:55:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.8.398
+# Version: 0.0.9.411
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -112,3 +112,18 @@ xsys.vol(){
 # #    echo $(( $val/$max*100 ))
 #    echo "$val/$max*100" | bc -l | cut -d '.' -f1
 # }
+
+xsys.clipboard(){
+    # case sys.os in
+    case $(xsys.os) in
+        Darwin) 
+            _xSYS_CLIP_CMD="pbcopy"
+            _xSYS_CLIP_ARG=""
+        ;;
+        Linux)  
+            _xSYS_CLIP_CMD="xclip-cmd"
+            _xSYS_CLIP_ARG=""
+        ;;
+    esac
+    eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
+}
