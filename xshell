@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 #
-# ############################################################################
-# Project: xSHELL (vundefined)
+# ############################################################################# Project: xSHELL (none)
 # File...: xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2023/03/02 - 02:08:37
+# Last Modified: Monday, 2023/10/02 - 01:53:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.344
+# Version: 0.1.19.351
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,7 +23,9 @@
 #   * SC2154: var is referenced but not assigned.
 #       -> ignore this warning because shellcheck cant detect variables created by or library system.
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-source ~/bin/xSHELL/init
+# source ~/bin/xSHELL/init
+source "/opt/xSHELL/init"
+
 use args utils xshell.lib
 xrequirements touch chmod date
 
