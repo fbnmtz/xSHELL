@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2023/02/17 - 00:40:11
+# Last Modified: Monday, 2023/10/02 - 01:50:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.67
+# Version: 0.0.9.103
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,21 +17,41 @@
 # HISTORY:
 #
 
+# function to require ROOT user
+requireROOT(){
+    if [ $UID = 0 ] ; then 
+        return 0 
+    else
+        echo "Error! You need to be ROOT to run '$APP'."
+        exit 1
+    fi
+}
+
 github=https://github.com
 repo=fbnmtz/xSHELL
+instalation=/opt/xSHELL/
 
 #local exception
 ExDirAlredyExists=10
 
-if [ -d ~/bin/xSHELL ] || [ -L ~/bin/xSHELL ]; then
-    echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '~/bin' already exists"
-    exit $ExDirAlredyExists
+requireROOT
+
+if [ -d $instalation ] || [ -L $instalation ]; then
+    echo "want to update repository? (y/n)"
+    read choice
+    if [ "${choice^^}" == "Y" ]; then
+        git pull
+    fi
+    # echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '$instalation' already exists"
+    # exit $ExDirAlredyExists
 else
     # clone this repo to your '/home'
-    git clone "${github}/${repo}" ~/bin/xSHELL
+    git clone "${github}/${repo}" $instalation
+fi
     
     # Add scripts to your system $PATH
-    if ! grep "\$PATH:\$HOME/bin/xSHELL" ~/.profile  1> /dev/null  ; then
-        echo -e "\nexport PATH=\"\$PATH:\$HOME/bin/xSHELL\"" >> ~/.profile
+    if [ ! -f "/etc/profile.d/xSHELL.sh" ]  ; then
+        echo "creating /etc/profile.d/xSHELL.sh config"
+        echo -e "\nexport PATH=\"\$PATH:$instalation\"" >> /etc/profile.d/xSHELL.sh
+        echo -e "\nxSHELL_LOAD=\"${instalation}init\""  >> /etc/profile.d/xSHELL.sh
     fi 
-fi
