@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 01:56:49
+# Last Modified: Sunday, 2024/12/08 - 04:14:24
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.183
+# Version: 0.0.9.197
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -59,11 +59,23 @@ if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
 else 
     git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."
 fi
-    
-# Add scripts to system $PATH
-if [ ! -f "/etc/profile.d/xSHELL.sh" ]; then
-    [ ! -d /etc/profile.d ] &&  mkdir /etc/profile.d
-    echo "creating /etc/profile.d/xSHELL.sh"
-    _sudo "echo -e \"\nexport PATH=\"\$PATH:$install_dir\"\" > /etc/profile.d/xSHELL.sh"
-    _sudo "echo -e \"\n_xSHELL_=\"${install_dir}/init\"\"  >> /etc/profile.d/xSHELL.sh"
-fi 
+
+# Check if the configuration already exists in /etc/profile
+if ! grep -q "export _xSHELL_" /etc/profile; then
+    # If the configuration does not exist, add it
+    _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> /etc/profile"
+    _sudo "echo -e '\nexport _xSHELL_=\"${install_dir}\"'  >> /etc/profile"
+    echo "Configuration added to /etc/profile"
+else
+    echo "Configuration already exists in /etc/profile"
+fi
+
+# Check if the configuration already exists in /etc/profile
+if ! grep -q "export _xSHELL_" /etc/bashrc; then
+    # If the configuration does not exist, add it
+    _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> /etc/bashrc"
+    _sudo "echo -e '\nexport _xSHELL_=\"${install_dir}\"'  >> /etc/bashrc"
+    echo "Configuration added to /etc/bashrc"
+else
+    echo "Configuration already exists in /etc/bashrc"
+fi
