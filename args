@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 19:18:14
+# Last Modified: Sunday, 2024/12/08 - 19:21:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1347
+# Version: 0.2.16.1348
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -452,6 +452,29 @@ xrun(){
                 shift
         esac
     done
+
+    # Function to handle joint short flags
+    handleJointShortFlags() {
+        local joint_flags="$1"  # The joint short flags passed as an argument
+        local length=${#joint_flags}  # The length of the joint short flags string
+
+        # Iterate over each character in the joint short flags string
+        for (( i=0; i<length; i++ )); do
+            local flag="${joint_flags:i:1}"  # Extract the current character (flag)
+            _PARAMS_+=("-$flag")  # Add the individual flag to the _PARAMS_ array
+        done
+    }
+
+    # Check for joint short flags and expand them
+    for arg in "${_PARAMS_[@]}"; do
+        # Check if the argument is a joint short flag (e.g., -abc)
+        if [[ "$arg" =~ ^-[a-zA-Z]{2,}$ ]]; then
+            handleJointShortFlags "${arg:1}"  # Call the function to handle the joint short flags
+            unset _PARAMS_[$arg]  # Remove the joint short flag from the _PARAMS_ array
+        fi
+    done
+
+
     generateCase "${_PARAMS_[@]}"
 }
 
