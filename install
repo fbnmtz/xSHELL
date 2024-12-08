@@ -6,58 +6,69 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 04:14:24
+# Last Modified: Sunday, 2024/12/08 - 19:42:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.197
+# Version: 0.0.9.206
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Description: 
+# Description:
 #  >
 # ############################################################################
 # HISTORY:
 #
 
-# function to require ROOT user
-requireROOT(){
-    if [ $UID -eq 0 ] ; then 
-        return 0 
+# Function to require ROOT user
+requireROOT() {
+    if [ $UID -eq 0 ]; then  # Check if the user is ROOT (UID 0)
+        return 0  # Return 0 if the user is ROOT
     else
-        echo "Error! You need to be ROOT to install xSHELL"
-        exit 1
+        echo "Error! You need to be ROOT to install xSHELL"  # Print an error message
+        exit 1  # Exit the script with status code 1
     fi
 }
 
-_sudo(){
-    _cmd_=$1
-    echo -n "running 'sudo $_cmd_ "; echo
-    eval "$_cmd_"
+# Function to run a command with sudo
+_sudo() {
+    _cmd_=$1  # Store the command to be run
+    echo -n "running 'sudo $_cmd_ "; echo  # Print the command being run
+    eval "$_cmd_"  # Evaluate and run the command
 }
 
+# Function to convert a string to uppercase
+upcase() {
+    echo "$1" | tr a-z A-Z  # Convert the input string to uppercase
+}
+
+# URL and repository information
 url=https://github.com
 repo=fbnmtz/xSHELL
 default_dir=/opt
 
+# Prompt the user for the installation directory
 echo -n "install xSHELL on directory (default $default_dir): "
 read custom_path
 
+# Set the installation directory
 if [ -z "${custom_path}" ]; then
-    install_dir="$default_dir/xSHELL"
+    install_dir="$default_dir/xSHELL"  # Use the default directory if no custom path is provided
 else
-    install_dir="${custom_path}/xSHELL"
+    install_dir="${custom_path}/xSHELL"  # Use the custom path if provided
 fi
 
+# Check if the installation directory is writable
 if [ ! -w "${install_dir}" ]; then
-    requireROOT
+    requireROOT  # Require ROOT user if the directory is not writable
 fi
 
+# Check if xSHELL is already installed
 if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
     echo "xSHELL is already installed. Do you want to update it? (y/n)"
     read choice
-    if [ "${choice^^}" == "Y" ]; then
-        cd $install_dir && git pull
+    if [ "$(upcase $choice)" == "Y" ]; then  # Check if the user wants to update
+        cd $install_dir && git pull  # Update the repository
     fi
-else 
-    git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."
+else
+    git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."  # Clone the repository if not already installed
 fi
 
 # Check if the configuration already exists in /etc/profile
@@ -70,7 +81,7 @@ else
     echo "Configuration already exists in /etc/profile"
 fi
 
-# Check if the configuration already exists in /etc/profile
+# Check if the configuration already exists in /etc/bashrc
 if ! grep -q "export _xSHELL_" /etc/bashrc; then
     # If the configuration does not exist, add it
     _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> /etc/bashrc"
