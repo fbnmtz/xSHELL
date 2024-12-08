@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
-# File...: lib/hashs
+# Project: xSHELL (none)
+# File...: hashs
 # Created: Wednesday, 2021/05/26 - 00:47:46
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/01/11 - 01:03:44
+# Last Modified: Sunday, 2024/12/08 - 05:26:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.1.1.51
+# Version: 1.1.1.59
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Implements a virtual Hash inspired on starckoverflow thread
@@ -21,74 +21,130 @@
 
 _xLIB_HASHS_=true;
 
-
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-# create a file based struct to save pairs key / value (Hash)
-# Ex. Hash.new hash_name
-#   -> create a file /tmp/hashs/map.SCRIPTNAME.hash_name 
-# @param $1 -> hash_name
+# Function: Hash.new
+#
+# Creates a new hash (virtual file-based structure) with the given name.
+# The hash is saved as a file in the /tmp/hashs directory.
+# If the hash already exists, it will be overwritten.
+#
+# Parameters:
+#   $1: hash_name (string) - The name of the hash to create.
+#
+# Return:
+#   None
 Hash.new() {
+    # Create the directory if it doesn't exist
     mkdir -p /tmp/hashs
+
+    # Construct the full path to the hash file
     _hash_filename_="/tmp/hashs/map.$APP.$1"
+
+    # Remove the existing hash file if it exists
     rm -f "$_hash_filename_"
 }
 
-# Add a key / value to a existent Hash / file
-# @param $1 -> hash_name ($_hash_filename_)
-# @param $2 -> key
-# @param $3 -> value
+# Function: Hash.put
+# 
+# Adds a key-value pair to an existing hash file.
+#
+# Parameters:
+#   $1: hash_name (string) - The name of the hash file to which the key-value pair will be added.
+#   $2: key (string) - The key to be added to the hash.
+#   $3: value (string) - The value associated with the key.
+#
+# Return:
+#   None
 Hash.put() {
     echo "$2:$3" >> "$_hash_filename_"
 }
 alias Hash.add='Hash.put'
 
-# get a `value` from a Hash by its `key`
-# @param $1 -> hash_name
-# @param $2 -> `key`
-# @return -> `value`
+# Function to retrieve a value from a hash by its key
+#
+# This function searches for a key in a hash file and returns the corresponding value.
+# The hash file is expected to be in the format: key:value
+#
+# @param $1 -> The name of the hash file (without the .hash extension)
+# @param $2 -> The key to search for in the hash file
+# @return -> The value corresponding to the key
 Hash.get() {
+    # Use grep to find the line that starts with the key followed by a colon
+    # Then use cut to extract the value part after the colon
     grep "^$2:" "$_hash_filename_" | cut -d ':' -f2
 }
+
+# Alias for the Hash.get function
+# This allows the function to be called using Hash.val as well
 alias Hash.val='Hash.get'
 
-# get all keys in a Hash
-# @param $1 -> hash_name
-# @return <keys>
-Hash.keys(){
+# Function to retrieve all keys from a hash file
+#
+# This function extracts and returns all keys from a hash file.
+# The hash file is expected to be in the format: key:value
+#
+# @param $1 -> The name of the hash file (without the .hash extension)
+# @return -> A list of all keys in the hash file
+Hash.keys() {
+    # Use cut to extract the first field (keys) from the hash file
+    # The delimiter is a colon (:)
     cut -d ':' -f1 < "$_hash_filename_"
 }
 
-# get all `values` from a  Hash
-# @param $1 -> hash_name
-# @return <values>
-Hash.values(){
+# Function to retrieve all values from a hash file
+#
+# This function extracts and returns all values from a hash file.
+# The hash file is expected to be in the format: key:value
+#
+# @param $1 -> The name of the hash file (without the .hash extension)
+# @return -> A list of all values in the hash file
+Hash.values() {
+    # Use cut to extract the second field (values) from the hash file
+    # The delimiter is a colon (:)
     cut -d ':' -f2 < "$_hash_filename_"
 }
 
-# get all pairs `key/value` from a Hash
-# @param $1 -> hash_name
-# @return <keys:values>
-Hash.all(){
+# Function to retrieve all key-value pairs from a hash file
+#
+# This function returns all key-value pairs from a hash file.
+# The hash file is expected to be in the format: key:value
+#
+# @param $1 -> The name of the hash file (without the .hash extension)
+# @return -> A list of all key-value pairs in the hash file
+Hash.all() {
+    # Use cat to display the contents of the hash file
+    # Redirect any errors to /dev/null to suppress them
     cat "$_hash_filename_" 2>/dev/null
 }
 
-# count items in a Hash
-# @param $1 -> hash_name
-# @return <count>
-Hash.count(){
+# Function to count the number of items in a hash file
+#
+# This function counts and returns the number of key-value pairs in a hash file.
+#
+# @param $1 -> The name of the hash file (without the .hash extension)
+# @return -> The count of key-value pairs in the hash file
+Hash.count() {
+    # Use Hash.all to get all key-value pairs and pipe the output to wc -l to count the lines
     Hash.all | wc -l
 }
 
-# search a item in a Hash
-# @param $1 -> search_term
-# @return <count>
-Hash.search(){
+# Function to search for a term in a hash file
+#
+# This function searches for a term in the key-value pairs of a hash file and returns the matching lines.
+#
+# @param $1 -> The search term
+# @return -> The lines containing the search term
+Hash.search() {
+    # Use Hash.all to get all key-value pairs and pipe the output to grep to search for the term
     Hash.all | grep "$*"
 }
 
-# search a item in a Hash
-# @param $1 -> search_term
-# @return <count>
-Hash.searchVal(){
+# Function to search for a value in a hash file
+#
+# This function searches for a term in the values of a hash file and returns the matching lines.
+#
+# @param $1 -> The search term
+# @return -> The lines containing the search term
+Hash.searchVal() {
+    # Use Hash.values to get all values and pipe the output to grep to search for the term
     Hash.values | grep "$*"
 }
