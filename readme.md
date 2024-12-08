@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2023/03/30 - 23:03:02
+ Last Modified: Sunday, 2024/12/08 - 19:33:17
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.22.508
+ Version: 0.0.22.512
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -73,7 +73,7 @@
 Steps to install `xSHELL` library system
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/shell/master/install | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/master/install | bash 
 
 ```
 
@@ -264,7 +264,9 @@ libsExapmle --math "2*2"
 
 #### init
 
-    Basic library to initialize our framework/system.
+```
+Basic library to initialize our framework/system.
+```
 
 <details close="true">
 
@@ -285,18 +287,24 @@ libsExapmle --math "2*2"
   * `xrequirements binary1 binary2`
     * function to check if a binary exists on your system. Pass program names separeted by spaces. Throw an error and exit if not found.
     * you can test conditional binarys using this syntax: `xrequirements bin1:bin2` (that means bin1 or bin2)
+
 </details>
 </br>
 
 #### args
-    This library is used to manage/generate/validate the command line arguments of a script.
+
+```
+This library is used to manage/generate/validate the command line arguments of a script.
+```
 
 <details close="true">
 
 Functions
+
 * `xarg`
-  * used to define arguments: 
- 
+
+  * used to define arguments:
+
   ```
   # params supported:
     * --id <shortflat,longflag>
@@ -317,12 +325,14 @@ Functions
 
   ```
 * `xrun`
-  * validates arguments 
+
+  * validates arguments
+
   ```
   # params to define validations:
     * --xrequire-one
     * --xreject-unknow
-    
+
   # set version format to use release candidate version:
     * --xversionrc
 
@@ -331,14 +341,14 @@ Functions
     * --xhelp
   ```
 * `xhelp`
-  * set help information to the script. Mostly used internally but you can use it to set header and footer information. 
+
+  * set help information to the script. Mostly used internally but you can use it to set header and footer information.
 
   ```
   # usable argumnets
     * --header=<value>
     * --footer=<value>
   ```
-
 * `xusage`
 * `xflag_require_value`
 * `xrequire_one`
@@ -347,10 +357,16 @@ Functions
 </br>
 
 #### system
-    Library to by an interface between your scritp and Operation System, providin some basic functions.
+
+```
+Library to by an interface between your scritp and Operation System, providin some basic functions.
+```
 
 #### colors
-    This library set variables with ANSI codes allowing you to use colors on your script. 
+
+```
+This library set variables with ANSI codes allowing you to use colors on your script. 
+```
 
 <details close="true">
 
@@ -384,42 +400,55 @@ Functions
   $BGCYAN
   $BGWHITE
   ```
-  
+
 </details>
 </br>
 
 #### utils
-    A collection of auxiliary functions.
+
+```
+A collection of auxiliary functions.
+```
 
 <details close="true">
 
 Functions
+
 * getPath
+
   * return full path of a first binary of all received via arguments
+
   ```bash
     # usage
     getPath nano vim micro emacs
   ```
 * basePath
+
   * return base path of a file
+
   ```bash
   # return /etc
   basepath /etc/passwd
   ```
 * tern
+
   * ternary command
+
   ```bash
     tern "expr" "true value" "false value"
   ```
 * isROOT?
+
   * check if current user is root
 * requireROOT
+
   * require root to continue script (non root users? exit)
+
 <!-- * dots
   ```
   
   ``` -->
-  
+
 </details>
 </br>
 
@@ -429,9 +458,9 @@ Functions
 
 ## TODO List
 
-* [x] xshell: add support for define args for new scripts
-* [x] Implent color system (draft)
-* [ ] lib/arbs: Implements joint flags (ex: -lsaf)
+* [X] xshell: add support for define args for new scripts
+* [X] Implent color system (draft)
+* [X] lib/args: Implements joint flags (ex: -lsaf)
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 
