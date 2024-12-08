@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 04:02:26
+# Last Modified: Sunday, 2024/12/08 - 19:18:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1313
+# Version: 0.2.16.1347
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -119,6 +119,7 @@ xusage(){
         ;;
         -h|--help)
             xhelp
+            # helpOptionsDarwin
             __usage_full=true
         ;;
         *) 
@@ -141,57 +142,32 @@ xusage(){
         #       --> column to equaly expand texts
         # Hash.all main_params | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
 
-        __HELP_OPTIONS_DESCRIPTION__=''
-        for h in $(
-                Hash.all main_params |      # get all hashes \
-                sed "s/:/:/g" |             # add blue color to options description':'\
-                sed "s/^-/:-/g" |           # add color to options/flags \
-                sed 's/ /./g'                       # replace ' ' with '.'  
-            ); do
-            b=$(echo -e $h | cut -d '+' -f2)
-            # echo "'$b' - '$block'"
-            if [ -n "${b// }" ]; then 
-                [ "${b}" != "${block// /.}" ] && block="${b}" \
-                    && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
-                # echo
-            else 
-                if [ -z "$outblock" ];then
-                    block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
-                    outblock=true
-                fi
-                # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
-            fi
-            __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
+    # case sys.os in
+    case $(xsys.os) in
+        Darwin)
+        _HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n"
+        ;;
+        Linux)  
+        __HELP_OPTIONS_DESCRIPTION__="$(helpOptionsLinux)"
+        ;;
+    esac
+       
 
-            # apply colors
-             if [ -n "$RED" ]; then 
-                # arguments description highlighting
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
-                # flags highlighting
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//-/${MAGENTA}-}
-                # block highlighting
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//->/${BLUE}->}
-                # required arguments highlighting
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
-                # required arguments closing 
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
-
-                # TODO: optional arguments highlighting
-                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
-
-            fi
-
-        done
-
+        # v1
         # echo -e "$____HELP_OPTIONS_DESCRIPTION" | column -t -s ':' | sed 's/;/:/g'
         # __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
         #     column -L -t -s ':' -o ' ' | \
         #     sed "s/;/:/g" | \
         #     sed 's/,/,  /g' )
-        __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-            column -t -s ':' | \
-            sed "s/;/:/g" | \
-            sed 's/,/,  /g' )
+        
+        # v2
+        # __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+        #     column -t -s ':' | \
+        #     sed "s/;/:/g" | \
+        #     sed 's/,/,  /g' )
+
+        # v3
+        __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n"
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
             # sed '/^#/ s/ \{1,\}/ /g' | \
         
@@ -436,6 +412,7 @@ xrun(){
     xarg --id "-h,${_arg_prefix_}help"    \
          --code "xusage --help" \
          --desc "show this help"
+        #  --code "formatHelpOptions" \
          
     # gen default version argument
     xarg --id "-v,${_arg_prefix_}version" \
@@ -490,4 +467,79 @@ xflag_require_value(){
 # function to force script to receive at last one param/arg
 xrequire_one(){
     test -z "$1" && xusage --missing-param; 
+}
+
+# Function to format help options with standard spacing on Darwin systems
+helpOptionsDarwin() {
+    local max_length=0
+    local options=()
+
+    # Find the maximum length of the options
+    while IFS= read -r line; do
+        # Extract the option key (first word) from the line
+        local option=$(echo "$line" | cut -d ':' -f 1)
+        # Determine the length of the option key
+        local length=${#option}
+        # Update the maximum length if the current option key is longer
+        if [ $length -gt $max_length ]; then
+            max_length=$length
+        fi
+        # Add the entire line to the options array
+        options+=("$line")
+    done <<< "$(Hash.all main_params)"
+
+    # Format the options with standard spacing
+    for option in "${options[@]}"; do
+        # Extract the option key (first word) from the option
+        local key=$(echo "$option" | cut -d ':' -f 1)
+        key=${key/\:/ }
+        # Extract the description (remaining words) from the option
+        local desc=$(echo "$option" | cut -d ':' -f 2-)
+        desc=$(echo "$desc" | cut -d '+' -f1)
+        # Print the option key and description with standard spacing
+        printf "     %-${max_length}s   %s\n" "$key" "$desc"
+    done
+}
+
+# Function to format help options with standard spacing on Linux systems
+helpOptionsLinux(){
+    for h in $(
+            Hash.all main_params |      # get all hashes \
+            sed "s/:/:/g" |             # add blue color to options description':'\
+            sed "s/^-/:-/g" |           # add color to options/flags \
+            sed 's/ /./g'               # replace ' ' with '.'  
+        ); do
+        b=$(echo -e $h | cut -d '+' -f2)
+        # echo "'$b' - '$block'"
+        if [ -n "${b// }" ]; then 
+            [ "${b}" != "${block// /.}" ] && block="${b}" \
+                && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
+            # echo
+        else 
+            if [ -z "$outblock" ];then
+                block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
+                outblock=true
+            fi
+            # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+        fi
+        __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
+
+        # apply colors
+            if [ -n "$RED" ]; then 
+            # arguments description highlighting
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
+            # flags highlighting
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//-/${MAGENTA}-}
+            # block highlighting
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//->/${BLUE}->}
+            # required arguments highlighting
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
+            # required arguments closing 
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
+
+            # TODO: optional arguments highlighting
+            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
+
+        fi
+    done
 }
