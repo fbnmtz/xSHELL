@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/10/02 - 01:50:51
+# Last Modified: Sunday, 2024/12/08 - 01:56:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.103
+# Version: 0.0.9.183
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,39 +19,51 @@
 
 # function to require ROOT user
 requireROOT(){
-    if [ $UID = 0 ] ; then 
+    if [ $UID -eq 0 ] ; then 
         return 0 
     else
-        echo "Error! You need to be ROOT to run '$APP'."
+        echo "Error! You need to be ROOT to install xSHELL"
         exit 1
     fi
 }
 
-github=https://github.com
+_sudo(){
+    _cmd_=$1
+    echo -n "running 'sudo $_cmd_ "; echo
+    eval "$_cmd_"
+}
+
+url=https://github.com
 repo=fbnmtz/xSHELL
-instalation=/opt/xSHELL/
+default_dir=/opt
 
-#local exception
-ExDirAlredyExists=10
+echo -n "install xSHELL on directory (default $default_dir): "
+read custom_path
 
-requireROOT
+if [ -z "${custom_path}" ]; then
+    install_dir="$default_dir/xSHELL"
+else
+    install_dir="${custom_path}/xSHELL"
+fi
 
-if [ -d $instalation ] || [ -L $instalation ]; then
-    echo "want to update repository? (y/n)"
+if [ ! -w "${install_dir}" ]; then
+    requireROOT
+fi
+
+if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
+    echo "xSHELL is already installed. Do you want to update it? (y/n)"
     read choice
     if [ "${choice^^}" == "Y" ]; then
-        git pull
+        cd $install_dir && git pull
     fi
-    # echo "Error: $ExDirAlredyExists! faild to install repository '$repo'. Dir '$instalation' already exists"
-    # exit $ExDirAlredyExists
-else
-    # clone this repo to your '/home'
-    git clone "${github}/${repo}" $instalation
+else 
+    git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."
 fi
     
-    # Add scripts to your system $PATH
-    if [ ! -f "/etc/profile.d/xSHELL.sh" ]  ; then
-        echo "creating /etc/profile.d/xSHELL.sh config"
-        echo -e "\nexport PATH=\"\$PATH:$instalation\"" >> /etc/profile.d/xSHELL.sh
-        echo -e "\nxSHELL_LOAD=\"${instalation}init\""  >> /etc/profile.d/xSHELL.sh
-    fi 
+# Add scripts to system $PATH
+if [ ! -f "/etc/profile.d/xSHELL.sh" ]; then
+    [ ! -d /etc/profile.d ] &&  mkdir /etc/profile.d
+    echo "creating /etc/profile.d/xSHELL.sh"
+    _sudo "echo -e \"\nexport PATH=\"\$PATH:$install_dir\"\" > /etc/profile.d/xSHELL.sh"
+    _sudo "echo -e \"\n_xSHELL_=\"${install_dir}/init\"\"  >> /etc/profile.d/xSHELL.sh"
+fi 
