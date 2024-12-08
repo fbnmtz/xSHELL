@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/11 - 00:01:47
+# Last Modified: Sunday, 2024/12/08 - 04:02:26
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1309
+# Version: 0.2.16.1313
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -184,8 +184,12 @@ xusage(){
         done
 
         # echo -e "$____HELP_OPTIONS_DESCRIPTION" | column -t -s ':' | sed 's/;/:/g'
+        # __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+        #     column -L -t -s ':' -o ' ' | \
+        #     sed "s/;/:/g" | \
+        #     sed 's/,/,  /g' )
         __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-            column -L -t -s ':' -o ' ' | \
+            column -t -s ':' | \
             sed "s/;/:/g" | \
             sed 's/,/,  /g' )
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"

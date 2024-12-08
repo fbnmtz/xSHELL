@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2023/10/02 - 01:53:01
+# Last Modified: Sunday, 2024/12/08 - 04:28:46
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.613
+# Version: 0.1.18.628
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,7 +22,8 @@
 
 # shellcheck disable=SC1090   #warning on 'source' usage
 [ "$_INIT_DEBUG_" == 'true' ] && \
-  source /opt/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
+  source "$_xSHELL_/colors"   #  autoload 'colors' if in DEBUG mode
+  # source /opt/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
   # source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -31,7 +32,33 @@ APP=$(basename "$0")          # application name
 APP_DIR=$(dirname "$0")       # application current directory
 APP_HOME=""                   # application home (store data)
 
-declare -A _xLIB_DIRS_
+
+# Função para definir um valor em um array associativo simulado
+set_assoc_array() {
+    local key=$1
+    local value=$2
+    eval "_xLIB_DIRS_${key}=\"${value}\""
+}
+
+# Função para obter um valor de um array associativo simulado
+get_assoc_array() {
+    local key=$1
+    eval "echo \$_xLIB_DIRS_${key}"
+}
+
+# Função para converter uma string para maiúsculas
+to_uppercase() {
+    echo "$1" | tr '[:lower:]' '[:upper:]'
+}
+
+# # Exemplo de uso
+# set_assoc_array "lib1" "/path/to/lib1"
+# set_assoc_array "lib2" "/path/to/lib2"
+
+# echo "lib1: $(get_assoc_array lib1)"
+# echo "lib2: $(get_assoc_array lib2)"
+
+# declare -A _xLIB_DIRS_
 _CALLER_=''
 _USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -49,7 +76,8 @@ use(){
   _USE_COUNT_+=1
   # check if some lib already loaded
   checkLibLoaded(){
-    local lib_const=${1^^}          # convert fist arg to UPCASE 
+    # local lib_const=${1^^}          # convert fist arg to UPCASE 
+    lib_const=$(to_uppercase "$1")
     lib_const=${lib_const//./_}     # replace '.' for '_'
     lib_const=${lib_const//LIB/}    # remove word 'lib' from filename 
     lib_const="_xLIB_${lib_const}"  # Const for mark lib as loaded
@@ -92,12 +120,16 @@ use(){
       # shellcheck disable=SC2155         # warning - declare and assign separate
       local current_path=$(dirname "$0") 
       local lib_dirs=( 
-        "/opt/xSHELL/$lib_file"
-        "$HOME/bin/xSHELL/$lib_file"
-        "$HOME/bin/xSHELL/vendor/$lib_file" 
         "$current_path/$lib_file" 
         "$current_path/lib/$lib_file"
-        "$HOME/bin/vendor/$lib_file" 
+        "$current_path/vendor/$lib_file"
+        "$_xSHELL_/$lib_file"
+        "$_xSHELL_/lib/$lib_file"
+        "$_xSHELL_/vendor/$lib_file"
+        # "/opt/xSHELL/$lib_file"
+        # "$HOME/bin/xSHELL/$lib_file"
+        # "$HOME/bin/xSHELL/vendor/$lib_file" 
+        # "$HOME/bin/vendor/$lib_file" 
       )
       local included=''
       
@@ -114,7 +146,8 @@ use(){
           }
           included="true"
           
-          _xLIB_DIRS_[$lib_file]="${lib}"
+          # _xLIB_DIRS_[$lib_file]="${lib}"
+          set_assoc_array "${lib_file//./_}" "$lib"
 
           break
         fi
