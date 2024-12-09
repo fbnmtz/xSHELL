@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 19:42:28
+# Last Modified: Sunday, 2024/12/08 - 19:54:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.206
+# Version: 0.0.9.207
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -71,22 +71,18 @@ else
     git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."  # Clone the repository if not already installed
 fi
 
-# Check if the configuration already exists in /etc/profile
-if ! grep -q "export _xSHELL_" /etc/profile; then
-    # If the configuration does not exist, add it
-    _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> /etc/profile"
-    _sudo "echo -e '\nexport _xSHELL_=\"${install_dir}\"'  >> /etc/profile"
-    echo "Configuration added to /etc/profile"
-else
-    echo "Configuration already exists in /etc/profile"
-fi
+# List of configuration files to check and update
+config_files=("/etc/profile" "/etc/bashrc")
 
-# Check if the configuration already exists in /etc/bashrc
-if ! grep -q "export _xSHELL_" /etc/bashrc; then
-    # If the configuration does not exist, add it
-    _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> /etc/bashrc"
-    _sudo "echo -e '\nexport _xSHELL_=\"${install_dir}\"'  >> /etc/bashrc"
-    echo "Configuration added to /etc/bashrc"
-else
-    echo "Configuration already exists in /etc/bashrc"
-fi
+# Loop through each configuration file
+for config_file in "${config_files[@]}"; do
+    # Check if the configuration already exists in the file
+    if ! grep -q "export _xSHELL_" "$config_file"; then
+        # If the configuration does not exist, add it
+        _sudo "echo -e '\nexport PATH=\"\$PATH:$install_dir\"' >> $config_file"
+        _sudo "echo -e '\nexport _xSHELL_=\"${install_dir}\"'  >> $config_file"
+        echo "Configuration added to $config_file"
+    else
+        echo "Configuration already exists in $config_file"
+    fi
+done
