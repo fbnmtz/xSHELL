@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/11 - 12:21:19
+# Last Modified: Monday, 2024/12/09 - 00:41:15
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.10.452
+# Version: 1.0.10.457
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,7 +22,7 @@ _xLIB_ARGS_UTILS_=true
 # define version of script
 xversion(){
     # set app version (dynamic from header comments or static)
-    _VERSION_="$(head -n 20 "$0" | \
+    [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
         grep '# Version:' -m1 | \
         tr -d ' ' | \
         cut -d ':' -f2 | \
@@ -43,7 +43,7 @@ xversion(){
 # define when script was created
 xcreated(){
     # set app version (dynamic from header comments or static)
-    _CREATED_AT_="$(head -n 20 "$0" | \
+    [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
         grep '# Created:' -m1 | \
         tr -d ' ' | \
         cut -d ':' -f2 | \
@@ -60,12 +60,12 @@ xcreated(){
             cut -d '-' -f1 \
         )"
     # still null? set as unknown, to be filed later
-    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknow>'
+    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknown>'
 }
 
 # define author of script
 xauthor(){
-    _AUTHOR_=$(
+    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(
         head -n 20 "$0" | \
         grep '# Author.:' -m1 | \
         cut -d ':' -f2 |\
@@ -80,5 +80,5 @@ xauthor(){
     # still null? try by $USER variable
     [ -z "$_AUTHOR_" ] && _AUTHOR_="$USER"
     # null? set as unknown, to be filled in later
-    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknow>'
+    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknown>'
 }
