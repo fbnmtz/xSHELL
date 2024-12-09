@@ -6,10 +6,10 @@
 # Created: Friday, 2021/05/21 - 21:09:41
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2023/02/22 - 21:16:33
+# Last Modified: Monday, 2024/12/09 - 00:55:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.90
+# Version: 0.1.4.91
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -48,7 +48,10 @@ strReverse(){ echo "$1" | rev; }
 
 # change case of a string 
 upCase(){ echo "$1" | tr a-z A-Z ; }
+alias upcase=upCase
+
 lowCase(){ echo "$1" | tr A-Z a-z ; }
+alias lowcase=lowCase
 
 # check if a string contains another string
 # @param $1: string alvo da busca
