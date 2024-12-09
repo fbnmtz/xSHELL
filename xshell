@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 00:09:36
+# Last Modified: Monday, 2024/12/09 - 00:55:59
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.359
+# Version: 0.1.19.363
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,7 +26,7 @@
 
 source "$_xSHELL_/init"
 
-use args utils xshell.lib
+use args utils strings xshell.lib
 xrequirements touch chmod date
 
 xshell_init
@@ -61,7 +61,7 @@ if [ -f "$filename" ]; then
     echo -n "script '$filename' already exists! Open it on default editor: '$editor' (y/n)? "
     read -r choice
     # convert answer to UPPERCASE
-    [ "${choice^^}" == "Y" ] && $editor "$filename"
+    [ "$(upcase $choice)" == "Y" ] && $editor "$filename"
     exit 1
 fi
 
