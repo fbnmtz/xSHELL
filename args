@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 19:21:30
+# Last Modified: Monday, 2024/12/09 - 03:35:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1348
+# Version: 0.2.16.1365
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -444,8 +444,17 @@ xrun(){
             ;;
             --xhelp)
                 use utils
-                local _help_viewer=$(getPath bat less)
+                local _help_viewer=$(getPath bat less more cat)
                 shift; xrunHelp | $_help_viewer
+            ;;
+            --xlib-dirs)
+                shift;
+                [ -z "$RED" ] && use colors
+                echo -e "\n${YELLOW}Listing xSHELL LIB directories:${RESET}\n"
+                for dir in "${xSHELL_DIRS[@]}"; do
+                    echo -e "${GREEN}  \`-> directory '${dir}${RESET})"
+                done
+                exit
             ;;
             *)
                 _PARAMS_+=("$1")

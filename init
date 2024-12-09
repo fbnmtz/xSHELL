@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 04:28:46
+# Last Modified: Monday, 2024/12/09 - 14:38:02
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.628
+# Version: 0.1.18.670
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,8 +21,7 @@
 # _INIT_DEBUG_=false      # set to true or false to DEBUG
 
 # shellcheck disable=SC1090   #warning on 'source' usage
-[ "$_INIT_DEBUG_" == 'true' ] && \
-  source "$_xSHELL_/colors"   #  autoload 'colors' if in DEBUG mode
+[ "$_INIT_DEBUG_" == 'true' ] && source "$xSHELL_PATH/colors"   #  autoload 'colors' if in DEBUG mode
   # source /opt/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
   # source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
@@ -32,6 +31,18 @@ APP=$(basename "$0")          # application name
 APP_DIR=$(dirname "$0")       # application current directory
 APP_HOME=""                   # application home (store data)
 
+xSHELL_DIRS=( 
+  "$APP_DIR/" 
+  "$APP_DIR/lib/"
+  "$APP_DIR/vendor/"
+  "$xSHELL_PATH/"
+  "$xSHELL_PATH/lib/" 
+  "$xSHELL_PATH/vendor/"
+  # "/opt/xSHELL/"
+  # "$HOME/bin/xSHELL/"
+  # "$HOME/bin/xSHELL/vendor/" 
+  # "$HOME/bin/vendor/" 
+)
 
 # Função para definir um valor em um array associativo simulado
 set_assoc_array() {
@@ -66,7 +77,7 @@ _USE_COUNT_=0
 # function to set $APP_HOME
 # ex: setHome {dir1, dir2}
 xsetHome(){
-  APP_HOME=~/.fbnmtz/$APP
+  APP_HOME=~/.xshell/$APP
   mkdir -p "$APP_HOME"/"$*"
 }
 
@@ -118,31 +129,32 @@ use(){
     if ! checkLibLoaded "$lib_file"; then
 
       # shellcheck disable=SC2155         # warning - declare and assign separate
-      local current_path=$(dirname "$0") 
-      local lib_dirs=( 
-        "$current_path/$lib_file" 
-        "$current_path/lib/$lib_file"
-        "$current_path/vendor/$lib_file"
-        "$_xSHELL_/$lib_file"
-        "$_xSHELL_/lib/$lib_file"
-        "$_xSHELL_/vendor/$lib_file"
-        # "/opt/xSHELL/$lib_file"
-        # "$HOME/bin/xSHELL/$lib_file"
-        # "$HOME/bin/xSHELL/vendor/$lib_file" 
-        # "$HOME/bin/vendor/$lib_file" 
-      )
+      local current_path=$(dirname "$0")
+      # Novo array para armazenar os paths com o arquivo adicionado
+      lib_dirs=()
+
+      # Iterar sobre cada item do array original
+      for dir in "${xSHELL_DIRS[@]}"; do
+        # Adicionar o nome do arquivo ao final do path
+        lib_dirs+=("$dir$lib_file")
+      done
+
       local included=''
       
       # search file in default destinations
       local li=0
       for lib in "${lib_dirs[@]}"; do
 
-        if source "$lib" 2> /dev/null ; then
-          _CALLER_=$lib
+        if source "${lib}" 2> /dev/null ; then
+          _CALLER_=${lib}
           # success? set a flag; break loop
           [ "$_INIT_DEBUG_" == 'true' ] && { 
-            echo -e "${GREEN}  \`-> loading '${lib_dirs[$li]}'${RESET} - "\
-              "${CYAN}directory: $((li+1))/${#lib_dirs[@]}${RESET})"
+            # printf "     %-${max_length}s   %s\n" "$key" "$desc"
+            
+            # printf "   %s\`-> loading '%s' %-25s - directory: %s/%s"  "${GREEN}" "${xSHELL_DIRS[$li]}" "${RESET}" "${CYAN}" "$((li+1))" "${#xSHELL_DIRS[@]}${RESET}"
+            
+            echo -e "${GREEN}  \`-> loading '${xSHELL_DIRS[$li]}'${RESET} - "\
+              "${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
           }
           included="true"
           
@@ -159,10 +171,9 @@ use(){
 
     # not included with success? raise a error 
     test -z "$included" && { 
-      echo -e "\n${RED}Error importing lib '$lib_file'"\
-        "- NOT_FOUND!${RESET}"
+      echo -e "\n${RED}Error importing lib '$lib_file' - NOT_FOUND!${RESET}"
       [ "$_INIT_DEBUG_" == 'true' ] && { 
-          local all_dirs=${lib_dirs[*]}
+          local all_dirs=${xSHELL_DIRS[*]}
           echo -e "${RED} \`-> searched on dir's:\n   *"\
             "${all_dirs// /\\n   \* }"\
             "${RESET}"
@@ -180,6 +191,7 @@ alias import=use
 alias require=use
 alias load=use
 alias unit=use
+alias xuse=use
 
 # validade required binaries
 # ex: xrequirements bin1 bin2 bin3A:bin3B
