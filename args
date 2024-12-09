@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 03:35:32
+# Last Modified: Monday, 2024/12/09 - 14:57:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1365
+# Version: 0.2.16.1369
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -450,10 +450,11 @@ xrun(){
             --xlib-dirs)
                 shift;
                 [ -z "$RED" ] && use colors
-                echo -e "\n${YELLOW}Listing xSHELL LIB directories:${RESET}\n"
+                echo -e "\n${YELLOW}xSHELL LIB directories:${RESET}\n"
                 for dir in "${xSHELL_DIRS[@]}"; do
-                    echo -e "${GREEN}  \`-> directory '${dir}${RESET})"
+                    echo -e "${GREEN}  \`-> '${dir}${RESET})"
                 done
+                echo
                 exit
             ;;
             *)
