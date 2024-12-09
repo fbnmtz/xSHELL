@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 # ############################################################################# Project: xSHELL (none)
-# File...: xshell
+# File...: scripts/xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 13:27:32
+# Last Modified: Monday, 2024/12/09 - 16:06:20
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.375
+# Version: 0.1.19.377
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -50,6 +50,10 @@ xrun --xreject-unknow --xrequire-one --xversionrc --xcolors "$@"
 
 if [ -n "$name" ]; then
     filename="$output/$name"
+    # Check if the output directory is writable
+    if [ ! -w "${output}" ]; then
+        requireROOT  # Require ROOT user if the directory is not writable
+    fi
 else 
     echo "Error: You must specify <filename> with -f option"
     xusage
