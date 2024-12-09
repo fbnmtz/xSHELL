@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 16:21:29
+# Last Modified: Monday, 2024/12/09 - 16:44:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.13.269
+# Version: 0.1.13.275
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -173,6 +173,8 @@ templateLib(){
     local lastchar="$(echo "$name" | rev | cut -c1)"
     # check if it is a 'underscore' character
     [ "${lastchar}" != "_" ]  && name+="_"
-    # convert lib name to upercase {^^}
-    echo -e  "\n_xLIB_${name^^}=true\n"
+    # upcase lib name {^^}
+    name=$(upcase $name)
+    # const for LIB
+    echo -e  "\n_xLIB_${name}=true\n"
 }
