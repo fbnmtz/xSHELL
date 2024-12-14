@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 04:24:48
+# Last Modified: Saturday, 2024/12/14 - 12:08:00
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.692
+# Version: 0.1.18.698
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -74,39 +74,40 @@ _CALLER_=''
 _USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
-# function to set $APP_HOME
+# function to create default $APP_HOME and sub folders
 # ex: setHome {dir1, dir2}
 xsetHome(){
   APP_HOME=~/.xshell/$APP
   mkdir -p "$APP_HOME"/"$*"
 }
+alias mkAPP_HOME=xsetHome
 
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
-  _USE_COUNT_+=1
+  _USE_COUNT_+=1  # Increment the use counter
   # check if some lib already loaded
   checkLibLoaded(){
     # local lib_const=${1^^}          # convert fist arg to UPCASE 
-    lib_const=$(to_uppercase "$1")
+    lib_const=$(to_uppercase "$1")  # Convert the argument to uppercase
     lib_const=${lib_const//./_}     # replace '.' for '_'
     lib_const=${lib_const//LIB/}    # remove word 'lib' from filename 
     lib_const="_xLIB_${lib_const}"  # Const for mark lib as loaded
 
     # check last char (needs to be equal '_' underline) 
-    [ ! "${lib_const:-1}" == "_" ]  && lib_const+="_"
+    [ ! "${lib_const:-1}" == "_" ]  && lib_const+="_"  # Add an underscore if it's not already there
 
     # check if load lib has a defined var _xLIB_NAME_ and its not null
     if eval "[ -z \"\$${lib_const}\" ]" ; then
       [ "$_INIT_DEBUG_" == 'true' ] && { 
         echo -e "${RED}\`-> lib '${1}' not loaded. (const "\
-          "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"
+          "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"  # Print an error message if the library is not loaded
       }
       return 1
     else
       [ "$_INIT_DEBUG_" == 'true' ] && {
         echo -e "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. ("\
-          "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"
+          "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
       }
       return 0
     fi
@@ -114,22 +115,22 @@ use(){
 
   # trackback function caller
   if [ "$_USE_COUNT_" -eq 1 ]; then 
-    _CALLER_="$0" ; _LIB_=$1
+    _CALLER_="$0" ; _LIB_=$1  # Set the caller and library variables
   else
     [ "$_CALLER_" == "$_LIB_" ] && { 
       _CALLER_="$0";
-    } || _CALLER_=$_LIB_
+    } || _CALLER_=$_LIB_  # Update the caller and library variables if necessary
   fi
   
   [ "$_INIT_DEBUG_" == 'true' ] && \
-    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"
+    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"  # Print a message indicating that the use function is being called
   
   for lib_file in "$@"; do
     
     if ! checkLibLoaded "$lib_file"; then
 
       # shellcheck disable=SC2155         # warning - declare and assign separate
-      local current_path=$(dirname "$0")
+      local current_path=$(dirname "$0")  # Get the directory path of the current script
       # Novo array para armazenar os paths com o arquivo adicionado
       lib_dirs=()
 
@@ -193,13 +194,13 @@ alias load=use
 alias unit=use
 alias xuse=use
 
-# validade required binaries
+# validate required binaries
 # ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
   missing=""
   fail(){
     local tools=$@
-    local error_msg="requirements error! please missing tools: '${tools//\:/\' or \'}' ."
+    local error_msg="requirements error! please install missing tools: '${tools//\:/\' or \'}'."
     echo -e "$error_msg"
     notify-send "$0" "$error_msg"
     exit 10
