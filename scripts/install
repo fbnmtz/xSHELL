@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: install
+# File...: scripts/install
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 15:36:03
+# Last Modified: Saturday, 2024/12/14 - 11:53:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.220
+# Version: 0.0.9.222
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -83,7 +83,7 @@ for config_file in "${config_files[@]}"; do
         _sudo "echo -e '\nexport xSHELL_SCRIPTS=\"\${xSHELL_PATH}/scripts\"'  >> $config_file"
         _sudo "echo -e '\nexport PATH=\"\$PATH:\$xSHELL_PATH:\$xSHELL_SCRIPTS\"' >> $config_file"
         _sudo "echo -e '\nexport xSHELL_INIT=\"\${xSHELL_PATH}/init\"'  >> $config_file"
-        _sudo "echo -e '\nxinitialize(){ source \"\${xSHELL_PATH}/init\" }'  >> $config_file"
+        _sudo "echo -e '\nxinitialize(){ source \"\${xSHELL_PATH}/init\" ; }'  >> $config_file"
         echo "Configuration added to $config_file"
     else
         echo "Configuration already exists in $config_file"
