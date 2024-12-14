@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 14:38:02
+# Last Modified: Monday, 2024/12/09 - 18:24:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.670
+# Version: 0.1.18.686
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -196,9 +196,10 @@ alias xuse=use
 # validade required binaries
 # ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
+  missing=""
   fail(){
-    local tool=$1
-    local error_msg="requirements error! please search and install a package with missing tool: '${tool//\:/\' or \'}' ."
+    local tools=$@
+    local error_msg="requirements error! please missing tools: '${tools//\:/\' or \'}' ."
     echo -e "$error_msg"
     notify-send "$0" "$error_msg"
     exit 10
@@ -216,13 +217,18 @@ xrequirements(){
           break;
         else
           found=false
+          missing+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && fail "$tool"
+      # [ "$found" != 'true' ] && fail "$tool"
     else
       if ! check "$tool"; then
-        fail "$tool"
+          missing+=" $tool"
+
+        # fail "$tool"
       fi
     fi
   done
+
+  [ -n "$missing" ] && fail "$missing"
 }
