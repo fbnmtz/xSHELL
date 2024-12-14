@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 18:24:48
+# Last Modified: Saturday, 2024/12/14 - 04:17:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.686
+# Version: 0.1.18.689
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -217,7 +217,7 @@ xrequirements(){
           break;
         else
           found=false
-          missing+=" $tool"
+          [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
         fi
       done
       # [ "$found" != 'true' ] && fail "$tool"
