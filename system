@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2023/04/25 - 22:32:54
+# Last Modified: Saturday, 2024/12/14 - 15:33:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.419
+# Version: 0.0.9.421
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -58,13 +58,9 @@ xsys.notify(){
         # su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"; bash\"'"
         su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \" echo \"$_xSYS_NOTIFY_ARG\" && sleep 10 \"'"
     else
-        echo -e "\ncmd: $_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG\n"
+        # echo -e "\ncmd: $_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG\n"
         eval "$_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG"
     fi
-
-    
-    # eval "$_xSYS_NOTIFY_APP" "$_xSYS_NOTIFY_ARG"
-    # eval "$_xSYS_NOTIFY_APP" "$(echo ${_xSYS_NOTIFY_ARG} | sed 's/^ //')"
 }
 
 # write contents on terminal
