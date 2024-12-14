@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 12:15:08
+# Last Modified: Saturday, 2024/12/14 - 15:30:33
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.701
+# Version: 0.1.18.707
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -202,7 +202,9 @@ xrequirements(){
     local tools=$@
     local error_msg="requirements error! please install missing tools: '${tools//\:/\' or \'}'."
     echo -e "$error_msg"
-    notify-send "$0" "$error_msg"
+    if source "$xSHELL_PATH/system" 2> /dev/null; then
+      xsys.notify "$APP" "$error_msg"
+    fi
     exit 10
   }
   # check if a package exists on the system
