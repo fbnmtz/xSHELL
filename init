@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 12:08:00
+# Last Modified: Saturday, 2024/12/14 - 12:15:08
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.698
+# Version: 0.1.18.701
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -85,7 +85,7 @@ alias mkAPP_HOME=xsetHome
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
-  _USE_COUNT_+=1  # Increment the use counter
+  ((_USE_COUNT_+=1))  # Increment the use counter
   # check if some lib already loaded
   checkLibLoaded(){
     # local lib_const=${1^^}          # convert fist arg to UPCASE 
@@ -130,7 +130,7 @@ use(){
     if ! checkLibLoaded "$lib_file"; then
 
       # shellcheck disable=SC2155         # warning - declare and assign separate
-      local current_path=$(dirname "$0")  # Get the directory path of the current script
+      # local current_path=$(dirname "$0")  # Get the directory path of the current script
       # Novo array para armazenar os paths com o arquivo adicionado
       lib_dirs=()
 
@@ -211,13 +211,13 @@ xrequirements(){
   
   for tool in "$@"; do
     if [[ "$tool" =~ ":" ]]; then
-      local found=''
+      # local found=''
       for t in ${tool//\:/ }; do 
         if check "$t"; then
-          found=true
+          # found=true
           break;
         else
-          found=false
+          # found=false
           [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
         fi
       done
