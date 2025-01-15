@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 15:30:33
+# Last Modified: Tuesday, 2025/01/14 - 23:00:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.707
+# Version: 0.1.18.722
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -197,10 +197,12 @@ alias xuse=use
 # validate required binaries
 # ex: xrequirements bin1 bin2 bin3A:bin3B
 xrequirements(){
-  missing=""
+  local missing=""
+  local found=''
+  
   fail(){
     local tools=$@
-    local error_msg="requirements error! please install missing tools: '${tools//\:/\' or \'}'."
+    local error_msg="requirements error! please install missing tools: '${tools//\|/\' or \'}'."
     echo -e "$error_msg"
     if source "$xSHELL_PATH/system" 2> /dev/null; then
       xsys.notify "$APP" "$error_msg"
@@ -208,30 +210,31 @@ xrequirements(){
     exit 10
   }
   # check if a package exists on the system
-  # ex: check bin1
+  # ex| check bin1
   check(){ which "$1" &> /dev/null; }
   
   for tool in "$@"; do
-    if [[ "$tool" =~ ":" ]]; then
-      # local found=''
-      for t in ${tool//\:/ }; do 
+    if [[ "$tool" =~ "|" ]]; then
+      for t in ${tool//\|/ }; do 
         if check "$t"; then
-          # found=true
+          found=true
           break;
         else
-          # found=false
+          found=false
           [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
         fi
       done
-      # [ "$found" != 'true' ] && fail "$tool"
+      [ "$found" != 'true' ] && fail "$tool"
     else
       if ! check "$tool"; then
-          [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
+        [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
 
-        # fail "$tool"
+        fail "$tool"
+      else 
+        found=true
       fi
     fi
   done
 
-  [ -n "$missing" ] && fail "$missing"
+  # [ "$found" != 'true' ] && fail "$missing"
 }
