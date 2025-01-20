@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/01/14 - 23:00:05
+# Last Modified: Monday, 2025/01/20 - 01:03:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.722
+# Version: 0.1.18.724
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -202,7 +202,7 @@ xrequirements(){
   
   fail(){
     local tools=$@
-    local error_msg="requirements error! please install missing tools: '${tools//\|/\' or \'}'."
+    local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'."
     echo -e "$error_msg"
     if source "$xSHELL_PATH/system" 2> /dev/null; then
       xsys.notify "$APP" "$error_msg"
@@ -213,7 +213,7 @@ xrequirements(){
   # ex| check bin1
   check(){ which "$1" &> /dev/null; }
   
-  for tool in "$@"; do
+  for tool in $*; do
     if [[ "$tool" =~ "|" ]]; then
       for t in ${tool//\|/ }; do 
         if check "$t"; then
