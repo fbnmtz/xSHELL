@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2025/01/20 - 01:03:35
+# Last Modified: Sunday, 2025/01/26 - 11:04:59
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.724
+# Version: 0.1.18.739
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -106,8 +106,7 @@ use(){
       return 1
     else
       [ "$_INIT_DEBUG_" == 'true' ] && {
-        echo -e "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. ("\
-          "const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
+        echo -e "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
       }
       return 0
     fi
@@ -154,7 +153,7 @@ use(){
             
             # printf "   %s\`-> loading '%s' %-25s - directory: %s/%s"  "${GREEN}" "${xSHELL_DIRS[$li]}" "${RESET}" "${CYAN}" "$((li+1))" "${#xSHELL_DIRS[@]}${RESET}"
             
-            echo -e "${GREEN}  \`-> loading '${xSHELL_DIRS[$li]}'${RESET} - "\
+            echo -e "${GREEN}  \`-> loading '${lib}'${RESET} - "\
               "${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
           }
           included="true"
