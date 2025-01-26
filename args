@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/01/26 - 12:55:15
+# Last Modified: Sunday, 2025/01/26 - 13:17:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.18.1395
+# Version: 0.2.18.1396
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -224,6 +224,7 @@ xarg(){
                 # [ -n "$action_vars" ] && action_vars+=" ; "
                 action_vars+=" $assign_vars  "
                 option_rule=''
+                desc_var=""
             ;;
             -v|--var) 
                 key=$1; shift
@@ -232,7 +233,6 @@ xarg(){
                 var_name=''
                 var_value=''
                 option_rule=""
-                desc_var=""
                 
                 # $1 content -> can be a list of values comma separated
                     # value,value
