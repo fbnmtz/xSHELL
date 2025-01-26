@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 14:57:25
+# Last Modified: Sunday, 2025/01/26 - 12:05:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.16.1369
+# Version: 0.2.17.1392
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -213,12 +213,22 @@ xarg(){
                 option_key=$(echo "$1" | tr -s ',' '|')
                 option_default=$1
                 description=''
+
+                # autocreate xarg variable with short flag letter
+                # Ex: xarg function with -s param will generate variable xarg=s
+                method=var
+                action_vars=''
+                var_name=xarg
+                var_value=$(echo $option_key | cut -d '|' -f1 | cut -d '-' -f2)
+                assign_vars=" $var_name=\"$var_value\" "
+                # [ -n "$action_vars" ] && action_vars+=" ; "
+                action_vars+=" $assign_vars  "
+                option_rule=''
             ;;
-            # TODO: implements joint shortflags  (ex: -lsa) 
             -v|--var) 
                 key=$1; shift
                 method=var
-                action_vars=''
+                # action_vars=''
                 option_rule=""
                 desc_var=""
                 
