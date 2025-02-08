@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/02/08 - 11:45:20
+# Last Modified: Saturday, 2025/02/08 - 18:31:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.10.229
+# Version: 0.1.0.439
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -17,20 +17,56 @@
 # HISTORY:
 #
 
-# Function to require ROOT user
+# install log
+_LOG=/tmp/xshell-install.log
+
+# always with ESCAPE support
+echo(){ builtin echo -e "$@" | tee -a $_LOG; }
+
+# log
+if [ "$_VERBOSE_" ]; then
+  log() { echo "$@"; }
+else
+  log() { :; }
+fi
+
+check_path() {
+    local path="$1"
+    local parent_path=$(dirname "$path")
+
+    # Check if the path and parent path is writable
+    if [ -d "$path" ] && [ ! -w "$path" ] || [ -d "$parent_path" ] && [ ! -w "$parent_path" ]; then
+        return 1
+    fi
+}
+
+fileAdd(){
+    local file=$1; shift
+    local content="$@"
+    local cmd=""
+    local content_cmd="echo -e '$content'"
+    local tee_cmd="tee -a $file"
+    ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
+    cmd="$content_cmd | $tee_cmd"
+    # echo "$cmd"
+    # "$cmd"
+    echo "\tadding '${content/\\n/}' to '$file'."
+    eval "$cmd" >> $_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
+}
+
+# function to verify if the current user is root
 requireROOT() {
-    if [ $UID -eq 0 ]; then  # Check if the user is ROOT (UID 0)
-        return 0  # Return 0 if the user is ROOT
-    else
-        echo "Error! You need to be ROOT to install xSHELL"  # Print an error message
-        exit 1  # Exit the script with status code 1
+    if [ $UID -ne 0 ]; then
+        echo "${RED}Error!${RESET} You need to be ROOT to install $project_name in $install_dir"
+        exit 1
     fi
 }
 
 # Function to run a command with sudo
 _sudo() {
     _cmd_=$1  # Store the command to be run
-    echo -n "running 'sudo $_cmd_ '"; echo  # Print the command being run
+    # log "running 'sudo $_cmd_ '"; echo  # Print the command being run
+    log "running 'sudo $_cmd_ '"
     eval "$_cmd_"  # Evaluate and run the command
 }
 
@@ -41,51 +77,71 @@ upcase() {
 
 # URL and repository information
 url=https://github.com
-repo=fbnmtz/xSHELL
+project_name=xSHELL
+repo=fbnmtz/$project_name
 default_dir=/opt
 
-# Prompt the user for the installation directory
-echo -n "install xSHELL on directory (default $default_dir): "
-read -r custom_path
+# TODO: test source from web on Linux
+# load colors
+source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/heads/master/colors)"
+
+# handle arguments
+[ "$1" == "--verbose" ] && { shift; _VERBOSE_=1; }
+[ "$1" == "--dir"     ] && { shift; custom_path=$1; }
+
+echo "$project_name install started..." > $_LOG
+
+if [ -z "$custom_path" ]; then
+    # Prompt the user for the installation directory
+    echo -n "${BLUE}$project_name install${RESET} - Use default location: ($default_dir) or inform new path: "
+    read -r custom_path
+fi
 
 # Set the installation directory
 if [ -z "${custom_path}" ]; then
-    install_dir="$default_dir/xSHELL"  # Use the default directory if no custom path is provided
+    install_dir="$default_dir/$project_name"  # Use the default directory if no custom path is provided
 else
-    install_dir="${custom_path}/xSHELL"  # Use the custom path if provided
+    install_dir="${custom_path}/$project_name"  # Use the custom path if provided
 fi
 
+_parent_dir=$(dirname "$install_dir")
 # Check if the installation directory is writable
-if [ ! -w "${install_dir}" ]; then
+if [ -d "$install_dir}" ] && [ ! -w "${install_dir}" ] || [ -d "$_parent_dir" ] && [ ! -w "$_parent_dir" ]; then
     requireROOT  # Require ROOT user if the directory is not writable
 fi
 
-# Check if xSHELL is already installed
+# Check if it is already installed
 if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
-    echo "xSHELL is already installed. Do you want to update it? (y/n)"
+    echo -n "${YELLOW}Waring!${RESET} ${BLUE}$project_name is already installed.${RESET} Do you want to update it? (y/n): "
     read -r choice
     if [ "$(upcase $choice)" == "Y" ]; then  # Check if the user wants to update
-        cd "$install_dir" && git pull  # Update the repository
+        cd "$install_dir" && git pull >> $_LOG 2>&1 # Update the repository
     fi
 else
-    git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."  # Clone the repository if not already installed
+    echo -n "clonning repo... "
+    git clone "${url}/${repo}" "$install_dir" >> $_LOG 2>&1 # Clone the repository if not already installed
+    echo "done."
 fi
 
 # List of configuration files to check and update
-config_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/xshell.sh")
+config_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
 
+echo "configuring files: ${config_files[@]}... "
 # Loop through each configuration file
-for config_file in "${config_files[@]}"; do
+for file in "${config_files[@]}"; do
     # Check if the configuration already exists in the file
-    if ! grep -q "export xSHELL_PATH" "$config_file"; then
+    if ! grep -q "export ${project_name}_PATH" "$file" >> $_LOG 2>&1; then
+        echo "Configuring $file... "
         # If the configuration does not exist, add it
-        _sudo "echo -e '\nexport xSHELL_PATH=\"${install_dir}\"'  >> $config_file"
-        _sudo "echo -e '\nexport xSHELL_SCRIPTS=\"\${xSHELL_PATH}/scripts\"'  >> $config_file"
-        _sudo "echo -e '\nexport PATH=\"\$PATH:\$xSHELL_PATH:\$xSHELL_SCRIPTS\"' >> $config_file"
-        _sudo "echo -e '\nexport xSHELL_INIT=\"\${xSHELL_PATH}/init\"'  >> $config_file"
-        _sudo "echo -e '\nxinitialize(){ source \"\${xSHELL_PATH}/init\" ; }'  >> $config_file"
-        echo "Configuration added to $config_file"
+        fileAdd "$file" '\nexport '${project_name}'_PATH="'${install_dir}'"'  
+        fileAdd "$file" '\nexport '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
+        fileAdd "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS"' 
+        fileAdd "$file" '\nexport '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
+        fileAdd "$file" '\nxinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
+        echo "Configuration added to $file\n"
     else
-        echo "Configuration already exists in $config_file"
+        echo "\tConfiguration already exists in $file"
     fi
 done
+
+echo "configuration done! ${project_name} installed."
