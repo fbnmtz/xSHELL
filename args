@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/01/26 - 13:17:17
+# Last Modified: Saturday, 2025/02/08 - 11:59:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.18.1396
+# Version: 0.2.19.1417
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -369,10 +369,12 @@ xrun(){
         \n\nAvailable options:\
         "
         echo -e "
+        \n  ${CYAN}--xapp-home${RESET};create default directory for \$APP data ($APP_HOME)\
         \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
         \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
         \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
         \n  ${CYAN}--xcolors${RESET};enable color support\
+        \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
         \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
         \n  ${CYAN}--xhelp${RESET};prints this message
         " | column -t -s ';' 
@@ -393,7 +395,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_DEBUG"    ] && echo -e "#${RED} show debug information${RESET}:\n\n$__runARGS_case_\n" ;
+        [ -n "$_ARGS_DEBUG"    ] && echo -e "${RED}# DEBUG information:${RESET}\n\n# xrun function:\n$__runARGS_case_\n\n${GREEN}# Command output:${RESET}\n" ;
         [ -n "$_ARGS_REQUIRED" ] && xrequire_one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
@@ -438,6 +440,9 @@ xrun(){
      while [ "$1" != "" ]; do
         case "$1" in
         # function to force script to receive at last one param/arg
+            --xapp-home)
+                shift; xsetHome
+            ;;
             --xrequire-one | --xrequire_one | --require-one | --notNull)  
                 shift; _ARGS_REQUIRED=true
             ;;
