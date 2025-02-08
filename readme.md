@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2024/12/08 - 19:33:17
+ Last Modified: Saturday, 2025/02/08 - 11:45:33
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.22.512
+ Version: 0.0.23.530
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -53,7 +53,7 @@
 
 - [Index](#index)
 - [Install](#install)
-- [`xshell` Command](#xshell-command)
+- [`xshell` command](#xshell-command)
   - [Example of Usage (libsExample script)](#example-of-usage-libsexample-script)
     - [Code gerenated](#code-gerenated)
     - [Adding custom code](#adding-custom-code)
@@ -73,17 +73,21 @@
 Steps to install `xSHELL` library system
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/master/install | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash 
 
 ```
 
-After run install command, you will have xSHELL on your home and added to your system `$PATH`
+After run install command, you will have the variable `$_xSHELL_` PATH with the default install location, or a customized path of your choice. This also will add configs on some system files:
 
-* `~/bin/xSHELL`
+* Files changed:
+  * /etc/profile
+  * /etc/bashrc
+* Default install location:
+  * `/opt/xSHELL` or a custom path informed during the install process
 
 ---
 
-## `xshell` Command
+## `xshell` command
 
 Within this library, comes `xshell` tool used create new scripts;
 
@@ -104,8 +108,6 @@ usage:
    -v,  --version          print version and exit
 
 v0.1.17-rc316 - writen by @fbnmtz 2020
-
-
 
 
 ```
@@ -281,12 +283,12 @@ Basic library to initialize our framework/system.
 * Functions
 
   * `xsetHome {dir1, dir2}`
-    * Create `$APP_HOME` directory. Default localtion is `$HOME/.fbnmtz/$APP`
+    * Create `$APP_HOME` directory. Default localtion is `$HOME/.xshell/$APP`
   * `use lib1 lib2 lib3`
     * function to easily load libraries into your script
   * `xrequirements binary1 binary2`
     * function to check if a binary exists on your system. Pass program names separeted by spaces. Throw an error and exit if not found.
-    * you can test conditional binarys using this syntax: `xrequirements bin1:bin2` (that means bin1 or bin2)
+    * you can test conditional binarys using this syntax: `xrequirements "bin1|bin2"` (that means bin1 or bin2)
 
 </details>
 </br>

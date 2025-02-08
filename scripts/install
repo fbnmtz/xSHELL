@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 11:53:14
+# Last Modified: Saturday, 2025/02/08 - 11:45:20
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.222
+# Version: 0.0.10.229
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -30,13 +30,13 @@ requireROOT() {
 # Function to run a command with sudo
 _sudo() {
     _cmd_=$1  # Store the command to be run
-    echo -n "running 'sudo $_cmd_ "; echo  # Print the command being run
+    echo -n "running 'sudo $_cmd_ '"; echo  # Print the command being run
     eval "$_cmd_"  # Evaluate and run the command
 }
 
 # Function to convert a string to uppercase
 upcase() {
-    echo "$1" | tr a-z A-Z  # Convert the input string to uppercase
+    echo "$1" | tr '[:lower:]' '[:upper:]'  # Convert the input string to uppercase
 }
 
 # URL and repository information
@@ -46,7 +46,7 @@ default_dir=/opt
 
 # Prompt the user for the installation directory
 echo -n "install xSHELL on directory (default $default_dir): "
-read custom_path
+read -r custom_path
 
 # Set the installation directory
 if [ -z "${custom_path}" ]; then
@@ -63,16 +63,16 @@ fi
 # Check if xSHELL is already installed
 if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
     echo "xSHELL is already installed. Do you want to update it? (y/n)"
-    read choice
+    read -r choice
     if [ "$(upcase $choice)" == "Y" ]; then  # Check if the user wants to update
-        cd $install_dir && git pull  # Update the repository
+        cd "$install_dir" && git pull  # Update the repository
     fi
 else
     git clone "${url}/${repo}" "$install_dir" && echo "xSHELL installed."  # Clone the repository if not already installed
 fi
 
 # List of configuration files to check and update
-config_files=("/etc/profile" "/etc/bashrc")
+config_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/xshell.sh")
 
 # Loop through each configuration file
 for config_file in "${config_files[@]}"; do

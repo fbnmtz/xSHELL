@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/01/26 - 11:04:59
+# Last Modified: Saturday, 2025/02/08 - 11:44:59
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.739
+# Version: 0.1.19.743
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@
 # _INIT_DEBUG_=false      # set to true or false to DEBUG
 
 # shellcheck disable=SC1090   #warning on 'source' usage
-[ "$_INIT_DEBUG_" == 'true' ] && source "$xSHELL_PATH/colors"   #  autoload 'colors' if in DEBUG mode
+[ -n "$_INIT_DEBUG_" ] && source "$xSHELL_PATH/colors"   #  autoload 'colors' if in DEBUG mode
   # source /opt/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
   # source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
