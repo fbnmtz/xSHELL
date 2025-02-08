@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 16:44:57
+# Last Modified: Saturday, 2025/02/08 - 11:52:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.13.275
+# Version: 0.1.14.277
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -134,8 +134,8 @@ source \"\$xSHELL_INIT\"
 use args
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~"
-[ -n "$arguments" ] && \
-    parse_args "$arguments" || \
+# [ -n "$arguments" ] && \
+    # parse_args "$arguments" || \
     echo "# define your arguments with 'xarg' function. Example below:
 # xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
 "

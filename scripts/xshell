@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 16:06:20
+# Last Modified: Saturday, 2025/02/08 - 11:52:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.377
+# Version: 0.1.20.379
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -33,7 +33,7 @@ xshell_init
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xarg --block "Script's Generation"
-xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
+# xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
 xarg --id -e,--editor    --var editor+r        --desc "define <editor> to open script"
 xarg --id -f,--filename  --var name+r          --desc "filename for new script"
 xarg --id -H,--header    --var _xHEADER_:true  --desc "enable our default header on the new script"
