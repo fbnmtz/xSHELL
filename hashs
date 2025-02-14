@@ -6,10 +6,10 @@
 # Created: Wednesday, 2021/05/26 - 00:47:46
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2024/12/08 - 05:26:10
+# Last Modified: Thursday, 2025/02/13 - 22:38:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.1.1.59
+# Version: 1.1.2.76
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Implements a virtual Hash inspired on starckoverflow thread
@@ -20,6 +20,8 @@
 #
 
 _xLIB_HASHS_=true;
+
+xrequirements mkdir cut cat wc grep rm
 
 # Function: Hash.new
 #
@@ -33,14 +35,21 @@ _xLIB_HASHS_=true;
 # Return:
 #   None
 Hash.new() {
+    # support to temp/persistent hashs
+    if [ "$1" == "-t" ]; then
+        shift
+        _hash_location_=/tmp/hashs/$APP
+    else
+        _hash_location_=$APP_HOME
+    fi
     # Create the directory if it doesn't exist
-    mkdir -p /tmp/hashs
+    mkdir -p "$_hash_location_"
 
     # Construct the full path to the hash file
-    _hash_filename_="/tmp/hashs/map.$APP.$1"
+    _hash_path_="$_hash_location_/$1.hash"
 
     # Remove the existing hash file if it exists
-    rm -f "$_hash_filename_"
+    rm -f "$_hash_path_"
 }
 
 # Function: Hash.put
@@ -55,7 +64,7 @@ Hash.new() {
 # Return:
 #   None
 Hash.put() {
-    echo "$2:$3" >> "$_hash_filename_"
+    echo "$2:$3" >> "$_hash_path_"
 }
 alias Hash.add='Hash.put'
 
@@ -70,7 +79,7 @@ alias Hash.add='Hash.put'
 Hash.get() {
     # Use grep to find the line that starts with the key followed by a colon
     # Then use cut to extract the value part after the colon
-    grep "^$2:" "$_hash_filename_" | cut -d ':' -f2
+    grep "^$2:" "$_hash_path_" | cut -d ':' -f2
 }
 
 # Alias for the Hash.get function
@@ -87,7 +96,7 @@ alias Hash.val='Hash.get'
 Hash.keys() {
     # Use cut to extract the first field (keys) from the hash file
     # The delimiter is a colon (:)
-    cut -d ':' -f1 < "$_hash_filename_"
+    cut -d ':' -f1 < "$_hash_path_"
 }
 
 # Function to retrieve all values from a hash file
@@ -100,7 +109,7 @@ Hash.keys() {
 Hash.values() {
     # Use cut to extract the second field (values) from the hash file
     # The delimiter is a colon (:)
-    cut -d ':' -f2 < "$_hash_filename_"
+    cut -d ':' -f2 < "$_hash_path_"
 }
 
 # Function to retrieve all key-value pairs from a hash file
@@ -113,7 +122,7 @@ Hash.values() {
 Hash.all() {
     # Use cat to display the contents of the hash file
     # Redirect any errors to /dev/null to suppress them
-    cat "$_hash_filename_" 2>/dev/null
+    cat "$_hash_path_" 2>/dev/null
 }
 
 # Function to count the number of items in a hash file

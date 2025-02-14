@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/02/08 - 12:01:50
+# Last Modified: Thursday, 2025/02/13 - 22:37:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.19.1418
+# Version: 0.2.20.1446
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@ _xLIB_ARGS_=true;
 
 use args.utils system hashs
 # hash to save app params
-Hash.new main_params
+Hash.new -t main
 
 block=''
 # update text used in function 'xusage'
@@ -45,7 +45,7 @@ xhelp(){
             -p|--param ) 
                     param_id="$(echo $val | cut -d '+' -f1)"; 
                     param_text="$(echo $val | cut -d '+' -f2-3)";
-                    Hash.put main_params "$param_id" "$param_text";;
+                    Hash.put main "$param_id" "$param_text";;
                     
             -b|--body   ) __HELP_BODY__+="$val" ;;
             -h|--header ) __HELP_HEADER__+="\n$val\n" ;;
@@ -57,18 +57,19 @@ xhelp(){
     # set vars VERSION, _CREATED_AT_, _AUTHOR_
     xversion
     xcreated
+    xupdated
     xauthor
 
-    # get all keys in main_params hash (format: key:value)
+    # get all keys in main hash (format: key:value)
     #   --> key pattern (shortkey,longkey): Ex: -k,--key
     #   --> sed remove second key; 
     #   --> tr replace breaklines '\n' for a space ' ' . 
     # result: all shortkeys in one line
-    # __HELP_USAGE__="usage: \n  $APP $(Hash.keys main_params | sed 's/,--.[a-z]*//g' | tr -s '\n' ' ')" 
+    # __HELP_USAGE__="usage: \n  $APP $(Hash.keys main | sed 's/,--.[a-z]*//g' | tr -s '\n' ' ')" 
     __HELP_USAGE__="usage: \n  ${GREEN}$APP${RESET} "
-    if [ $(Hash.count main_params) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
+    if [ $(Hash.count main) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
         __HELP_USAGE__+="$(
-            Hash.keys main_params | \
+            Hash.keys main | \
             sed 's/,--.[a-z,-]*//g' | \
             sed 's/,.[a-z,-]*//g' | \
             sed 's/^/[/g' | \
@@ -129,28 +130,24 @@ xusage(){
     esac
     
     # prints initial help text
-    echo -e "${BLUE}${__HELP_HEADER__}${RESET}\n${__usage_msg}${__HELP_USAGE__}"
+    echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
 
     if [ -n "$__usage_full" ]; then
         # help body text (before params/args)
         [ -n "$__HELP_BODY__" ] && echo -e "\n${__HELP_BODY__}" 
         # [ -z "$block" ] && echo -e "Available options:" || echo -e "$block"
         
-        # get all key/values from main_params hash
+        # get all key/values from main hash
         #     pairs stored as 'key:value'. We parse to ':key:value' 
         #       --> sed to add ':' in begin of each line 
         #       --> column to equaly expand texts
-        # Hash.all main_params | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
+        # Hash.all main | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
 
-    # case sys.os in
-    case $(xsys.os) in
-        Darwin)
-        _HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n"
-        ;;
-        Linux)  
-        __HELP_OPTIONS_DESCRIPTION__="$(helpOptionsLinux)"
-        ;;
-    esac
+        # case sys.os in
+        case $(xsys.os) in
+            Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
+            Linux ) __HELP_OPTIONS_DESCRIPTION__="$(helpOptionsLinux)";;
+        esac
        
 
         # v1
@@ -167,13 +164,12 @@ xusage(){
         #     sed 's/,/,  /g' )
 
         # v3
-        __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n"
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
             # sed '/^#/ s/ \{1,\}/ /g' | \
         
         # not null? prints footer 
         [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
-        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_} ${YELLOW}${_CREATED_AT_}${RESET}"
+        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} on ${YELLOW}${_UPDATED_AT_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_}${RESET}"
     
     else
         echo -e ""
@@ -299,8 +295,9 @@ xarg(){
             ;;
             -d|--desc) 
                 key=$1; shift
-                description="$*" 
+                description="$1" 
             ;;
+            # FIXME: --block not working on Darwin system
             -b|--block|-g|--group|-s|--section)
                 method=block
                 block="$2"
@@ -369,7 +366,7 @@ xrun(){
         \n\nAvailable options:\
         "
         echo -e "
-        \n  ${CYAN}--xapp-home${RESET};create default directory for \$APP data ($APP_HOME)\
+        \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
         \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
         \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
         \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
@@ -440,7 +437,7 @@ xrun(){
      while [ "$1" != "" ]; do
         case "$1" in
         # function to force script to receive at last one param/arg
-            --xapp-home)
+            --xapp-data)
                 shift; xsetHome
             ;;
             --xrequire-one | --xrequire_one | --require-one | --notNull)  
@@ -465,7 +462,7 @@ xrun(){
                 local _help_viewer=$(getPath bat less more cat)
                 shift; xrunHelp | $_help_viewer
             ;;
-            --xlib-dirs)
+            --xlib-dirs | --xlibs)
                 shift;
                 [ -z "$RED" ] && use colors
                 echo -e "\n${YELLOW}xSHELL LIB directories:${RESET}\n"
@@ -537,7 +534,7 @@ helpOptionsDarwin() {
         fi
         # Add the entire line to the options array
         options+=("$line")
-    done <<< "$(Hash.all main_params)"
+    done <<< "$(Hash.all main)"
 
     # Format the options with standard spacing
     for option in "${options[@]}"; do
@@ -555,7 +552,7 @@ helpOptionsDarwin() {
 # Function to format help options with standard spacing on Linux systems
 helpOptionsLinux(){
     for h in $(
-            Hash.all main_params |      # get all hashes \
+            Hash.all main |      # get all hashes \
             sed "s/:/:/g" |             # add blue color to options description':'\
             sed "s/^-/:-/g" |           # add color to options/flags \
             sed 's/ /./g'               # replace ' ' with '.'  
