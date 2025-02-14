@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/02/08 - 11:44:59
+# Last Modified: Thursday, 2025/02/13 - 22:47:02
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.743
+# Version: 0.1.20.775
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -29,7 +29,9 @@
 APP=$(basename "$0")          # application name
 # shellcheck disable=SC2034   # unused variable warning
 APP_DIR=$(dirname "$0")       # application current directory
-APP_HOME=""                   # application home (store data)
+APP_HOME="$HOME/.xshell/$APP" # application home (store data)
+APP_DATA=$APP_HOME
+# DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
 
 xSHELL_DIRS=( 
   "$APP_DIR/" 
@@ -73,15 +75,13 @@ to_uppercase() {
 _CALLER_=''
 _USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-
-# function to create default $APP_HOME and sub folders
+# function to create default $APP_DATA and sub folders
 # ex: setHome {dir1, dir2}
 xsetHome(){
-  APP_HOME=~/.xshell/$APP
-  mkdir -p "$APP_HOME"/"$*"
+  APP_DATA=$HOME/.xshell/$APP
+  APP_HOME=$APP_DATA
+  mkdir -p "$APP_DATA/$*"
 }
-alias mkAPP_HOME=xsetHome
-
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
