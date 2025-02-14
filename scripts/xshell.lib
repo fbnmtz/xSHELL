@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:28:45
+# Last Modified: Friday, 2025/02/14 - 00:35:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.15.308
+# Version: 0.1.16.314
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -198,13 +198,11 @@ newFile(){
 removeFile(){
     # local name=$1
     if [ -f "$name" ]; then
-        cp "$name" "$BACKUP_DIR/$name"
-        echo "deletar1 $name"
+        cp "$name" "$BACKUP_DIR/$name" && rm "$name"
+        # echo "deletar1 $name"
     elif [ -f "$dir/$name" ]; then
-        echo "found"
-        echo "deletar2 $dir/$name"
-        cp "$dir/$name" "$BACKUP_DIR/$name" && \
-        rm "$dir/$name"
+        # echo "deletar2 $dir/$name"
+        cp "$dir/$name" "$BACKUP_DIR/$name" && rm "$dir/$name"
     else
         echo "file '$name' not found!"
         exit 1
