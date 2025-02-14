@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/02/08 - 11:52:37
+# Last Modified: Friday, 2025/02/14 - 00:31:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.20.379
+# Version: 0.1.21.419
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,7 +26,7 @@
 
 source "$xSHELL_INIT"
 
-use args utils strings xshell.lib
+use args utils colors strings xshell.lib
 xrequirements touch chmod date
 
 xshell_init
@@ -34,11 +34,14 @@ xshell_init
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xarg --block "Script's Generation"
 # xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
-xarg --id -e,--editor    --var editor+r        --desc "define <editor> to open script"
-xarg --id -f,--filename  --var name+r          --desc "filename for new script"
-xarg --id -H,--header    --var _xHEADER_:true  --desc "enable our default header on the new script"
-xarg --id -l,--lib       --var _xLIB_:true     --desc "define new script as a our LIB type (can be loaded with 'use' function)"
-xarg --id -o,--output    --var output+r        --desc "setup <output> directory for new script"
+xarg --id -f,--file      --var name+r          --desc "file <name> for new script"
+xarg --id -H,--header    --var _xHEADER_:true  --desc "default HEADER on the new script"
+xarg --id -l,--lib       --var _xLIB_:true     --desc "LIB type on new script(can be loaded with 'use' function)"
+xarg --id -o,--output    --var dir+r           --desc "output <dir> for new script (default: $DEFAULT_OUTPUT)"
+xarg --id -e,--editor    --var editor+r        --desc "<editor> to open new script (default: $editor)"
+xarg --id -r,--remove    --var name+r          --desc "remove file <name> (backup: $BACKUP_DIR/<name>)"
+
+xarg --header "xSHELL script generator"
 
 # TODO: planning new features
 # xarg --block "xSHELL Packages"
@@ -48,21 +51,16 @@ xarg --id -o,--output    --var output+r        --desc "setup <output> directory 
 
 xrun --xreject-unknow --xrequire-one --xversionrc --xcolors "$@"
 
-if [ -n "$name" ]; then
-    filename="$output/$name"
-    # Check if the output directory is writable
-    if [ ! -w "${output}" ]; then
-        requireROOT  # Require ROOT user if the directory is not writable
-    fi
-else 
-    echo "Error: You must specify <filename> with -f option"
-    xusage
-    exit 2
-fi
+case "${xarg}" in
+    f) newFile "$name" ;;
+    r) removeFile "$name" ;;
+esac
+
+
 
 # exit if exist a script with this name
 if [ -f "$filename" ]; then 
-    echo -n "script '$filename' already exists! Open it on default editor: '$editor' (y/n)? "
+    echo -n "script '$filename' already exists! Open it on editor: '$editor' (y/n)? "
     read -r choice
     # convert answer to UPPERCASE
     [ "$(upcase $choice)" == "Y" ] && $editor "$filename"
