@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 01:10:50
+# Last Modified: Friday, 2025/02/14 - 01:32:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.22.421
+# Version: 0.1.23.429
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -52,40 +52,6 @@ xarg --header "xSHELL script generator"
 xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 case "${xarg}" in
-    f) newFile "$name" ;;
     r) removeFile "$name" ;;
+    *) newFile "$name" ;;
 esac
-
-
-
-# exit if exist a script with this name
-if [ -f "$filename" ]; then 
-    echo -n "script '$filename' already exists! Open it on editor: '$editor' (y/n)? "
-    read -r choice
-    # convert answer to UPPERCASE
-    [ "$(upcase $choice)" == "Y" ] && $editor "$filename"
-    exit 1
-fi
-
-# open a block and print everything to $filename
-{ 
-    # add shebang (get by env)
-    echo -e "#!/usr/bin/env bash"
-    
-    # add default header information (if requested) 
-    [ "$_xHEADER_" == 'true' ] && templateHeader || \
-        {
-            echo -e "\n# script: $filename"
-            templateInfo
-        }
-    
-    # finally, create the new script OR library 
-    [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 
-
-} > "$filename"
-
-# set executable permissions
-chmod +x "$filename"
-
-# open script on a selected editor (by user with --editor or by function getPath)
-$editor "$filename" 

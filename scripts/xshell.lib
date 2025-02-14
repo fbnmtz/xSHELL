@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:58:10
+# Last Modified: Friday, 2025/02/14 - 01:33:02
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.17.316
+# Version: 0.1.18.323
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -193,19 +193,55 @@ newFile(){
         xusage
         exit 2
     fi
+
+    # exit if exist a script with this name
+    if [ -f "$filename" ]; then 
+        echo -n "script '$filename' already exists! Open it on editor: '$editor' (y/n)? "
+        read -r choice
+        # convert answer to UPPERCASE
+        [ "$(upcase $choice)" == "Y" ] && $editor "$filename"
+        exit 1
+    fi
+
+    # open a block and print everything to $filename
+    { 
+        # add shebang (get by env)
+        echo -e "#!/usr/bin/env bash"
+        
+        # add default header information (if requested) 
+        [ "$_xHEADER_" == 'true' ] && templateHeader || \
+            {
+                echo -e "\n# script: $filename"
+                templateInfo
+            }
+        
+        # finally, create the new script OR library 
+        [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 
+
+    } > "$filename"
+
+    # set executable permissions
+    chmod +x "$filename"
+
+    # open script on a selected editor (by user with --editor or by function getPath)
+    $editor "$filename" 
 }
 
 removeFile(){
-    # local name=$1
+    local delete
     if [ -f "$name" ]; then
         cp "$name" "$BACKUP_DIR/$name" && rm "$name"
+        delete=$name
+        echo "file '$name' not found!"
         # echo "deletar1 $name"
     elif [ -f "$dir/$name" ]; then
         # echo "deletar2 $dir/$name"
         cp "$dir/$name" "$BACKUP_DIR/$name" && rm "$dir/$name"
+        delete="$dir/$name"
     else
         echo "file '$name' not found!"
         exit 1
     fi
+    echo "file '$delete' removed!"
     exit
 }
