@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:31:30
+# Last Modified: Friday, 2025/02/14 - 01:10:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.21.419
+# Version: 0.1.22.421
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -49,7 +49,7 @@ xarg --header "xSHELL script generator"
 # xarg --id -r,--remove    --var package+r        --desc "remove a xSHELL <package>"
 # xarg --id -s,--search    --var package+r        --desc "search <package> on xSHELL repository"
 
-xrun --xreject-unknow --xrequire-one --xversionrc --xcolors "$@"
+xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 case "${xarg}" in
     f) newFile "$name" ;;

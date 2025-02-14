@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:35:13
+# Last Modified: Friday, 2025/02/14 - 00:58:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.16.314
+# Version: 0.1.17.316
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -48,8 +48,8 @@ xshell_init(){
     editor=$(getPath code micro nano vim neovim ne emacs mcedit tilde atom gedit gvim pico)
     # set default scripts output directory
     [ -z "$dir" ] && dir=$DEFAULT_OUTPUT
-    [ ! -d "$dir" ] && mkdir "$dir"
-    [ ! -d "$BACKUP_DIR" ] && mkdir "$BACKUP_DIR"
+    [ ! -d "$dir" ] && mkdir -p "$dir"
+    [ ! -d "$BACKUP_DIR" ] && mkdir -p "$BACKUP_DIR"
 
     # Get author name and email
     author_name=$(get_author_info name)
