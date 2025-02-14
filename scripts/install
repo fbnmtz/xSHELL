@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/02/08 - 18:31:32
+# Last Modified: Friday, 2025/02/14 - 00:53:00
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.0.439
+# Version: 0.1.1.463
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -40,7 +40,7 @@ check_path() {
     fi
 }
 
-fileAdd(){
+appendFile(){
     local file=$1; shift
     local content="$@"
     local cmd=""
@@ -123,21 +123,29 @@ else
     echo "done."
 fi
 
+# files for each user
+root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
+user_files=("$HOME/.profile" "$HOME/.bashrc")
+
 # List of configuration files to check and update
-config_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
+if [ $UID -eq 0 ]; then
+    config_files=("${root_files[@]}")
+else
+    config_files=("${user_files[@]}")
+fi
 
 echo "configuring files: ${config_files[@]}... "
 # Loop through each configuration file
 for file in "${config_files[@]}"; do
     # Check if the configuration already exists in the file
-    if ! grep -q "export ${project_name}_PATH" "$file" >> $_LOG 2>&1; then
+    if ! grep -q "export {$project_name}_PATH" "$file" >> $_LOG 2>&1; then
         echo "Configuring $file... "
         # If the configuration does not exist, add it
-        fileAdd "$file" '\nexport '${project_name}'_PATH="'${install_dir}'"'  
-        fileAdd "$file" '\nexport '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
-        fileAdd "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS"' 
-        fileAdd "$file" '\nexport '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
-        fileAdd "$file" '\nxinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
+        appendFile "$file" '\nexport '${project_name}'_PATH="'${install_dir}'"'  
+        appendFile "$file" '\nexport '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
+        appendFile "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS"' 
+        appendFile "$file" '\nexport '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
+        appendFile "$file" '\nxinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
         echo "Configuration added to $file\n"
     else
         echo "\tConfiguration already exists in $file"
