@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2025/02/13 - 22:47:02
+# Last Modified: Friday, 2025/02/14 - 00:32:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.20.775
+# Version: 0.1.21.783
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -85,9 +85,13 @@ xsetHome(){
 # import/use some library
 # ex: use args utils mycustomlib
 use(){
+  local lib_file lib dir
+  
   ((_USE_COUNT_+=1))  # Increment the use counter
   # check if some lib already loaded
   checkLibLoaded(){
+    local lib_const
+    
     # local lib_const=${1^^}          # convert fist arg to UPCASE 
     lib_const=$(to_uppercase "$1")  # Convert the argument to uppercase
     lib_const=${lib_const//./_}     # replace '.' for '_'
