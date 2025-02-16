@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 01:33:02
+# Last Modified: Sunday, 2025/02/16 - 18:49:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.18.323
+# Version: 0.1.19.341
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -92,6 +92,7 @@ templateInfo(){
     echo -e "
 _AUTHOR_=\"$author_name\"
 _CREATED_AT_=\"$today\"
+_UPDATED_AT_=\"$today\"
 _CURRENT_VERSION_=\"0.0.1\""
 }
 
@@ -126,11 +127,6 @@ templateScript(){
     echo -e "
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # shellcheck disable=SC1090,SC2154
-#   * SC1090: Can't follow non-constant source. Use a directive to specify location.
-#       -> cant follow or source usage
-#   * SC2154: var is referenced but not assigned.
-#       -> variables created by or library system (don't worry)
-
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source \"\$xSHELL_INIT\"
 use args
@@ -141,13 +137,8 @@ use args
     echo "# define your arguments with 'xarg' function. Example below:
 # xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
 "
-
-echo "# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-# initilizae values before xrun (if you need to)
-
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-# arguments will be checked/validated here (use --xhelp arg for more info)
-xrun --xreject-unknow --xrequire-one \"\$@\"
+echo "# arguments will be checked/validated here (use --xhelp arg for more info)"
+echo "xrun \"\$@\"
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # now put your code below
@@ -228,20 +219,17 @@ newFile(){
 }
 
 removeFile(){
-    local delete
+    local msg="file '$name' not found!"
     if [ -f "$name" ]; then
         cp "$name" "$BACKUP_DIR/$name" && rm "$name"
-        delete=$name
-        echo "file '$name' not found!"
-        # echo "deletar1 $name"
+        msg="file '$name' deleted!"
     elif [ -f "$dir/$name" ]; then
-        # echo "deletar2 $dir/$name"
         cp "$dir/$name" "$BACKUP_DIR/$name" && rm "$dir/$name"
-        delete="$dir/$name"
+        msg="file '$name' deleted!"
     else
-        echo "file '$name' not found!"
+        echo "$msg"
         exit 1
     fi
-    echo "file '$delete' removed!"
+    echo "$msg"
     exit
 }

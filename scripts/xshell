@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 01:32:56
+# Last Modified: Sunday, 2025/02/16 - 18:14:02
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.23.429
+# Version: 0.1.24.434
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -35,11 +35,11 @@ xshell_init
 xarg --block "Script's Generation"
 # xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
 xarg --id -f,--file      --var name+r          --desc "file <name> for new script"
-xarg --id -H,--header    --var _xHEADER_:true  --desc "default HEADER on the new script"
-xarg --id -l,--lib       --var _xLIB_:true     --desc "LIB type on new script(can be loaded with 'use' function)"
-xarg --id -o,--output    --var dir+r           --desc "output <dir> for new script (default: $DEFAULT_OUTPUT)"
-xarg --id -e,--editor    --var editor+r        --desc "<editor> to open new script (default: $editor)"
-xarg --id -r,--remove    --var name+r          --desc "remove file <name> (backup: $BACKUP_DIR/<name>)"
+xarg --id -H,--header    --var _xHEADER_:true  --desc "add default HEADER on the new script"
+xarg --id -l,--lib       --var _xLIB_:true     --desc "new script as LIB type (can be loaded with 'use' function)"
+xarg --id -o,--output    --var dir+r           --desc "output <dir> for new script (default '$DEFAULT_OUTPUT')"
+xarg --id -e,--editor    --var editor+r        --desc "<editor> to open new script (default '$editor')"
+xarg --id -r,--remove    --var name+r          --desc "remove file <name> (backup '$BACKUP_DIR/<name>')"
 
 xarg --header "xSHELL script generator"
 
