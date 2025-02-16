@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/02/16 - 17:30:35
+# Last Modified: Sunday, 2025/02/16 - 17:55:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.21.1455
+# Version: 0.2.22.1458
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -589,4 +589,9 @@ helpOptionsLinux(){
             __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
         fi
     done
+
+    __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+        column -t -s ':' | \
+        sed "s/;/:/g" | \
+        sed 's/,/,  /g' )
 }
