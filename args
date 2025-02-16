@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2025/02/13 - 22:37:23
+# Last Modified: Sunday, 2025/02/16 - 17:30:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.20.1446
+# Version: 0.2.21.1455
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 _xLIB_ARGS_=true;
 
-use args.utils system hashs
+use args.utils utils system hashs
 # hash to save app params
 Hash.new -t main
 
@@ -146,7 +146,7 @@ xusage(){
         # case sys.os in
         case $(xsys.os) in
             Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
-            Linux ) __HELP_OPTIONS_DESCRIPTION__="$(helpOptionsLinux)";;
+            Linux ) helpOptionsLinux ;;
         esac
        
 
@@ -552,11 +552,11 @@ helpOptionsDarwin() {
 # Function to format help options with standard spacing on Linux systems
 helpOptionsLinux(){
     for h in $(
-            Hash.all main |      # get all hashes \
-            sed "s/:/:/g" |             # add blue color to options description':'\
-            sed "s/^-/:-/g" |           # add color to options/flags \
-            sed 's/ /./g'               # replace ' ' with '.'  
-        ); do
+        Hash.all main |      # get all hashes \
+        sed "s/:/:/g" |             # add blue color to options description':'\
+        sed "s/^-/:-/g" |           # add color to options/flags \
+        sed 's/ /./g'               # replace ' ' with '.'  
+    ); do
         b=$(echo -e $h | cut -d '+' -f2)
         # echo "'$b' - '$block'"
         if [ -n "${b// }" ]; then 
@@ -573,7 +573,7 @@ helpOptionsLinux(){
         __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
 
         # apply colors
-            if [ -n "$RED" ]; then 
+        if [ -n "$RED" ]; then 
             # arguments description highlighting
             __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
             # flags highlighting
@@ -587,7 +587,6 @@ helpOptionsLinux(){
 
             # TODO: optional arguments highlighting
             __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
-
         fi
     done
 }

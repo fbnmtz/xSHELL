@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:53:00
+# Last Modified: Sunday, 2025/02/16 - 17:31:12
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.1.463
+# Version: 0.1.2.483
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -86,13 +86,14 @@ default_dir=/opt
 source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/heads/master/colors)"
 
 # handle arguments
-[ "$1" == "--verbose" ] && { shift; _VERBOSE_=1; }
-[ "$1" == "--dir"     ] && { shift; custom_path=$1; }
+[ "$1" == "--verbose" ] && { shift; _VERBOSE_=1; shift; }
+[ "$1" == "--dir"     ] && { shift; custom_path=$1; shift; }
 
 echo "$project_name install started..." > $_LOG
 
-if [ -z "$custom_path" ]; then
-    # Prompt the user for the installation directory
+# interactive shell? no custom path?
+if [ -t 0 ] && [ -z "$custom_path" ]; then
+    # Prompt for the install dir
     echo -n "${BLUE}$project_name install${RESET} - Use default location: ($default_dir) or inform new path: "
     read -r custom_path
 fi
@@ -125,11 +126,11 @@ fi
 
 # files for each user
 root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
-user_files=("$HOME/.profile" "$HOME/.bashrc")
+user_files=("$HOME/.profile" "$HOME/.bashrc" "$HOME/.bash_profile")
 
 # List of configuration files to check and update
 if [ $UID -eq 0 ]; then
-    config_files=("${root_files[@]}")
+    config_files=("${root_files[@]} ${user_files[@]}")
 else
     config_files=("${user_files[@]}")
 fi
@@ -143,8 +144,8 @@ for file in "${config_files[@]}"; do
         # If the configuration does not exist, add it
         appendFile "$file" '\nexport '${project_name}'_PATH="'${install_dir}'"'  
         appendFile "$file" '\nexport '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
-        appendFile "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS"' 
         appendFile "$file" '\nexport '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
+        appendFile "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS:$HOME/bin"' 
         appendFile "$file" '\nxinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
         echo "Configuration added to $file\n"
     else
