@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/02/14 - 00:32:29
+# Last Modified: Monday, 2025/02/17 - 01:41:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.21.783
+# Version: 0.1.22.798
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,13 +26,19 @@
   # source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-APP=$(basename "$0")          # application name
 # shellcheck disable=SC2034   # unused variable warning
+APP=$(basename "$0")          # application name
+APP_NAME=$APP                 # application name
+APP_PATH=$0                   # application path and name
 APP_DIR=$(dirname "$0")       # application current directory
 APP_HOME="$HOME/.xshell/$APP" # application home (store data)
 APP_DATA=$APP_HOME
 # DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
 
+# store loaded LIBs
+xSHELL_LIBS=''
+
+# PATHs to search a LIB
 xSHELL_DIRS=( 
   "$APP_DIR/" 
   "$APP_DIR/lib/"
@@ -136,6 +142,7 @@ use(){
       # local current_path=$(dirname "$0")  # Get the directory path of the current script
       # Novo array para armazenar os paths com o arquivo adicionado
       lib_dirs=()
+      
 
       # Iterar sobre cada item do array original
       for dir in "${xSHELL_DIRS[@]}"; do
@@ -150,6 +157,7 @@ use(){
       for lib in "${lib_dirs[@]}"; do
 
         if source "${lib}" 2> /dev/null ; then
+          xSHELL_LIBS+=($lib)
           _CALLER_=${lib}
           # success? set a flag; break loop
           [ "$_INIT_DEBUG_" == 'true' ] && { 
