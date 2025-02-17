@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/02/16 - 17:55:36
+# Last Modified: Monday, 2025/02/17 - 01:42:42
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.22.1458
+# Version: 0.2.23.1654
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -95,6 +95,7 @@ xhelp(){
 xusage(){
     # generate default help text if user not difined one
     [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
+    [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}"
     
     case "$1" in
         -f|--field-error)
@@ -120,14 +121,19 @@ xusage(){
         ;;
         -h|--help)
             xhelp
-            # helpOptionsDarwin
             __usage_full=true
+        ;;
+        -v|--version)
+            echo "$_CURRENT_VERSION_"; exit
         ;;
         *) 
             __exit_code=0      
             __usage_msg="" 
         ;;
     esac
+
+    # print debug info
+    # [ -n "$_ARGS_DEBUG" ] && xrunDebug  "${xRUN_ARGS[@]}" ;
     
     # prints initial help text
     echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
@@ -148,24 +154,8 @@ xusage(){
             Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
             Linux ) helpOptionsLinux ;;
         esac
-       
 
-        # v1
-        # echo -e "$____HELP_OPTIONS_DESCRIPTION" | column -t -s ':' | sed 's/;/:/g'
-        # __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-        #     column -L -t -s ':' -o ' ' | \
-        #     sed "s/;/:/g" | \
-        #     sed 's/,/,  /g' )
-        
-        # v2
-        # __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-        #     column -t -s ':' | \
-        #     sed "s/;/:/g" | \
-        #     sed 's/,/,  /g' )
-
-        # v3
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
-            # sed '/^#/ s/ \{1,\}/ /g' | \
         
         # not null? prints footer 
         [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
@@ -216,7 +206,7 @@ xarg(){
                 action_vars=''
                 var_name=xarg
                 var_value=$(echo $option_key | cut -d '|' -f1 | cut -d '-' -f2)
-                assign_vars=" $var_name=\"$var_value\" "
+                assign_vars=" $var_name+=\"$var_value\" "
                 # [ -n "$action_vars" ] && action_vars+=" ; "
                 action_vars+=" $assign_vars  "
                 option_rule=''
@@ -260,7 +250,7 @@ xarg(){
                             case "$current_rule" in
                                 # 'r' means 'required'
                                 r)  
-                                    option_rule+=" shift; xflag_require_value \"\$1\" \"$var_name\" ;" 
+                                    option_rule+=" shift; xsHelper --require-value \"\$1\" \"$var_name\" ;" 
                                     desc_var+=" <$var_name>" 
                                     if [ -z "$var_value" ]; then
                                         assign_vars=" $var_name=\"\$1\" "
@@ -333,57 +323,84 @@ xarg(){
     esac
 }
 
+
+xrunHelp(){
+    echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
+    \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
+    \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
+    \n\nAvailable options:\
+    "
+    echo -e "\
+    \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
+    \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
+    \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
+    \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
+    \n
+    \n # Grouping options #
+    \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
+    \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
+    \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
+    \
+    " | column -t -s ';'
+    
+    echo -e "\
+    \nExamples:\
+    \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
+    \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
+    \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
+    
+    \n${YELLOW}2) xrun${RESET} -> create 'case struct/validate args' defined via 'function xarg' for your application\
+    \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
+    \n\nAvailable options:\
+    "
+    echo -e "
+    \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
+    \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
+    \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
+    \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
+    \n  ${CYAN}--xcolors${RESET};enable color support\
+    \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
+    \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
+    \n  ${CYAN}--xhelp${RESET};prints this message
+    " | column -t -s ';' 
+
+    # echo -e "\n[!] ATENTION:\
+    #     \n    1-You can't use 'xrun' arguments in your application.\
+    #     \n    2-You must pass all of your app/script args to 'xrun' validate then.\
+    #     \n\tex: xrun --xrequire-one \"\$@\"\
+    #     \n    3-xrun args will be removed via shift; so they need to be before incoming args (\"\$@\")\
+    #     "
+    exit 0
+}
+
+xrunDebug(){
+    echo -e "${RED}$(xsHelper --hl '-')\n# xSHELL DEBUG information:\
+        \n$(xsHelper --hl '-')${RESET}\n# variables:\
+        \n\$xSHELL_PATH: '$xSHELL_PATH'\
+        \n\$xSHELL_LIBS:\
+        \n \`-> count: '$(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' ')'\
+        \n \`-> files:$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")\
+        \n\$APP: '$APP'\
+        \n\$APP_PATH: '$0'\
+        \n\$APP_DATA: '$APP_DATA'\
+        \n\$@: '${_ARGS_[*]}'\
+        \n\$_PARAMS_: '${_PARAMS_[*]}'\
+        \n\$xarg: '$xarg'\
+
+        \n# xarg function:\
+        \n$(Hash.all main | cut -d '+' -f1)
+
+        \n# xrun function:\
+        \n\$@: '${xRUN_ARGS}'\
+        \n$__runARGS_case_\
+        \n${RED}$(xsHelper --hl -)\n# DEBUG end\
+        \n$(xsHelper --hl -)${RESET}";
+}
+
 # xrun "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xrun(){
-    xrunHelp(){
-        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
-        \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
-        \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
-        \n\nAvailable options:\
-        "
-        echo -e "\
-        \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
-        \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
-        \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
-        \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
-        \n
-        \n # Grouping options #
-        \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
-        \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
-        \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
-        \
-        " | column -t -s ';'
-        
-        echo -e "\
-        \nExamples:\
-        \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
-        \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
-        \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
-        
-        \n${YELLOW}2) xrun${RESET} -> create 'case struct/validate args' defined via 'function xarg' for your application\
-        \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
-        \n\nAvailable options:\
-        "
-        echo -e "
-        \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
-        \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
-        \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
-        \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
-        \n  ${CYAN}--xcolors${RESET};enable color support\
-        \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
-        \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
-        \n  ${CYAN}--xhelp${RESET};prints this message
-        " | column -t -s ';' 
-
-        # echo -e "\n[!] ATENTION:\
-        #     \n    1-You can't use 'xrun' arguments in your application.\
-        #     \n    2-You must pass all of your app/script args to 'xrun' validate then.\
-        #     \n\tex: xrun --xrequire-one \"\$@\"\
-        #     \n    3-xrun args will be removed via shift; so they need to be before incoming args (\"\$@\")\
-        #     "
-        exit 0
-    }
+    xRUN_ARGS="$@"
     generateCase(){
          # fill case with options (xarg)
         __runARGS_case_='case $1 in \n'
@@ -392,8 +409,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_DEBUG"    ] && echo -e "${RED}# DEBUG information:${RESET}\n\n# xrun function:\n$__runARGS_case_\n\n${GREEN}# Command output:${RESET}\n" ;
-        [ -n "$_ARGS_REQUIRED" ] && xrequire_one "$1" && unset _ARGS_REQUIRED;
+        [ -n "$_ARGS_REQUIRED" ] && xsHelper --xrequire-one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
         while [ "$1" != "" ]; do
@@ -427,7 +443,7 @@ xrun(){
          
     # gen default version argument
     xarg --id "-v,${_arg_prefix_}version" \
-         --code "echo \"\$_CURRENT_VERSION_\"; exit" \
+         --code "xusage --version" \
          --desc "print version and exit"
     
     # store arguments/params to be passed to the script
@@ -435,8 +451,8 @@ xrun(){
     
     # search for xrun args 
      while [ "$1" != "" ]; do
-        case "$1" in
         # function to force script to receive at last one param/arg
+        case "$1" in
             --xapp-data)
                 shift; xsetHome
             ;;
@@ -477,6 +493,7 @@ xrun(){
                 shift
         esac
     done
+    _ARGS_=(${_PARAMS_[@]})
 
     # Function to handle joint short flags
     handleJointShortFlags() {
@@ -501,6 +518,8 @@ xrun(){
 
 
     generateCase "${_PARAMS_[@]}"
+    # @=(${_PARAMS_[@]})
+    [ -n "$_ARGS_DEBUG" ] && xrunDebug "$xRUN_ARGS";
 }
 
 # check if one flag is set and require a value for it
@@ -512,9 +531,23 @@ xflag_require_value(){
         # || { true; } #echo "1"; -r}
 }
 
-# function to force script to receive at last one param/arg
-xrequire_one(){
-    test -z "$1" && xusage --missing-param; 
+xsHelper(){
+    case "${1}" in
+        --require-value)
+            shift;
+            test -z "$1" && { xusage --field-error "$2"; } 
+        ;;
+        --require-one)
+            shift;
+            test -z "$1" && xusage --missing-param; 
+        ;;
+        --hl | --horizontal-line)
+            shift;
+            xrequirements seq tput
+            for i in $(seq 1 "$(($(tput cols)-2))"); do echo -n "$1"; done
+        ;;
+    esac
+    
 }
 
 # Function to format help options with standard spacing on Darwin systems
@@ -595,3 +628,6 @@ helpOptionsLinux(){
         sed "s/;/:/g" | \
         sed 's/,/,  /g' )
 }
+
+# initialize var 'xarg'
+xarg=''
