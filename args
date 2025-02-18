@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/02/18 - 00:29:10
+# Last Modified: Tuesday, 2025/02/18 - 01:48:22
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.24.1757
+# Version: 0.2.25.1786
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -55,18 +55,8 @@ xhelp(){
     done
 
     # set vars VERSION, _CREATED_AT_, _AUTHOR_NAME_
-    xsVersion
-    xsCreated
-    xsUpdated
-    xsAuthorName
-    xsAuthorMail
+    .xs --init
 
-    # get all keys in main hash (format: key:value)
-    #   --> key pattern (shortkey,longkey): Ex: -k,--key
-    #   --> sed remove second key; 
-    #   --> tr replace breaklines '\n' for a space ' ' . 
-    # result: all shortkeys in one line
-    # __HELP_USAGE__="usage: \n  $APP $(Hash.keys main | sed 's/,--.[a-z]*//g' | tr -s '\n' ' ')" 
     __HELP_USAGE__="usage: \n  ${GREEN}$APP${RESET} "
     if [ $(Hash.count main) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
         __HELP_USAGE__+="$(
@@ -92,8 +82,86 @@ xhelp(){
     fi
 }
 
-
 xusage(){
+    # Function to format help options with standard spacing on Darwin systems
+    helpOptionsDarwin() {
+        local max_length=0
+        local options=()
+
+        # Find the maximum length of the options
+        while IFS= read -r line; do
+            # Extract the option key (first word) from the line
+            local option=$(echo "$line" | cut -d ':' -f 1)
+            # Determine the length of the option key
+            local length=${#option}
+            # Update the maximum length if the current option key is longer
+            if [ $length -gt $max_length ]; then
+                max_length=$length
+            fi
+            # Add the entire line to the options array
+            options+=("$line")
+        done <<< "$(Hash.all main)"
+
+        # Format the options with standard spacing
+        for option in "${options[@]}"; do
+            # Extract the option key (first word) from the option
+            local key=$(echo "$option" | cut -d ':' -f 1)
+            key=${key/\:/ }
+            # Extract the description (remaining words) from the option
+            local desc=$(echo "$option" | cut -d ':' -f 2-)
+            desc=$(echo "$desc" | cut -d '+' -f1)
+            # Print the option key and description with standard spacing
+            printf "     %-${max_length}s   %s\n" "$key" "$desc"
+        done
+    }
+
+    # Function to format help options with standard spacing on Linux systems
+    helpOptionsLinux(){
+        for h in $(
+            Hash.all main |      # get all hashes \
+            sed "s/:/:/g" |             # add blue color to options description':'\
+            sed "s/^-/:-/g" |           # add color to options/flags \
+            sed 's/ /./g'               # replace ' ' with '.'  
+        ); do
+            b=$(echo -e $h | cut -d '+' -f2)
+            # echo "'$b' - '$block'"
+            if [ -n "${b// }" ]; then 
+                [ "${b}" != "${block// /.}" ] && block="${b}" \
+                    && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
+                # echo
+            else 
+                if [ -z "$outblock" ];then
+                    block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
+                    outblock=true
+                fi
+                # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
+            fi
+            __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
+
+            # apply colors
+            if [ -n "$RED" ]; then 
+                # arguments description highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
+                # flags highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//-/${MAGENTA}-}
+                # block highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//->/${BLUE}->}
+                # required arguments highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
+                # required arguments closing 
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
+
+                # TODO: optional arguments highlighting
+                __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
+            fi
+        done
+
+        __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+            column -t -s ':' | \
+            sed "s/;/:/g" | \
+            sed 's/,/,  /g' )
+    }
+    
     # generate default help text if user not difined one
     [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
     [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}"
@@ -251,7 +319,7 @@ xarg(){
                             case "$current_rule" in
                                 # 'r' means 'required'
                                 r)  
-                                    option_rule+=" shift; xsHelper --require-value \"\$1\" \"$var_name\" ;" 
+                                    option_rule+=" shift; .xs --require-value \"\$1\" \"$var_name\" ;" 
                                     desc_var+=" <$var_name>" 
                                     if [ -z "$var_value" ]; then
                                         assign_vars=" $var_name=\"\$1\" "
@@ -299,12 +367,12 @@ xarg(){
             ;;
             -h|--header)
                 method=header
-                xsHelper --require-value "$1" "$2"
+                .xs --require-value "$1" "$2"
                 xhelp --header="$2"
             ;;
             -f|--footer)
                 method=footer
-                xsHelper --require-value "$1" "$2"
+                .xs --require-value "$1" "$2"
                 xhelp --footer="$2"
             ;;
         esac
@@ -324,86 +392,86 @@ xarg(){
     esac
 }
 
-
-xrunHelp(){
-    echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
-    \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
-    \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
-    \n\nAvailable options:\
-    "
-    echo -e "\
-    \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
-    \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
-    \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
-    \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
-    \n
-    \n # Grouping options #
-    \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
-    \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
-    \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
-    \
-    " | column -t -s ';'
-    
-    echo -e "\
-    \nExamples:\
-    \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
-    \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
-    \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
-    
-    \n${YELLOW}2) xrun${RESET} -> create 'case struct/validate args' defined via 'function xarg' for your application\
-    \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
-    \n\nAvailable options:\
-    "
-    echo -e "
-    \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
-    \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
-    \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
-    \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
-    \n  ${CYAN}--xcolors${RESET};enable color support\
-    \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
-    \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
-    \n  ${CYAN}--xhelp${RESET};prints this message
-    " | column -t -s ';' 
-
-    # echo -e "\n[!] ATENTION:\
-    #     \n    1-You can't use 'xrun' arguments in your application.\
-    #     \n    2-You must pass all of your app/script args to 'xrun' validate then.\
-    #     \n\tex: xrun --xrequire-one \"\$@\"\
-    #     \n    3-xrun args will be removed via shift; so they need to be before incoming args (\"\$@\")\
-    #     "
-    exit 0
-}
-
-xrunDebug(){
-    echo -e "${RED}$(xsHelper --hl '-')\n# xSHELL DEBUG - begin\
-        \n$(xsHelper --hl '-')${RESET}\n# 1. variables:\
-        \n\$xSHELL_PATH: '$xSHELL_PATH'\
-        \n\$xSHELL_LIBS: '(count $(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' '))$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")'\
-
-        \n\$APP: '$APP'\
-        \n\$APP_PATH: '$0'\
-        \n\$APP_DATA: '$APP_DATA'\
-
-        \n\$@: '${_ARGS_[*]}'\
-        \n\$_PARAMS_: '${_PARAMS_[*]}'\
-        \n\$xarg: '$xarg'\
-
-        \n\$_AUTHOR_NAME_: '$_AUTHOR_NAME_'\
-        \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
-        \n\$_VERSION_: '$_VERSION_' ($(echo $_VERSIONRC_ | cut -d '-' -f2))\
-        \n$(xsHelper --hl '-')\n# 2. xarg function:\
-        \n$(Hash.all main | cut -d '+' -f1)\
-        \n$(xsHelper --hl '-')\n# 3. xrun function:\
-        \n\$@: '${xRUN_ARGS}'\
-        \n$__runARGS_case_\
-        \n${RED}$(xsHelper --hl -)\n# xSHELL DEBUG - end\
-        \n$(xsHelper --hl -)${RESET}";
-}
-
 # xrun "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xrun(){
     xRUN_ARGS="$@"
+
+    xrunHelp(){
+        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
+        \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
+        \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
+        \n\nAvailable options:\
+        "
+        echo -e "\
+        \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
+        \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
+        \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
+        \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
+        \n
+        \n # Grouping options #
+        \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
+        \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
+        \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
+        \
+        " | column -t -s ';'
+        
+        echo -e "\
+        \nExamples:\
+        \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
+        \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
+        \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
+        
+        \n${YELLOW}2) xrun${RESET} -> create 'case struct/validate args' defined via 'function xarg' for your application\
+        \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
+        \n\nAvailable options:\
+        "
+        echo -e "
+        \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
+        \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
+        \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
+        \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
+        \n  ${CYAN}--xcolors${RESET};enable color support\
+        \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
+        \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
+        \n  ${CYAN}--xhelp${RESET};prints this message
+        " | column -t -s ';' 
+
+        # echo -e "\n[!] ATENTION:\
+        #     \n    1-You can't use 'xrun' arguments in your application.\
+        #     \n    2-You must pass all of your app/script args to 'xrun' validate then.\
+        #     \n\tex: xrun --xrequire-one \"\$@\"\
+        #     \n    3-xrun args will be removed via shift; so they need to be before incoming args (\"\$@\")\
+        #     "
+        exit 0
+    }
+    
+    xrunDebug(){
+        echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
+            \n$(.xs --hl '-')${RESET}\n# 1. variables:\
+            \n\$xSHELL_PATH: '$xSHELL_PATH'\
+            \n\$xSHELL_LIBS: '(count $(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' '))$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")'\
+
+            \n\$APP: '$APP'\
+            \n\$APP_PATH: '$0'\
+            \n\$APP_DATA: '$APP_DATA'\
+
+            \n\$@: '${_ARGS_[*]}'\
+            \n\$_PARAMS_: '${_PARAMS_[*]}'\
+            \n\$xarg: '$xarg'\
+
+            \n\$_AUTHOR_NAME_: '$_AUTHOR_NAME_'\
+            \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
+            \n\$_VERSION_: '$_VERSION_' ($xs_release_candidate)\
+            \n$(.xs --hl '-')\n# 2. xarg function:\
+            \n$(Hash.all main | cut -d '+' -f1)\
+            \n$(.xs --hl '-')\n# 3. xrun function:\
+            \n\$@: '${xRUN_ARGS}'\
+            \n$__runARGS_case_\
+            \n${RED}$(.xs --hl -)\n# xSHELL DEBUG - end\
+            \n$(.xs --hl -)${RESET}";
+    }
+    
     generateCase(){
          # fill case with options (xarg)
         __runARGS_case_='case $1 in \n'
@@ -412,13 +480,25 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_REQUIRED" ] && xsHelper --xrequire-one "$1" && unset _ARGS_REQUIRED;
+        [ -n "$_ARGS_REQUIRED" ] && .xs --xrequire-one "$1" && unset _ARGS_REQUIRED;
 
         # loop all params 
         while [ "$1" != "" ]; do
             # run generated 'case' code
             eval "$__runARGS_case_"
             shift
+        done
+    }
+
+    # Function to handle joint short flags
+    handleJointShortFlags() {
+        local joint_flags="$1"  # The joint short flags passed as an argument
+        local length=${#joint_flags}  # The length of the joint short flags string
+
+        # Iterate over each character in the joint short flags string
+        for (( i=0; i<length; i++ )); do
+            local flag="${joint_flags:i:1}"  # Extract the current character (flag)
+            _PARAMS_+=("-$flag")  # Add the individual flag to the _PARAMS_ array
         done
     }
 
@@ -453,7 +533,7 @@ xrun(){
     _PARAMS_=()
     
     # search for xrun args 
-     while [ "$1" != "" ]; do
+    while [ "$1" != "" ]; do
         # function to force script to receive at last one param/arg
         case "$1" in
             --xapp-data)
@@ -496,19 +576,9 @@ xrun(){
                 shift
         esac
     done
+    
+    # Save all arguments (except the pala lib xshell reserves)
     _ARGS_=(${_PARAMS_[@]})
-
-    # Function to handle joint short flags
-    handleJointShortFlags() {
-        local joint_flags="$1"  # The joint short flags passed as an argument
-        local length=${#joint_flags}  # The length of the joint short flags string
-
-        # Iterate over each character in the joint short flags string
-        for (( i=0; i<length; i++ )); do
-            local flag="${joint_flags:i:1}"  # Extract the current character (flag)
-            _PARAMS_+=("-$flag")  # Add the individual flag to the _PARAMS_ array
-        done
-    }
 
     # Check for joint short flags and expand them
     for arg in "${_PARAMS_[@]}"; do
@@ -519,9 +589,8 @@ xrun(){
         fi
     done
 
-
     generateCase "${_PARAMS_[@]}"
-    # @=(${_PARAMS_[@]})
+
     [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
 }
 
@@ -533,8 +602,116 @@ xcase(){
     fi
 }
 
-xsHelper(){
+.xs(){
+    # define version of script
+    xsVersion(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
+            grep '# Version:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d '.' -f1-3 \
+        )"
+        # get release candidate 
+        xs_release_candidate="$(head -n 20 "$0" | \
+            grep '# Version:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d '.' -f4 \
+        )"
+
+        _VERSIONRC_="$_VERSION_-rc$xs_release_candidate"
+        [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
+    }
+
+    # define when script was created
+    xsCreated(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
+            grep '# Created:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d ',' -f2 | \
+            cut -d '-' -f1 | \
+            cut -d '/' -f1 \
+        )"
+        # not found date in header comments, try filestats
+        [ -z "$_CREATED_AT_" ] && \
+            _CREATED_AT_="$(stat "$0" | \
+                grep Birth  | \
+                cut -d ' ' -f3 | \
+                cut -d '.' -f1 | \
+                cut -d '-' -f1 \
+            )"
+        # still null? set as unknown, to be filed later
+        [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknown>'
+    }
+
+    # define when script was updated
+    xsUpdated(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
+            grep '# Last Modified:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d ',' -f2 | \
+            cut -d '-' -f1 | \
+            tr -d '/'
+        )"
+            # cut -d '/' -f1 \
+        # not found date in header comments, try filestats
+        [ -z "$_UPDATED_AT_" ] && \
+            _UPDATED_AT_="$(stat "$0" | \
+                grep Birth  | \
+                cut -d ' ' -f3 | \
+                cut -d '.' -f1 | \
+                cut -d '-' -f1 \
+            )"
+        # still null? set as unknown, to be filed later
+        [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_='<unknown>'
+    }
+
+    # define author of script
+    xsAuthorName(){
+        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(
+            head -n 20 "$0" | \
+            grep '# Author.:' -m1 | \
+            cut -d ':' -f2 |\
+            cut -d ',' -f1 |\
+            cut -c2-
+        )
+        # not found author in header comments, try get by git config
+        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.name)
+        # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.email)
+        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.name)
+        # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.email)
+        # still null? try by $USER variable
+        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_="$USER"
+        # null? set as unknown, to be filled in later
+        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_='<unknown>'
+    }
+
+    # define author email
+    xsAuthorMail(){
+        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(
+            head -n 20 "$0" | \
+            grep '# Author.:' -m1 | \
+            cut -d ':' -f2 |\
+            cut -d ',' -f2 |\
+            tr -d '(' | tr -d ')' | tr -d ' '
+        )
+        # not found author in header comments, try get by git config
+        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global user.email)
+        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global author.email)
+        # null? set as unknown, to be filled in later
+        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_='<unknown>'
+    }
+
     case "${1}" in
+        --init)
+            shift;
+            xsVersion; xsCreated; xsUpdated; xsAuthorName; xsAuthorMail
+        ;;
         --require-value)
             shift;
             test -z "$1" && { xusage --field-error "$2"; } 
@@ -550,190 +727,6 @@ xsHelper(){
         ;;
     esac
 }
-
-# Function to format help options with standard spacing on Darwin systems
-helpOptionsDarwin() {
-    local max_length=0
-    local options=()
-
-    # Find the maximum length of the options
-    while IFS= read -r line; do
-        # Extract the option key (first word) from the line
-        local option=$(echo "$line" | cut -d ':' -f 1)
-        # Determine the length of the option key
-        local length=${#option}
-        # Update the maximum length if the current option key is longer
-        if [ $length -gt $max_length ]; then
-            max_length=$length
-        fi
-        # Add the entire line to the options array
-        options+=("$line")
-    done <<< "$(Hash.all main)"
-
-    # Format the options with standard spacing
-    for option in "${options[@]}"; do
-        # Extract the option key (first word) from the option
-        local key=$(echo "$option" | cut -d ':' -f 1)
-        key=${key/\:/ }
-        # Extract the description (remaining words) from the option
-        local desc=$(echo "$option" | cut -d ':' -f 2-)
-        desc=$(echo "$desc" | cut -d '+' -f1)
-        # Print the option key and description with standard spacing
-        printf "     %-${max_length}s   %s\n" "$key" "$desc"
-    done
-}
-
-# Function to format help options with standard spacing on Linux systems
-helpOptionsLinux(){
-    for h in $(
-        Hash.all main |      # get all hashes \
-        sed "s/:/:/g" |             # add blue color to options description':'\
-        sed "s/^-/:-/g" |           # add color to options/flags \
-        sed 's/ /./g'               # replace ' ' with '.'  
-    ); do
-        b=$(echo -e $h | cut -d '+' -f2)
-        # echo "'$b' - '$block'"
-        if [ -n "${b// }" ]; then 
-            [ "${b}" != "${block// /.}" ] && block="${b}" \
-                && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
-            # echo
-        else 
-            if [ -z "$outblock" ];then
-                block="Available.Options" && __HELP_OPTIONS_DESCRIPTION__+="\n${BLUE}->:$block;${RESET}\n"
-                outblock=true
-            fi
-            # [ -z "$block" ] && block="Available options" && __HELP_OPTIONS_DESCRIPTION__+="\n->:$block;\n"
-        fi
-        __HELP_OPTIONS_DESCRIPTION__+="$(echo -e ${h//./ } | cut -d '+' -f1)\n" 
-
-        # apply colors
-        if [ -n "$RED" ]; then 
-            # arguments description highlighting
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//\:/${BLUE}\:}
-            # flags highlighting
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//-/${MAGENTA}-}
-            # block highlighting
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//->/${BLUE}->}
-            # required arguments highlighting
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//</${YELLOW}<}
-            # required arguments closing 
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//>/>${BLUE}}
-
-            # TODO: optional arguments highlighting
-            __HELP_OPTIONS_DESCRIPTION__=${__HELP_OPTIONS_DESCRIPTION__//"{"/"${YELLOW}{"}
-        fi
-    done
-
-    __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-        column -t -s ':' | \
-        sed "s/;/:/g" | \
-        sed 's/,/,  /g' )
-}
-
-# define version of script
-xsVersion(){
-    # set app version (dynamic from header comments or static)
-    [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
-        grep '# Version:' -m1 | \
-        tr -d ' ' | \
-        cut -d ':' -f2 | \
-        cut -d '.' -f1-3 \
-    )"
-    # get release candidate 
-    xs_release_candidate="$(head -n 20 "$0" | \
-        grep '# Version:' -m1 | \
-        tr -d ' ' | \
-        cut -d ':' -f2 | \
-        cut -d '.' -f4 \
-    )"
-
-    _VERSIONRC_="$_VERSION_-rc$xs_release_candidate"
-    [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
-}
-
-# define when script was created
-xsCreated(){
-    # set app version (dynamic from header comments or static)
-    [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
-        grep '# Created:' -m1 | \
-        tr -d ' ' | \
-        cut -d ':' -f2 | \
-        cut -d ',' -f2 | \
-        cut -d '-' -f1 | \
-        cut -d '/' -f1 \
-    )"
-    # not found date in header comments, try filestats
-    [ -z "$_CREATED_AT_" ] && \
-        _CREATED_AT_="$(stat "$0" | \
-            grep Birth  | \
-            cut -d ' ' -f3 | \
-            cut -d '.' -f1 | \
-            cut -d '-' -f1 \
-        )"
-    # still null? set as unknown, to be filed later
-    [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknown>'
-}
-
-# define when script was updated
-xsUpdated(){
-    # set app version (dynamic from header comments or static)
-    [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
-        grep '# Last Modified:' -m1 | \
-        tr -d ' ' | \
-        cut -d ':' -f2 | \
-        cut -d ',' -f2 | \
-        cut -d '-' -f1 | \
-        tr -d '/'
-    )"
-        # cut -d '/' -f1 \
-    # not found date in header comments, try filestats
-    [ -z "$_UPDATED_AT_" ] && \
-        _UPDATED_AT_="$(stat "$0" | \
-            grep Birth  | \
-            cut -d ' ' -f3 | \
-            cut -d '.' -f1 | \
-            cut -d '-' -f1 \
-        )"
-    # still null? set as unknown, to be filed later
-    [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_='<unknown>'
-}
-
-# define author of script
-xsAuthorName(){
-    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(
-        head -n 20 "$0" | \
-        grep '# Author.:' -m1 | \
-        cut -d ':' -f2 |\
-        cut -d ',' -f1 |\
-        cut -c2-
-    )
-    # not found author in header comments, try get by git config
-    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.name)
-    # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.email)
-    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.name)
-    # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.email)
-    # still null? try by $USER variable
-    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_="$USER"
-    # null? set as unknown, to be filled in later
-    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_='<unknown>'
-}
-
-# define author email
-xsAuthorMail(){
-    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(
-        head -n 20 "$0" | \
-        grep '# Author.:' -m1 | \
-        cut -d ':' -f2 |\
-        cut -d ',' -f2 |\
-        tr -d '(' | tr -d ')' | tr -d ' '
-    )
-    # not found author in header comments, try get by git config
-    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global user.email)
-    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global author.email)
-    # null? set as unknown, to be filled in later
-    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_='<unknown>'
-}
-
 
 # initialize var 'xarg'
 xarg=''
