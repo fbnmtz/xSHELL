@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2024/12/14 - 15:33:36
+# Last Modified: Tuesday, 2025/02/18 - 00:44:06
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.421
+# Version: 0.0.10.432
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -37,7 +37,6 @@ xsys.notify(){
 
     # echo -e "\nsys.notify: title: $title; text:$text; level:$level\n";
     
-    # case sys.os in
     case $(xsys.os) in
         Darwin) 
             _xSYS_NOTIFY_APP="osascript -e"
@@ -65,7 +64,7 @@ xsys.notify(){
 
 # write contents on terminal
 xsys.write(){
-    echo "$@"
+    echo -e "$@"
 }
 
 # manage System volume
@@ -110,7 +109,6 @@ xsys.vol(){
 # }
 
 xsys.clipboard(){
-    # case sys.os in
     case $(xsys.os) in
         Darwin) 
             _xSYS_CLIP_CMD="pbcopy"
@@ -125,7 +123,6 @@ xsys.clipboard(){
 }
 
 xsys.menu(){
-    # case sys.os in
     case $(xsys.os) in
         Darwin) 
             _xSYS_CLIP_CMD="choose"
@@ -137,4 +134,23 @@ xsys.menu(){
         ;;
     esac
     eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
+}
+
+# return the path of a binary (utils getPath)
+xsys.path(){
+    for tool in "$@"; do
+        if which "$tool" &> /dev/null; then
+            which "$tool"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# function to return a basepath from a file
+# @param $1 -> file: /etc/hosts
+# @return path to file -> /etc
+xsys.basepath(){
+    xrequirements rev cut
+    echo "$1" | rev | cut -d '/' -f2-30 | rev
 }

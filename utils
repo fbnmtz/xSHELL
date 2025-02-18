@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: xSHELL (vundefined)
+# Project: xSHELL (none)
 # File...: utils
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/02/25 - 18:40:14
+# Last Modified: Tuesday, 2025/02/18 - 00:35:55
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.10.459
+# Version: 1.0.11.466
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,8 +28,8 @@ _xLIB_UTILS_=true;
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # methods
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-
 getPath(){
+    # DEPRECATED: moved to system as xsys.path
     for tool in "$@"; do
         if which "$tool" &> /dev/null; then
             which "$tool"
@@ -44,6 +44,7 @@ getPath(){
 # @param $1 -> file: /etc/hosts
 # @return path to file -> /etc
 basepath(){
+    # DEPRECATED: moved to system as xsys.baspath
     echo "$1" | rev | cut -d '/' -f2-30 | rev
 }
 
