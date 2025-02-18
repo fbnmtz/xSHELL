@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2025/02/17 - 03:01:32
+# Last Modified: Tuesday, 2025/02/18 - 00:29:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.23.1658
+# Version: 0.2.24.1757
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 _xLIB_ARGS_=true;
 
-use utils system hashs
+use hashs system utils
 # hash to save app params
 Hash.new -t main
 
@@ -54,11 +54,12 @@ xhelp(){
         esac
     done
 
-    # set vars VERSION, _CREATED_AT_, _AUTHOR_
-    xversion
-    xcreated
-    xupdated
-    xauthor
+    # set vars VERSION, _CREATED_AT_, _AUTHOR_NAME_
+    xsVersion
+    xsCreated
+    xsUpdated
+    xsAuthorName
+    xsAuthorMail
 
     # get all keys in main hash (format: key:value)
     #   --> key pattern (shortkey,longkey): Ex: -k,--key
@@ -159,7 +160,7 @@ xusage(){
         
         # not null? prints footer 
         [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
-        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} on ${YELLOW}${_UPDATED_AT_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_}${RESET}"
+        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} on ${YELLOW}${_UPDATED_AT_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_NAME_}${RESET}"
     
     else
         echo -e ""
@@ -298,12 +299,12 @@ xarg(){
             ;;
             -h|--header)
                 method=header
-                xflag_require_value "$1" "$2"
+                xsHelper --require-value "$1" "$2"
                 xhelp --header="$2"
             ;;
             -f|--footer)
                 method=footer
-                xflag_require_value "$1" "$2"
+                xsHelper --require-value "$1" "$2"
                 xhelp --footer="$2"
             ;;
         esac
@@ -374,26 +375,28 @@ xrunHelp(){
 }
 
 xrunDebug(){
-    echo -e "${RED}$(xsHelper --hl '-')\n# xSHELL DEBUG information:\
-        \n$(xsHelper --hl '-')${RESET}\n# variables:\
+    echo -e "${RED}$(xsHelper --hl '-')\n# xSHELL DEBUG - begin\
+        \n$(xsHelper --hl '-')${RESET}\n# 1. variables:\
         \n\$xSHELL_PATH: '$xSHELL_PATH'\
-        \n\$xSHELL_LIBS:\
-        \n \`-> count: '$(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' ')'\
-        \n \`-> files:$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")\
+        \n\$xSHELL_LIBS: '(count $(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' '))$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")'\
+
         \n\$APP: '$APP'\
         \n\$APP_PATH: '$0'\
         \n\$APP_DATA: '$APP_DATA'\
+
         \n\$@: '${_ARGS_[*]}'\
         \n\$_PARAMS_: '${_PARAMS_[*]}'\
         \n\$xarg: '$xarg'\
 
-        \n# xarg function:\
-        \n$(Hash.all main | cut -d '+' -f1)
-
-        \n# xrun function:\
+        \n\$_AUTHOR_NAME_: '$_AUTHOR_NAME_'\
+        \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
+        \n\$_VERSION_: '$_VERSION_' ($(echo $_VERSIONRC_ | cut -d '-' -f2))\
+        \n$(xsHelper --hl '-')\n# 2. xarg function:\
+        \n$(Hash.all main | cut -d '+' -f1)\
+        \n$(xsHelper --hl '-')\n# 3. xrun function:\
         \n\$@: '${xRUN_ARGS}'\
         \n$__runARGS_case_\
-        \n${RED}$(xsHelper --hl -)\n# DEBUG end\
+        \n${RED}$(xsHelper --hl -)\n# xSHELL DEBUG - end\
         \n$(xsHelper --hl -)${RESET}";
 }
 
@@ -475,7 +478,7 @@ xrun(){
             --xhelp)
                 use utils
                 [ -z "$RED" ] && use colors
-                local _help_viewer=$(getPath bat less more cat)
+                local _help_viewer=$(xsys.path bat less more cat)
                 shift; xrunHelp | $_help_viewer
             ;;
             --xlib-dirs | --xlibs)
@@ -519,16 +522,15 @@ xrun(){
 
     generateCase "${_PARAMS_[@]}"
     # @=(${_PARAMS_[@]})
-    [ -n "$_ARGS_DEBUG" ] && xrunDebug "$xRUN_ARGS";
+    [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
 }
 
-# check if one flag is set and require a value for it
-# @param $1 -> flag to be checked (cant be null)
-# @param $2 -> field name to throw an error when flag is not set
-xflag_require_value(){
-    # $1 is empty? call xusage with field name to get a error msg
-    test -z "$1" && { xusage --field-error "$2"; } 
-        # || { true; } #echo "1"; -r}
+xcase(){
+    local char="$1"; shift
+    local code="$@"
+    if [[ "$xarg" =~ $char ]]; then
+        eval "$code"
+    fi
 }
 
 xsHelper(){
@@ -544,10 +546,9 @@ xsHelper(){
         --hl | --horizontal-line)
             shift;
             xrequirements seq tput
-            for i in $(seq 1 "$(($(tput cols)-2))"); do echo -n "$1"; done
+            for i in $(seq 1 "$(($(tput cols)-3))"); do echo -n "$1"; done
         ;;
     esac
-    
 }
 
 # Function to format help options with standard spacing on Darwin systems
@@ -630,7 +631,7 @@ helpOptionsLinux(){
 }
 
 # define version of script
-xversion(){
+xsVersion(){
     # set app version (dynamic from header comments or static)
     [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
         grep '# Version:' -m1 | \
@@ -639,19 +640,19 @@ xversion(){
         cut -d '.' -f1-3 \
     )"
     # get release candidate 
-    local release_candidate="$(head -n 20 "$0" | \
+    xs_release_candidate="$(head -n 20 "$0" | \
         grep '# Version:' -m1 | \
         tr -d ' ' | \
         cut -d ':' -f2 | \
         cut -d '.' -f4 \
     )"
 
-    _VERSIONRC_="$_VERSION_-rc$release_candidate"
+    _VERSIONRC_="$_VERSION_-rc$xs_release_candidate"
     [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
 }
 
 # define when script was created
-xcreated(){
+xsCreated(){
     # set app version (dynamic from header comments or static)
     [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
         grep '# Created:' -m1 | \
@@ -674,7 +675,7 @@ xcreated(){
 }
 
 # define when script was updated
-xupdated(){
+xsUpdated(){
     # set app version (dynamic from header comments or static)
     [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
         grep '# Last Modified:' -m1 | \
@@ -698,8 +699,8 @@ xupdated(){
 }
 
 # define author of script
-xauthor(){
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(
+xsAuthorName(){
+    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(
         head -n 20 "$0" | \
         grep '# Author.:' -m1 | \
         cut -d ':' -f2 |\
@@ -707,14 +708,30 @@ xauthor(){
         cut -c2-
     )
     # not found author in header comments, try get by git config
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global user.name)
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global user.email)
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global author.name)
-    [ -z "$_AUTHOR_" ] && _AUTHOR_=$(git config --global author.email)
+    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.name)
+    # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.email)
+    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.name)
+    # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.email)
     # still null? try by $USER variable
-    [ -z "$_AUTHOR_" ] && _AUTHOR_="$USER"
+    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_="$USER"
     # null? set as unknown, to be filled in later
-    [ -z "$_AUTHOR_" ] && _AUTHOR_='<unknown>'
+    [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_='<unknown>'
+}
+
+# define author email
+xsAuthorMail(){
+    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(
+        head -n 20 "$0" | \
+        grep '# Author.:' -m1 | \
+        cut -d ':' -f2 |\
+        cut -d ',' -f2 |\
+        tr -d '(' | tr -d ')' | tr -d ' '
+    )
+    # not found author in header comments, try get by git config
+    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global user.email)
+    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global author.email)
+    # null? set as unknown, to be filled in later
+    [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_='<unknown>'
 }
 
 
