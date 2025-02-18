@@ -6,10 +6,10 @@
 # Created: Friday, 2021/05/21 - 21:09:41
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 16:45:34
+# Last Modified: Tuesday, 2025/02/18 - 01:27:08
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.92
+# Version: 0.1.5.109
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,49 +19,45 @@
 
 _xLIB_STRINGS_=true
 
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-# import libs/functions
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-
 # split a string by a ginver char
 # @param $1 - string to be splited
 # @param $2 - split in this char (it will be removed)
 # @return $array - string splited
-strSplit(){
+str.split(){
     local array=( $(echo "$1" | tr -s "$2" ' ') )
     echo "${array[@]}"
 }
 
 # convert string to a array with each char
-strChars(){
+str.chars(){
     local array=( $(echo "$1" | fold -w1 | tr -s '\n' ' ') )
     echo "${array[@]}"
 }
 
 # get SIZE of a str
-strLen(){ echo "${#1}"; }
-alias strSize=strLen
-# echo $1 | wc -m
+str.len(){ echo "${#1}"; }
+str.size(){ str.len "$@"; }
 
 # reverse a str
-strReverse(){ echo "$1" | rev; }
+str.reverse(){ echo "$1" | rev; }
+str.rev(){ str.reverse $1; }
 
 # change case of a string 
-upcase(){ echo "$1" | tr a-z A-Z ; }
+str.upcase(){ echo "$1" | tr a-z A-Z ; }
 
-lowcase(){ echo "$1" | tr A-Z a-z ; }
+str.lowcase(){ echo "$1" | tr A-Z a-z ; }
 
 # check if a string contains another string
 # @param $1: string alvo da busca
 # @param $2: texto a ser pesquisado na string
-strInclude(){
+str.include?(){
     local string=$1; reqsubstr=$2;
-    if [ -z "${string##*$reqsubstr*}" ]; then 
-        echo "true"
-        # return 0
+    if [[ "${string}" =~ ${reqsubstr} ]]; then 
+    # if [ -z "${string##*$reqsubstr*}" ]; then 
+        # echo "true"
+        return 0
     else
-        echo "false"
-        # return 1
+        # echo "false"
+        return 1
     fi
-        
 }
