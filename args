@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/02/18 - 01:48:22
+# Last Modified: Monday, 2025/03/03 - 19:10:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.25.1786
+# Version: 0.2.26.1814
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,10 +20,7 @@
 _xLIB_ARGS_=true;
 
 use hashs system utils
-# hash to save app params
-Hash.new -t main
 
-block=''
 # update text used in function 'xusage'
     # @param $1 -> string to customize each text of help sections. Use this pattern:
         # -<option>="<text>"
@@ -37,15 +34,15 @@ xhelp(){
     # loop all params
     for param in "$@"; do
         # split key and value
-        key=$(echo $param | cut -d '=' -f1)
-        val=$(echo $param | cut -d '=' -f2)
+        key=$(echo "$param" | cut -d '=' -f1)
+        val=$(echo "$param" | cut -d '=' -f2)
         
         # check key arg
         case $key in
             -p|--param ) 
-                    param_id="$(echo $val | cut -d '+' -f1)"; 
-                    param_text="$(echo $val | cut -d '+' -f2-3)";
-                    Hash.put main "$param_id" "$param_text";;
+                    param_id="$(echo "$val" | cut -d '+' -f1)"; 
+                    param_text="$(echo "$val" | cut -d '+' -f2-3)";
+                    Hash.put "$args_hash" "$param_id" "$param_text";;
                     
             -b|--body   ) __HELP_BODY__+="$val" ;;
             -h|--header ) __HELP_HEADER__+="\n$val\n" ;;
@@ -58,9 +55,9 @@ xhelp(){
     .xs --init
 
     __HELP_USAGE__="usage: \n  ${GREEN}$APP${RESET} "
-    if [ $(Hash.count main) -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
+    if [ $(Hash.count "$args_hash") -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
         __HELP_USAGE__+="$(
-            Hash.keys main | \
+            Hash.keys "$args_hash" | \
             sed 's/,--.[a-z,-]*//g' | \
             sed 's/,.[a-z,-]*//g' | \
             sed 's/^/[/g' | \
@@ -100,7 +97,7 @@ xusage(){
             fi
             # Add the entire line to the options array
             options+=("$line")
-        done <<< "$(Hash.all main)"
+        done <<< "$(Hash.all "$args_hash")"
 
         # Format the options with standard spacing
         for option in "${options[@]}"; do
@@ -118,7 +115,7 @@ xusage(){
     # Function to format help options with standard spacing on Linux systems
     helpOptionsLinux(){
         for h in $(
-            Hash.all main |      # get all hashes \
+            Hash.all "$args_hash" |      # get all hashes \
             sed "s/:/:/g" |             # add blue color to options description':'\
             sed "s/^-/:-/g" |           # add color to options/flags \
             sed 's/ /./g'               # replace ' ' with '.'  
@@ -157,7 +154,7 @@ xusage(){
         done
 
         __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-            column -t -s ':' | \
+            column -t -s ':' |
             sed "s/;/:/g" | \
             sed 's/,/,  /g' )
     }
@@ -169,18 +166,23 @@ xusage(){
     case "$1" in
         -f|--field-error)
             xhelp --long-usage
+            # remove header info on this error msg
+            __HELP_HEADER__=''
             __exit_code=3 
             __usage_msg="${RED}Error!${RESET} empty value for ${YELLOW}'$2'${RESET} param.${RESET}\n\n" 
         ;;
 
         -m|--missing-param)
             xhelp --long-usage
+            # remove header info on this error msg
+            __HELP_HEADER__=''
             __exit_code=1 
             __usage_msg="${RED}Error!${RESET} Missing required param.${RESET}\n\n" 
         ;;
         -r|--reject-unknow)
             xhelp --long-usage
-            __exit_code=2 
+            # remove header info on this error msg
+            __HELP_HEADER__=''
             __usage_msg="${RED}Error!${RESET} invalid option ${YELLOW}($2)${RESET}.${RESET}\n\n" 
         ;;
         -c|--custom)
@@ -216,7 +218,7 @@ xusage(){
         #     pairs stored as 'key:value'. We parse to ':key:value' 
         #       --> sed to add ':' in begin of each line 
         #       --> column to equaly expand texts
-        # Hash.all main | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
+        # Hash.all "$args_hash" | sed 's/^-/:-/g' | sed 's/,/,:/' | column -t -s ':'
 
         # case sys.os in
         case $(xsys.os) in
@@ -398,7 +400,7 @@ xrun(){
     xRUN_ARGS="$@"
 
     xrunHelp(){
-        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} main functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
+        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} "$args_hash" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
         \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
         \n\nAvailable options:\
@@ -429,7 +431,7 @@ xrun(){
         echo -e "
         \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
         \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
-        \n  ${CYAN}--xreject-unknow${RESET};raise an error if your script receives args not defined\
+        \n  ${CYAN}--xreject-unknown${RESET};raise an error if your script receives args not defined\
         \n  ${CYAN}--xversionrc${RESET};use full version with rc (release candidate)
         \n  ${CYAN}--xcolors${RESET};enable color support\
         \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
@@ -464,7 +466,7 @@ xrun(){
             \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
             \n\$_VERSION_: '$_VERSION_' ($xs_release_candidate)\
             \n$(.xs --hl '-')\n# 2. xarg function:\
-            \n$(Hash.all main | cut -d '+' -f1)\
+            \n$(Hash.all "$args_hash" | cut -d '+' -f1)\
             \n$(.xs --hl '-')\n# 3. xrun function:\
             \n\$@: '${xRUN_ARGS}'\
             \n$__runARGS_case_\
@@ -480,7 +482,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_REQUIRED" ] && .xs --xrequire-one "$1" && unset _ARGS_REQUIRED;
+        [ -n "$_ARGS_REQUIRED" ] && .xs --require-one "$@" && unset _ARGS_REQUIRED;
 
         # loop all params 
         while [ "$1" != "" ]; do
@@ -542,7 +544,7 @@ xrun(){
             --xrequire-one | --xrequire_one | --require-one | --notNull)  
                 shift; _ARGS_REQUIRED=true
             ;;
-            --xreject-unknow | --reject-unknow)
+            --xreject-unknown | --reject-unknow | --xreject-unknow)
                 shift
                 __runARGS_case_options+="*) xusage --reject-unknow \$1 ;; \n"
             ;;
@@ -728,5 +730,19 @@ xcase(){
     esac
 }
 
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # initialize var 'xarg'
 xarg=''
+
+# define current_cmd at start
+xcmd=main
+args_hash="${xcmd}-args"
+groups_hash="${xcmd}-groups"
+
+# hash to save app params
+Hash.new -t "$args_hash"
+Hash.new -t "$groups_hash"
+
+# Hash.put "$args_hash" "$param_id" "$param_text";;
+
+block=''

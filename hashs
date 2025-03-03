@@ -6,10 +6,10 @@
 # Created: Wednesday, 2021/05/26 - 00:47:46
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2025/02/13 - 22:38:48
+# Last Modified: Wednesday, 2025/02/19 - 13:15:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.1.2.76
+# Version: 1.1.3.84
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Implements a virtual Hash inspired on starckoverflow thread
@@ -64,7 +64,7 @@ Hash.new() {
 # Return:
 #   None
 Hash.put() {
-    echo "$2:$3" >> "$_hash_path_"
+    echo "$2:$3" >> "$_hash_location_/$1.hash"
 }
 alias Hash.add='Hash.put'
 
@@ -79,7 +79,7 @@ alias Hash.add='Hash.put'
 Hash.get() {
     # Use grep to find the line that starts with the key followed by a colon
     # Then use cut to extract the value part after the colon
-    grep "^$2:" "$_hash_path_" | cut -d ':' -f2
+    grep "^$2:" "$_hash_location_/$1.hash" | cut -d ':' -f2
 }
 
 # Alias for the Hash.get function
@@ -96,7 +96,7 @@ alias Hash.val='Hash.get'
 Hash.keys() {
     # Use cut to extract the first field (keys) from the hash file
     # The delimiter is a colon (:)
-    cut -d ':' -f1 < "$_hash_path_"
+    cut -d ':' -f1 < "$_hash_location_/$1.hash"
 }
 
 # Function to retrieve all values from a hash file
@@ -109,7 +109,7 @@ Hash.keys() {
 Hash.values() {
     # Use cut to extract the second field (values) from the hash file
     # The delimiter is a colon (:)
-    cut -d ':' -f2 < "$_hash_path_"
+    cut -d ':' -f2 < "$_hash_location_/$1.hash"
 }
 
 # Function to retrieve all key-value pairs from a hash file
@@ -122,7 +122,7 @@ Hash.values() {
 Hash.all() {
     # Use cat to display the contents of the hash file
     # Redirect any errors to /dev/null to suppress them
-    cat "$_hash_path_" 2>/dev/null
+    cat "$_hash_location_/$1.hash" 2>/dev/null
 }
 
 # Function to count the number of items in a hash file
@@ -133,7 +133,7 @@ Hash.all() {
 # @return -> The count of key-value pairs in the hash file
 Hash.count() {
     # Use Hash.all to get all key-value pairs and pipe the output to wc -l to count the lines
-    Hash.all | wc -l
+    Hash.all "$1" | wc -l
 }
 
 # Function to search for a term in a hash file
@@ -144,7 +144,7 @@ Hash.count() {
 # @return -> The lines containing the search term
 Hash.search() {
     # Use Hash.all to get all key-value pairs and pipe the output to grep to search for the term
-    Hash.all | grep "$*"
+    Hash.all "$1" | grep "$*"
 }
 
 # Function to search for a value in a hash file
@@ -155,5 +155,69 @@ Hash.search() {
 # @return -> The lines containing the search term
 Hash.searchVal() {
     # Use Hash.values to get all values and pipe the output to grep to search for the term
-    Hash.values | grep "$*"
+    Hash.values "$1" | grep "$*"
 }
+
+# Function to add a subhash to an existing hash
+#
+# This function creates a new subhash and adds it to an existing hash.
+#
+# @param $1 -> The name of the parent hash file (without the .hash extension)
+# @param $2 -> The key to be added to the parent hash
+# @param $3 -> The name of the subhash to be created
+# @return -> None
+Hash.addSubhash() {
+    # Create the new subhash
+    Hash.new "$3"
+
+    # Add the subhash key to the parent hash
+    Hash.put "$1" "$2" "$3"
+}
+
+# Function to retrieve a value from a subhash by its key
+#
+# This function searches for a key in a subhash and returns the corresponding value.
+# The subhash file is expected to be in the format: key:value
+#
+# @param $1 -> The name of the parent hash file (without the .hash extension)
+# @param $2 -> The key to search for in the parent hash file
+# @param $3 -> The key to search for in the subhash file
+# @return -> The value corresponding to the key in the subhash
+Hash.getSubhashValue() {
+    # Get the name of the subhash
+    subhash_name=$(Hash.get "$1" "$2")
+
+    # Use grep to find the line that starts with the key followed by a colon
+    # Then use cut to extract the value part after the colon
+    grep "^$3:" "$_hash_location_/$subhash_name.hash" | cut -d ':' -f2
+}
+
+# Function to add a key-value pair to a subhash
+#
+# This function adds a key-value pair to an existing subhash.
+#
+# @param $1 -> The name of the parent hash file (without the .hash extension)
+# @param $2 -> The key to search for in the parent hash file
+# @param $3 -> The key to be added to the subhash
+# @param $4 -> The value associated with the key in the subhash
+# @return -> None
+Hash.putSubhash() {
+    # Get the name of the subhash
+    subhash_name=$(Hash.get "$1" "$2")
+
+    # Add the key-value pair to the subhash
+    Hash.put "$subhash_name" "$3" "$4"
+}
+
+# # Criar um novo hash
+# Hash.new myhash
+
+# # Adicionar um subhash ao hash pai
+# Hash.addSubhash myhash subhash1 mysubhash
+
+# # Adicionar uma chave-valor ao subhash
+# Hash.putSubhash myhash subhash1 key1 value1
+
+# # Recuperar um valor do subhash
+# value=$(Hash.getSubhashValue myhash subhash1 key1)
+# echo $value
