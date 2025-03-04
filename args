@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2025/03/03 - 19:10:30
+# Last Modified: Tuesday, 2025/03/04 - 16:07:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.26.1814
+# Version: 0.2.27.1862
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -153,8 +153,8 @@ xusage(){
             fi
         done
 
-        __HELP_OPTIONS_DESCRIPTION__=$(echo -e "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-            column -t -s ':' |
+        __HELP_OPTIONS_DESCRIPTION__=$(echo "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
+            awkColumn "-s=:" | \
             sed "s/;/:/g" | \
             sed 's/,/,  /g' )
     }
@@ -222,8 +222,9 @@ xusage(){
 
         # case sys.os in
         case $(xsys.os) in
-            Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
-            Linux ) helpOptionsLinux ;;
+            # Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
+            # Linux ) helpOptionsLinux ;;
+            *) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
         esac
 
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
@@ -405,18 +406,18 @@ xrun(){
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
         \n\nAvailable options:\
         "
-        echo -e "\
-        \n${CYAN}  -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
-        \n${CYAN}  -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
-        \n${CYAN}  -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
-        \n${CYAN}  -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
-        \n
-        \n # Grouping options #
+        echo "\
+        \n${CYAN} -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
+        \n${CYAN} -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
+        \n${CYAN} -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
+        \n${CYAN} -d, --desc ${MAGENTA} <TEXT> ${RESET}; description to this 'arg'\
+        \n\n # Grouping options #\n
         \n${CYAN}  -b, --block   ${MAGENTA}<VALUE>${RESET} or\
         \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
         \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
         \
-        " | column -t -s ';'
+        " | awkColumn "-s=;"
+        # " | column -t -s ';'
         
         echo -e "\
         \nExamples:\
@@ -428,7 +429,8 @@ xrun(){
         \n\nusage: ${YELLOW}xrun ${CYAN}[OPTIONS] ${MAGENTA}\"\$@\"${RESET}\
         \n\nAvailable options:\
         "
-        echo -e "
+        
+        echo "\
         \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
         \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
         \n  ${CYAN}--xreject-unknown${RESET};raise an error if your script receives args not defined\
@@ -437,7 +439,13 @@ xrun(){
         \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
         \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
         \n  ${CYAN}--xhelp${RESET};prints this message
-        " | column -t -s ';' 
+        " |  awkColumn "-s=;" 
+        # " |  awkColumn "-t=;"
+        # " | awk '{ printf "%-8s", $1 } NR % 2 == 0 { printf "\n" }'  
+        # " | awk '{ getline line; printf "%s\t%s\n", $0, line }'
+        # " | awk -vOFS='\t' 'NF > 0 { $1 = $1 } 1'
+        # " > awkColumn -t=;
+        # " | column -t -s ';' 
 
         # echo -e "\n[!] ATENTION:\
         #     \n    1-You can't use 'xrun' arguments in your application.\

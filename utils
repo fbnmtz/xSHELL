@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 00:26:27
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/02/18 - 00:35:55
+# Last Modified: Tuesday, 2025/03/04 - 15:36:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.11.466
+# Version: 1.0.12.517
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -101,4 +101,34 @@ getGit(){
         _git_config=$($git_cmd --global "$c")
         [ -n "$_git_config" ] && { echo "$_git_config" ; break; }
     done
+}
+
+# column replacement
+awkColumn(){
+    xrequirements awk cut
+
+    local arg ARGS
+    local char="$(echo $1 | cut -d '=' -f2)"; shift
+
+    while read -r arg; do
+        ARGS+=($arg)
+    done
+
+    echo -e "${ARGS[@]}" | awk -v FS="$char" -v OFS="\t" '
+    {
+        for (i = 1; i <= NF; i++) {
+            col_width[i] = (length($i) > col_width[i]) ? length($i) : col_width[i];
+            data[NR, i] = $i;
+        }
+        row_count = NR;
+        col_count = (NF > col_count) ? NF : col_count;
+    }
+    END {
+        for (i = 1; i <= row_count; i++) {
+            for (j = 1; j <= col_count; j++) {
+                printf "%-*s%s", col_width[j], data[i, j], (j < col_count ? OFS : "");
+            }
+            print "";
+        }
+    }'
 }
