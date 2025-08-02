@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/03/04 - 16:07:07
+# Last Modified: Saturday, 2025/08/02 - 07:56:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.27.1862
+# Version: 0.2.28.1899
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -79,6 +79,15 @@ xhelp(){
     fi
 }
 
+# show usage information/help
+# usage: xusage <options>
+# `-> <options> can be:
+#  -f|--field-error <field_name>  : raise error when a field is empty
+#  -m|--missing-param <param_name> : raise error when a required param is missing
+#  -r|--reject-unknow <option>     : raise error when a unknow option is used
+#  -c|--custom <text>              : custom text to show on usage
+#  -h|--help                     : show help message
+#  -v|--version                  : show version of this script
 xusage(){
     # Function to format help options with standard spacing on Darwin systems
     helpOptionsDarwin() {
@@ -239,7 +248,6 @@ xusage(){
     # quit with error code
     exit $__exit_code
 }
-
 
 # xarg: id="-h,--help" var=variable:value
     #   --> dynamic create ARGs/actions
@@ -458,7 +466,7 @@ xrun(){
     
     xrunDebug(){
         echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
-            \n$(.xs --hl '-')${RESET}\n# 1. variables:\
+            \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
             \n\$xSHELL_PATH: '$xSHELL_PATH'\
             \n\$xSHELL_LIBS: '(count $(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' '))$(echo "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")'\
 
@@ -473,9 +481,9 @@ xrun(){
             \n\$_AUTHOR_NAME_: '$_AUTHOR_NAME_'\
             \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
             \n\$_VERSION_: '$_VERSION_' ($xs_release_candidate)\
-            \n$(.xs --hl '-')\n# 2. xarg function:\
+            \n$(.xs --hl '-')\n${YELLOW}# 2. xarg function:${RESET}\n\
             \n$(Hash.all "$args_hash" | cut -d '+' -f1)\
-            \n$(.xs --hl '-')\n# 3. xrun function:\
+            \n$(.xs --hl '-')\n${YELLOW}# 3. xrun function:${RESET}\n\
             \n\$@: '${xRUN_ARGS}'\
             \n$__runARGS_case_\
             \n${RED}$(.xs --hl -)\n# xSHELL DEBUG - end\
@@ -556,14 +564,17 @@ xrun(){
                 shift
                 __runARGS_case_options+="*) xusage --reject-unknow \$1 ;; \n"
             ;;
-            --xdebug) 
-                shift; _ARGS_DEBUG=true; 
-            ;;
             --xversion-full | --xversionrc)
                 shift; _CURRENT_VERSION_=$_VERSIONRC_
             ;;
+            --xdebug | --xsdebug) 
+                shift; _ARGS_DEBUG=true; 
+            ;;
             --xcolors)
                 shift; use colors;
+            ;;
+            --xscolors) 
+                shift; xsColors; exit 0;
             ;;
             --xhelp)
                 use utils
@@ -603,15 +614,23 @@ xrun(){
 
     [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
 }
-
+# Validate if $xarg variable contains a value and run the code block
+# Usage: xcase <value> <code_block>
 xcase(){
-    local char="$1"; shift
-    local code="$@"
-    if [[ "$xarg" =~ $char ]]; then
-        eval "$code"
+    local value="$1"; shift
+    local code_block="$@"
+    if [[ "$xarg" =~ $value ]]; then
+        eval "$code_block"
     fi
 }
 
+# internal helper function to set default values
+# Usage: .xs <argument>
+# `-> argument can be:
+#   --init: initialize script variables
+#   --require-value <value> <var_name>: require a value for a variable
+#   --require-one <args>: require at least one argument
+#   --hl <char>: prints a horizontal line with the given character
 .xs(){
     # define version of script
     xsVersion(){
@@ -668,6 +687,15 @@ xcase(){
             cut -d '-' -f1 | \
             tr -d '/'
         )"
+        # [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
+        #     grep '# Last Modified:' -m1 | \
+        #     cut -d ',' -f2 | \
+        #     tr -d ' ' | \
+        #     tr -d ':' | \
+        #     tr -d ',' | \
+        #     tr -d '-' | \
+        #     tr -d '/'
+        # )"
             # cut -d '/' -f1 \
         # not found date in header comments, try filestats
         [ -z "$_UPDATED_AT_" ] && \
