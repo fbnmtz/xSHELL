@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xsRequirementsReport
+# Created: Wednesday, 2026/07/15 - 15:06:28
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Monday, 2026/08/03 - 15:54:04
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.25
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+
+xsRequirementsReport() {
+
+    if [ "$1" == "--colors" ]; then
+        shift
+        source "$xSHELL_PATH/colors"
+    else
+        [ -n "$RED" ] && xsDisableColors
+    fi
+
+    # Ferramentas que não pertencem a pacotes do Arch Linux
+    declare -A XCUSTOM_TOOLS=(
+        [mdate]="github:fbnmtz/scripts"
+        [mtube]="github:fbnmtz/scripts"
+        [xbackup]="github:fbnmtz/scripts"
+    )
+
+    local requirement
+    local cmd
+    local path
+    local pkg
+    local installed
+    local alt
+    local -a alternatives
+    local -A packages
+    local -A customs
+
+    # Verifica se o banco de arquivos do pacman está disponível
+    if ! pacman -Fq /usr/bin/bash &>/dev/null; then
+        echo "Banco de arquivos do pacman não encontrado."
+        echo "Execute:"
+        echo "  sudo pacman -Fy"
+        return 1
+    fi
+    echo -e "${YELLOW}xrequirements '$@'${RESET}"
+    printf "${BLUE}%-6s %-30s %s${RESET}" "------" "------------------------------" "------------------------------"
+    printf "\n${BLUE}%-6s %-30s %s${RESET}\n" "STATUS" "COMMAND" "PACKAGE/SOURCE"
+    printf "${BLUE}%-6s %-30s %s${RESET}\n" "------" "------------------------------" "------------------------------"
+
+    for requirement in "$@"; do
+
+        cmd=""
+        path=""
+        installed=0
+
+        #
+        # Trata alternativas (cmd1|cmd2|cmd3)
+        #
+        if [[ "$requirement" == *"|"* ]]; then
+
+            IFS='|' read -ra alternatives <<< "$requirement"
+
+            for alt in "${alternatives[@]}"; do
+                if path=$(command -v "$alt" 2>/dev/null); then
+                    cmd="$alt"
+                    installed=1
+                    break
+                fi
+            done
+
+            # nenhuma alternativa encontrada
+            if [[ -z "$cmd" ]]; then
+                cmd="${alternatives[0]}"
+            fi
+
+        else
+
+            cmd="$requirement"
+
+            if path=$(command -v "$cmd" 2>/dev/null); then
+                installed=1
+            fi
+
+        fi
+
+        #
+        # Comando encontrado
+        #
+        if (( installed )); then
+
+            # Ferramenta personalizada
+            if [[ -n ${XCUSTOM_TOOLS[$cmd]} ]]; then
+                printf "${GREEN}%-6s %-30s %s${RESET}\n" "✔" "$requirement" "${XCUSTOM_TOOLS[$cmd]}"
+                continue
+            fi
+
+            # Pacote do pacman
+            pkg=$(pacman -Qo "$path" 2>/dev/null | awk '{print $(NF-1)}')
+
+            if [[ -n "$pkg" ]]; then
+                printf "${GREEN}%-6s %-30s %s${RESET}\n" "✔" "$requirement" "$pkg"
+            else
+                printf "${GREEN}%-6s %-30s (não gerenciado pelo pacman)${RESET}\n" "✔" "$requirement"
+            fi
+
+            continue
+        fi
+
+        #
+        # Ferramenta personalizada ausente
+        #
+        if [[ -n ${XCUSTOM_TOOLS[$cmd]} ]]; then
+            printf "${RED}%-6s %-30s %s${RESET}\n" "✘" "$requirement" "${XCUSTOM_TOOLS[$cmd]}"
+            customs["${XCUSTOM_TOOLS[$cmd]}"]=1
+            continue
+        fi
+
+        #
+        # Pesquisa no banco de arquivos
+        #
+        pkg=$(pacman -Fq "/usr/bin/$cmd" 2>/dev/null | head -n1)
+
+        if [[ -z "$pkg" ]]; then
+            pkg=$(pacman -Fq "$cmd" 2>/dev/null | head -n1)
+        fi
+
+        pkg=${pkg#*/}
+
+        if [[ -n "$pkg" ]]; then
+            printf "${RED}%-6s %-30s %s${RESET}\n" "✘" "$requirement" "$pkg"
+            packages["$pkg"]=1
+        else
+            printf "${YELLOW}%-6s %-30s unknown${RESET}\n" "✘" "$requirement"
+        fi
+
+    done
+
+    echo
+
+    if ((${#packages[@]})); then
+        echo "Pacotes a instalar:"
+        echo "  sudo pacman -S $(printf '%s\n' "${!packages[@]}" | sort | xargs)"
+        echo
+    fi
+
+    if ((${#customs[@]})); then
+        echo "Ferramentas personalizadas:"
+        printf "  %s\n" "${!customs[@]}"
+        echo
+    fi
+}

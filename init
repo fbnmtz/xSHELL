@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2025/02/17 - 01:41:39
+# Last Modified: Monday, 2026/08/03 - 15:49:16
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.22.798
+# Version: 0.1.22.813
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -35,8 +35,11 @@ APP_HOME="$HOME/.xshell/$APP" # application home (store data)
 APP_DATA=$APP_HOME
 # DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
 
+# store current app requirements (binaries)
+_REQUIREMENTS_=''
+
 # store loaded LIBs
-xSHELL_LIBS=''
+xSHELL_LIBS=()
 
 # PATHs to search a LIB
 xSHELL_DIRS=( 
@@ -206,24 +209,26 @@ alias unit=use
 alias xuse=use
 
 # validate required binaries
-# ex: xrequirements bin1 bin2 bin3A:bin3B
+# ex: xrequirements bin1 bin2 bin3A|bin3B
 xrequirements(){
   local missing=""
   local found=''
   
   fail(){
     local tools=$@
-    local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'."
+    local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'"
     echo -e "$error_msg"
     if source "$xSHELL_PATH/system" 2> /dev/null; then
       xsys.notify "$APP" "$error_msg"
     fi
-    exit 10
+    # exit 10
   }
   # check if a package exists on the system
   # ex| check bin1
   check(){ which "$1" &> /dev/null; }
   
+  _REQUIREMENTS_="$@"
+
   for tool in $*; do
     if [[ "$tool" =~ "|" ]]; then
       for t in ${tool//\|/ }; do 
@@ -235,17 +240,20 @@ xrequirements(){
           [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && fail "$tool"
+      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
     else
       if ! check "$tool"; then
         [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
 
-        fail "$tool"
+          found=false
+      #   { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
       else 
         found=true
       fi
     fi
   done
+
+  [ "$found" != 'true' ] && { fail "$missing"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
 
   # [ "$found" != 'true' ] && fail "$missing"
 }
