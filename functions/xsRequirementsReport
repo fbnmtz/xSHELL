@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/07/15 - 15:06:28
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/03 - 15:54:04
+# Last Modified: Tuesday, 2026/08/04 - 13:06:24
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.25
+# Version: 0.0.1.26
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -51,7 +51,7 @@ xsRequirementsReport() {
         echo "  sudo pacman -Fy"
         return 1
     fi
-    echo -e "${YELLOW}xrequirements '$@'${RESET}"
+    echo -e "${YELLOW}xrequirements '$*${RESET}"
     printf "${BLUE}%-6s %-30s %s${RESET}" "------" "------------------------------" "------------------------------"
     printf "\n${BLUE}%-6s %-30s %s${RESET}\n" "STATUS" "COMMAND" "PACKAGE/SOURCE"
     printf "${BLUE}%-6s %-30s %s${RESET}\n" "------" "------------------------------" "------------------------------"

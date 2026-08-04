@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/03 - 15:49:16
+# Last Modified: Tuesday, 2026/08/04 - 13:06:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.22.813
+# Version: 0.1.22.814
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -227,7 +227,7 @@ xrequirements(){
   # ex| check bin1
   check(){ which "$1" &> /dev/null; }
   
-  _REQUIREMENTS_="$@"
+  _REQUIREMENTS_="$*"
 
   for tool in $*; do
     if [[ "$tool" =~ "|" ]]; then
