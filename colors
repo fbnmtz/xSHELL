@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2025/08/01 - 11:36:43
+# Last Modified: Thursday, 2026/08/06 - 17:55:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.0.79
+# Version: 1.0.1.88
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -45,6 +45,7 @@ xsEnableColors(){
   MAGENTA='\033[35m'
   CYAN='\033[36m'
   WHITE='\033[37m'
+  GREY='\033[90m'
 
   # Background colors
   BGBLACK='\033[40m'
@@ -55,6 +56,7 @@ xsEnableColors(){
   BGMAGENTA='\033[45m'
   BGCYAN='\033[46m'
   BGWHITE='\033[47m' 
+  BGGREY='\033[100m'
 
   # create ALIASES for all attributes and colors
   ATTR_BOLD=${BOLD}
@@ -73,6 +75,7 @@ xsEnableColors(){
   FG_MAGENTA=${MAGENTA}
   FG_CYAN=${CYAN}
   FG_WHITE=${WHITE}
+  FG_GREY=${GREY}
 
   BG_BLACK=${BGBLACK}
   BG_RED=${BGRED}
@@ -82,15 +85,16 @@ xsEnableColors(){
   BG_MAGENTA=${BGMAGENTA}
   BG_CYAN=${BGCYAN}
   BG_WHITE=${BGWHITE}
+  BG_GREY=${BGGREY}
 }
 
 # unset all colors/attributes 
 xsDisableColors(){
   for var in RESET BOLD DIM ITALIC UNDERLINE BLINK REVERSE HIDDEN \
     ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
-    BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE \
-    BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE \
-    BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE; do 
+    BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
+    BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY \
+    BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY; do 
     unset $var
   done
 }
@@ -104,7 +108,7 @@ xsColors(){
   echo -e "${BLINK}BLINK${RESET}"
   echo -e "${REVERSE}REVERSE${RESET}"
   echo -e "${HIDDEN}HIDDEN${RESET}"
-
+  echo -e ""
   echo -e "${BLACK}BLACK${RESET}"
   echo -e "${RED}RED${RESET}"
   echo -e "${GREEN}GREEN${RESET}"
@@ -113,7 +117,8 @@ xsColors(){
   echo -e "${MAGENTA}MAGENTA${RESET}"
   echo -e "${CYAN}CYAN${RESET}"
   echo -e "${WHITE}WHITE${RESET}"
-
+  echo -e "${GREY}GREY${RESET}"
+  echo -e ""
   echo -e "${BGBLACK}BGBLACK${RESET}"
   echo -e "${BGRED}BGRED${RESET}"
   echo -e "${BGGREEN}BGGREEN${RESET}"
@@ -122,6 +127,7 @@ xsColors(){
   echo -e "${BGMAGENTA}BGMAGENTA${RESET}"
   echo -e "${BGCYAN}BGCYAN${RESET}"
   echo -e "${BGWHITE}BGWHITE${RESET}"
+  echo -e "${BGGREY}BGGREY${RESET}"
 }
 
 # enable colors by default (when this file/library is loaded)
