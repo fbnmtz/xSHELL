@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/06 - 17:55:19
+# Last Modified: Thursday, 2026/08/06 - 23:44:08
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.1.88
+# Version: 1.0.2.94
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -86,6 +86,17 @@ xsEnableColors(){
   BG_CYAN=${BGCYAN}
   BG_WHITE=${BGWHITE}
   BG_GREY=${BGGREY}
+
+  FGBLACK=${BLACK}
+  FGRED=${RED}
+  FGGREEN=${GREEN}
+  FGYELLOW=${YELLOW}
+  FGBLUE=${BLUE}
+  FGMAGENTA=${MAGENTA}
+  FGCYAN=${CYAN}
+  FGWHITE=${WHITE}
+  FGGREY=${GREY}
+
 }
 
 # unset all colors/attributes 
@@ -94,7 +105,8 @@ xsDisableColors(){
     ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
     BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
     BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY \
-    BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY; do 
+    BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY \
+    FGBLACK FGRED FGGREEN FGYELLOW FGBLUE FGMAGENTA FGCYAN FGWHITE FGGREY; do 
     unset $var
   done
 }
