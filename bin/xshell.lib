@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: scripts/xshell.lib
+# File...: bin/xshell.lib
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/02/16 - 18:49:48
+# Last Modified: Thursday, 2026/08/06 - 23:47:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.19.341
+# Version: 0.1.20.359
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -88,7 +88,7 @@ parse_args(){
 }
 
 # add some iformations to script without our default header
-templateInfo(){
+template_header_simple(){
     echo -e "
 _AUTHOR_=\"$author_name\"
 _CREATED_AT_=\"$today\"
@@ -97,7 +97,7 @@ _CURRENT_VERSION_=\"0.0.1\""
 }
 
 # default header for scripts
-templateHeader(){
+template_header_full(){
     # get current date/time (force locale to US format on date)
     export LC_TIME=en_US.UTF-8 2>/dev/null
     # print default header template
@@ -123,7 +123,7 @@ templateHeader(){
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # shellcheck disable=SC1090,SC2154
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-templateScript(){
+template_script(){
     echo -e "
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # shellcheck disable=SC1090,SC2154
@@ -157,7 +157,7 @@ echo "xrun \"\$@\"
 # #     help)    echo -e \"action:\$action\"; usage ;;
 # # esac
 
-templateLib(){
+template_lib(){
     # replace '.' for '_'
     local name=${1//./_}
     # remove word 'lib' from filename
@@ -172,7 +172,7 @@ templateLib(){
     echo -e  "\n_xLIB_${name}=true\n"
 }
 
-newFile(){
+action_new_file(){
     if [ -n "$name" ]; then
         filename="$dir/$name"
         # Check if the output directory is writable
@@ -200,14 +200,13 @@ newFile(){
         echo -e "#!/usr/bin/env bash"
         
         # add default header information (if requested) 
-        [ "$_xHEADER_" == 'true' ] && templateHeader || \
-            {
-                echo -e "\n# script: $filename"
-                templateInfo
-            }
+        [ "$_xHEADER_" == 'true' ] && template_header_full || {
+            echo -e "\n# script: $filename"
+            template_header_simple
+        }
         
         # finally, create the new script OR library 
-        [ "$_xLIB_" == 'true' ] && templateLib "$name" || templateScript 
+        [ "$_xLIB_" == 'true' ] && template_lib "$name" || template_script 
 
     } > "$filename"
 
@@ -218,18 +217,23 @@ newFile(){
     $editor "$filename" 
 }
 
-removeFile(){
+action_remove_file(){
     local msg="file '$name' not found!"
+    # check if the file exists 
     if [ -f "$name" ]; then
+        # backup and remove the file
         cp "$name" "$BACKUP_DIR/$name" && rm "$name"
         msg="file '$name' deleted!"
+    # check if the file exists in the output directory
     elif [ -f "$dir/$name" ]; then
+        # backup and remove the file
         cp "$dir/$name" "$BACKUP_DIR/$name" && rm "$dir/$name"
         msg="file '$name' deleted!"
     else
-        echo "$msg"
+        # file not found, print error message and exit with code 1
+        echo -e "${RED}Error!${RESET} $msg"
+        echo -e "backup directory: $BACKUP_DIR"
         exit 1
     fi
-    echo "$msg"
-    exit
+    echo "$msg" && exit
 }

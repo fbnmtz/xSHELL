@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 # ############################################################################# Project: xSHELL (none)
-# File...: scripts/xshell
+# File...: bin/xshell
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/02/16 - 18:14:02
+# Last Modified: Thursday, 2026/08/06 - 23:46:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.24.434
+# Version: 0.1.25.442
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -34,14 +34,17 @@ xshell_init
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 xarg --block "Script's Generation"
 # xarg --id -a,--args      --var arguments+r     --desc "define <arguments> for new script"
-xarg --id -f,--file      --var name+r          --desc "file <name> for new script"
-xarg --id -H,--header    --var _xHEADER_:true  --desc "add default HEADER on the new script"
-xarg --id -l,--lib       --var _xLIB_:true     --desc "new script as LIB type (can be loaded with 'use' function)"
-xarg --id -o,--output    --var dir+r           --desc "output <dir> for new script (default '$DEFAULT_OUTPUT')"
-xarg --id -e,--editor    --var editor+r        --desc "<editor> to open new script (default '$editor')"
-xarg --id -r,--remove    --var name+r          --desc "remove file <name> (backup '$BACKUP_DIR/<name>')"
+xarg --id -n,--new     --var name+r          --desc "create new script <name>"
+xarg --id -t,--type    --var type+r          --desc "create new script <type> (default 'script')"
+xarg --id -f,--file    --var name+r          --desc "file <name> for new script"
+xarg --id -H,--header  --var _xHEADER_:true  --desc "add default HEADER on the new script"
+xarg --id -l,--lib     --var _xLIB_:true     --desc "new script as LIB type (can be loaded with 'use' function)"
+xarg --id -o,--output  --var dir+r           --desc "output <dir> for new script (default '$DEFAULT_OUTPUT')"
+xarg --id -e,--editor  --var editor+r        --desc "<editor> to open new script (default '$editor')"
+xarg --id -r,--remove  --var name+r          --desc "remove file <name> (backup '$BACKUP_DIR/<name>')"
 
 xarg --header "xSHELL script generator"
+xarg --footer "xSHELL v$VERSION - $today - author: $author_name <$author_mail>"
 
 # TODO: planning new features
 # xarg --block "xSHELL Packages"
@@ -52,6 +55,6 @@ xarg --header "xSHELL script generator"
 xrun --xreject-unknow --xrequire-one --xversionrc "$@"
 
 case "${xarg}" in
-    r) removeFile "$name" ;;
-    *) newFile "$name" ;;
+    r) action_remove_file "$name" ;;
+    *) action_new_file "$name" ;;
 esac

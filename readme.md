@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2025/02/08 - 11:45:33
+ Last Modified: Thursday, 2026/08/06 - 21:28:09
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.0.23.530
+ Version: 0.1.0.533
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -49,9 +49,9 @@
     </br></br></br>xSHELL is a simple library system for bash/shell.</br></br></br>
 </p>
 
-## Index
+## Summary
 
-- [Index](#index)
+- [Summary](#summary)
 - [Install](#install)
 - [`xshell` command](#xshell-command)
   - [Example of Usage (libsExample script)](#example-of-usage-libsexample-script)
@@ -112,7 +112,7 @@ v0.1.17-rc316 - writen by @fbnmtz 2020
 
 ```
 
-[Go Back](#index)
+[Go Back](#summary)
 
 ### Example of Usage (libsExample script)
 
@@ -239,7 +239,7 @@ libsExapmle --math "2*2"
 </details>
 </br>
 
-[Go Back](#index)
+[Go Back](#summary)
 
 <!-- ### Note about lib/args:
 
@@ -258,7 +258,7 @@ libsExapmle --math "2*2"
    _CREATED_AT_="year"
    _CURRENT_VERSION_="X.X.X"
    ```
-[Go Back](#index) -->
+[Go Back](#summary) -->
 
 ---
 
@@ -454,7 +454,7 @@ Functions
 </details>
 </br>
 
-[Go Back](#index)
+[Go Back](#summary)
 
 ---
 
@@ -466,7 +466,7 @@ Functions
 * [ ] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 
-[Go Back](#index)
+[Go Back](#summary)
 
 ---
 

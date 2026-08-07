@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2025/02/16 - 17:31:12
+# Last Modified: Thursday, 2026/08/06 - 23:28:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.2.483
+# Version: 0.1.3.503
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -48,8 +48,6 @@ appendFile(){
     local tee_cmd="tee -a $file"
     ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
     cmd="$content_cmd | $tee_cmd"
-    # echo "$cmd"
-    # "$cmd"
     echo "\tadding '${content/\\n/}' to '$file'."
     eval "$cmd" >> $_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
 }
@@ -113,7 +111,7 @@ fi
 
 # Check if it is already installed
 if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
-    echo -n "${YELLOW}Waring!${RESET} ${BLUE}$project_name is already installed.${RESET} Do you want to update it? (y/n): "
+    echo -n "${YELLOW}Warning!${RESET} ${BLUE}$project_name is already installed.${RESET} Do you want to update it? (y/n): "
     read -r choice
     if [ "$(upcase $choice)" == "Y" ]; then  # Check if the user wants to update
         cd "$install_dir" && git pull >> $_LOG 2>&1 # Update the repository
@@ -138,18 +136,26 @@ fi
 echo "configuring files: ${config_files[@]}... "
 # Loop through each configuration file
 for file in "${config_files[@]}"; do
-    # Check if the configuration already exists in the file
-    if ! grep -q "export {$project_name}_PATH" "$file" >> $_LOG 2>&1; then
-        echo "Configuring $file... "
-        # If the configuration does not exist, add it
-        appendFile "$file" '\nexport '${project_name}'_PATH="'${install_dir}'"'  
-        appendFile "$file" '\nexport '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
-        appendFile "$file" '\nexport '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
-        appendFile "$file" '\nexport PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_SCRIPTS:$HOME/bin"' 
-        appendFile "$file" '\nxinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
-        echo "Configuration added to $file\n"
+    if [ -f "$file" ] && [ -w "$file" ]; then
+        echo "checking $file... "
+        # Check if env vars already exists in the file
+        if ! grep -q "export {$project_name}_PATH" "$file" >> $_LOG 2>&1; then
+            echo "Configuring $file... "
+            # If the env var does not exist, add it
+            appendFile "$file" 'export '${project_name}'_PATH="'${install_dir}'"'  
+            appendFile "$file" 'export '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
+            appendFile "$file" 'export '${project_name}'_BIN="${'${project_name}'_PATH}/bin"'  
+            appendFile "$file" 'export '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
+            appendFile "$file" 'export '${project_name}'_EXAMPLES="${'${project_name}'_PATH}/examples"'  
+            appendFile "$file" 'export PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_BIN:$'${project_name}'_SCRIPTS:$'${project_name}'_EXAMPLES:$HOME/bin"' 
+            appendFile "$file" 'xinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
+            echo "ENV vars added to $file\n"
+        else
+            echo "\t${YELLOW}Skipping...${RESET} ENV vars already exist in $file"
+        fi
     else
-        echo "\tConfiguration already exists in $file"
+        echo "Error! File $file not found or not writable. Please verify."
+        exit 2
     fi
 done
 
