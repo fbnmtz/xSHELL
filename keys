@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: keys
+# Created: Friday, 2026/08/07 - 01:21:14
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Friday, 2026/08/07 - 22:31:24
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 1.0.0.22
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Mapping of key codes
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+KEY_ENTER=13
+KEY_ESC=27
+KEY_SPACE=32
+KEY_BACKSPACE=127
+KEY_TAB=9
+KEY_SHIFT=16
+KEY_CTRL=17
+KEY_ALT=18
+KEY_CAPSLOCK=20
+
+# function keys
+KEY_F1=112
+KEY_F2=113
+KEY_F3=114
+KEY_F4=115
+KEY_F5=116
+KEY_F6=117
+KEY_F7=118
+KEY_F8=119
+KEY_F9=120
+KEY_F10=121
+KEY_F11=122
+KEY_F12=123
+
+KEY_INSERT=45
+KEY_DELETE=46
+KEY_HOME=36
+KEY_END=35
+KEY_PAGEUP=33
+KEY_PAGEDOWN=34
+
+# arrow keys
+KEY_UP=38
+KEY_DOWN=40
+KEY_LEFT=37
+KEY_RIGHT=39
+
+# numpad keys
+KEY_0=48
+KEY_1=49
+KEY_2=50
+KEY_3=51
+KEY_4=52
+KEY_5=53
+KEY_6=54
+KEY_7=55
+KEY_8=56
+KEY_9=57
+
+# alphabet keys
+KEY_A=65
+KEY_B=66
+KEY_C=67
+KEY_D=68
+KEY_E=69
+KEY_F=70
+KEY_G=71
+KEY_H=72
+KEY_I=73
+KEY_J=74
+KEY_K=75
+KEY_L=76
+KEY_M=77
+KEY_N=78
+KEY_O=79
+KEY_P=80
+KEY_Q=81
+KEY_R=82
+KEY_S=83
+KEY_T=84
+KEY_U=85
+KEY_V=86
+KEY_W=87
+KEY_X=88
+KEY_Y=89
+KEY_Z=90
+
+# def readkey(): function to read a key from the keyboard, including special key codes
+readkey() {
+    local key
+    # -r: do not allow backslashes to escape any characters, 
+    # -s: silent mode (do not echo input), -n1: read only one character
+    # -n1: read only one character
+    read -rsn1 key  
+    # verify if the key is an escape character
+    if [[ "$key" == $'\x1b' ]]; then
+        # read the next two characters to determine the special key code
+        read -rsn2 -t 0.1 key2  
+        key+="$key2"
+        if [[ "$key2" == "[" ]]; then
+            # read next character with a timeout of 0.1 seconds
+            read -rsn1 -t 0.1 key3  
+            key+="$key3"
+        fi
+    fi
+    echo "$key"
+}
+
+# Example usage:
+# echo "Press an key..."
+# key=$(readkey)
+# echo "You pressed: $key"
+# if [ $key -eq $K_ENTER ]; then
+#     echo "Enter key pressed"
+# elif [ $key -eq $K_ESC ]; then
+#     echo "Escape key pressed"
+# fi
