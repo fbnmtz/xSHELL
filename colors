@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/09 - 18:37:52
+# Last Modified: Sunday, 2026/08/09 - 19:38:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.3.111
+# Version: 1.0.3.113
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -143,8 +143,7 @@ xsEnableColors(){
 
 # unset all colors/attributes 
 xsDisableColors(){
-  for var in 
-    RESET BOLD DIM ITALIC UNDERLINE BLINK REVERSE HIDDEN \
+  for var in RESET BOLD DIM ITALIC UNDERLINE BLINK REVERSE HIDDEN \
     ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
     BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
     FGBLACK FGRED FGGREEN FGYELLOW FGBLUE FGMAGENTA FGCYAN FGWHITE FGGREY \
