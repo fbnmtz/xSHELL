@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/check_path
+# Created: Sunday, 2025/02/08 - 16:37:21
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2026/08/09 - 18:24:12
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.6
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# def check_path(path)
+check_path() {
+    local path="$1"
+    local parent_path=$(dirname "$path")
+
+    # Check if the path and parent path is writable
+    if [ -d "$path" ] && [ ! -w "$path" ] || [ -d "$parent_path" ] && [ ! -w "$parent_path" ]; then
+        return 1
+    fi
+}

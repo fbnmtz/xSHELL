@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/append_file
+# Created: Sunday, 2025/02/14 - 00:37:39
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2026/08/09 - 18:23:23
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.6
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# def append_file(filename, content)
+appendFile(){
+    local file=$1; shift
+    local content="$@"
+    local cmd=""
+    local content_cmd="echo -e '$content'"
+    local tee_cmd="tee -a $file"
+    ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
+    cmd="$content_cmd | $tee_cmd"
+    echo "\tadding '${content/\\n/}' to '$file'."
+    eval "$cmd" >> $_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
+}
+
+append_file(){ appendFile "$@"; }

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/_sudo
+# Created: Sunday, 2024/12/08 - 19:47:49                                      #
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)                                 #
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
+# Last Modified: Sunday, 2026/08/09 - 15:49:43
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
+# Version: 0.0.1.6
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
+# Description:                                                                #
+#  >                                                                          #
+# #############################################################################
+# HISTORY:                                                                    #
+#
+# Function to run a command with sudo
+_sudo() {
+    _cmd_=$1  # Store the command to be run
+    # log "running 'sudo $_cmd_ '"; echo  # Print the command being run
+    log "running 'sudo $_cmd_ '"
+    eval "$_cmd_"  # Evaluate and run the command
+}
