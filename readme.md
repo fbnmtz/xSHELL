@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2026/08/06 - 21:28:09
+ Last Modified: Sunday, 2026/08/09 - 15:22:09
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.0.533
+ Version: 0.1.1.557
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -53,6 +53,9 @@
 
 - [Summary](#summary)
 - [Install](#install)
+  - [Arguments](#arguments)
+  - [Files](#files)
+    - [ENV](#env)
 - [`xshell` command](#xshell-command)
   - [Example of Usage (libsExample script)](#example-of-usage-libsexample-script)
     - [Code gerenated](#code-gerenated)
@@ -74,18 +77,50 @@ Steps to install `xSHELL` library system
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash 
-
 ```
 
 After run install command, you will have the variable `$_xSHELL_` PATH with the default install location, or a customized path of your choice. This also will add configs on some system files:
 
-* Files changed:
-  * /etc/profile
-  * /etc/bashrc
-* Default install location:
-  * `/opt/xSHELL` or a custom path informed during the install process
+### Arguments
 
----
+You can pass arguments to install script adding `-s -- ` to bash following arguments do install script
+* `--verbose`: enable rich information output
+* `--dir`: define directory used on installation  
+
+
+```bash
+curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash -s -- --verbose --dir /custom/path
+```
+### Files
+
+If installed as root, will change files on etc and home folder of each user
+* System:
+  * /etc/profile 
+  * /etc/bashrc
+  * /etc/bash.bashrc
+  * /etc/profile.d/xSHELL.sh
+* each user:
+  * .profile
+  * .bashrc
+  * .bash_profile
+  * .bash_login
+  * .zshrc
+  * .zprofile
+  * .zlogin
+
+#### ENV
+this content will be added to listed files:
+```bash
+export xSHELL_PATH="/opt/xSHELL"
+export xSHELL_INIT="${xSHELL_PATH}/init"
+export xSHELL_BIN="${xSHELL_PATH}/bin"
+export xSHELL_SCRIPTS="${xSHELL_PATH}/scripts"
+export xSHELL_EXAMPLES="${xSHELL_PATH}/examples"
+export PATH="$PATH:$xSHELL_PATH:$xSHELL_BIN:$xSHELL_SCRIPTS:$xSHELL_EXAMPLES:$HOME/bin"
+xs_init(){ source "${xSHELL_PATH}/init" ; }
+```
+
+[Go Back](#summary)
 
 ## `xshell` command
 
