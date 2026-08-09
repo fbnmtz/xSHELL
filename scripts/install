@@ -6,13 +6,17 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/06 - 23:28:43
+# Last Modified: Sunday, 2026/08/09 - 20:05:58
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.3.503
+# Version: 0.1.4.591
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
-#  >
+#  > install script for xSHELL. Run directly from the repository or download it from the web.
+# curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash  -s -- --verbose --dir /custom/path
+# bash -s tells bash to read the script from standard input.
+# -- is used to separate the script arguments from the bash arguments.
+# --verbose and --dir /custom/path are the parameters you want to pass to the script.
 # ############################################################################
 # HISTORY:
 #
@@ -30,58 +34,18 @@ else
   log() { :; }
 fi
 
-check_path() {
-    local path="$1"
-    local parent_path=$(dirname "$path")
-
-    # Check if the path and parent path is writable
-    if [ -d "$path" ] && [ ! -w "$path" ] || [ -d "$parent_path" ] && [ ! -w "$parent_path" ]; then
-        return 1
-    fi
-}
-
-appendFile(){
-    local file=$1; shift
-    local content="$@"
-    local cmd=""
-    local content_cmd="echo -e '$content'"
-    local tee_cmd="tee -a $file"
-    ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
-    cmd="$content_cmd | $tee_cmd"
-    echo "\tadding '${content/\\n/}' to '$file'."
-    eval "$cmd" >> $_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
-}
-
-# function to verify if the current user is root
-requireROOT() {
-    if [ $UID -ne 0 ]; then
-        echo "${RED}Error!${RESET} You need to be ROOT to install $project_name in $install_dir"
-        exit 1
-    fi
-}
-
-# Function to run a command with sudo
-_sudo() {
-    _cmd_=$1  # Store the command to be run
-    # log "running 'sudo $_cmd_ '"; echo  # Print the command being run
-    log "running 'sudo $_cmd_ '"
-    eval "$_cmd_"  # Evaluate and run the command
-}
-
-# Function to convert a string to uppercase
-upcase() {
-    echo "$1" | tr '[:lower:]' '[:upper:]'  # Convert the input string to uppercase
-}
-
 # URL and repository information
 url=https://github.com
 project_name=xSHELL
 repo=fbnmtz/$project_name
 default_dir=/opt
 
-# TODO: test source from web on Linux
-# load colors
-source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/heads/master/colors)"
+# load function xs_source from the repository
+source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/heads/master/functions/xs_source)"
+
+# load additional libraries and functions
+xs_source "init colors functions/_sudo functions/append_file functions/check_path functions/require_root functions/upcase"
+xrequirements git tee
 
 # handle arguments
 [ "$1" == "--verbose" ] && { shift; _VERBOSE_=1; shift; }
@@ -89,24 +53,37 @@ source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/
 
 echo "$project_name install started..." > $_LOG
 
-# interactive shell? no custom path?
-if [ -t 0 ] && [ -z "$custom_path" ]; then
-    # Prompt for the install dir
-    echo -n "${BLUE}$project_name install${RESET} - Use default location: ($default_dir) or inform new path: "
-    read -r custom_path
+# verify if stdin is a interactive shell (TTY) 
+if [ -t 0 ]; then
+    echo "Executado localmente (stdin é terminal ou redirecionado de arquivo)."
+    # no custom path?
+    if [ -z "$custom_path" ]; then
+        # Prompt for the install dir
+        echo -n "${BLUE}$project_name install${RESET} - Use default location: ($default_dir) or inform new path? (y/n) "
+        read -r choice
+        if [[ "$(upcase ${choice})" == "Y" ]]; then
+            echo -n "inform the path to install:"
+            read -r custom_path
+        fi
+    fi
+else
+    echo "Executado via pipe (ex: curl | bash)."
 fi
 
 # Set the installation directory
 if [ -z "${custom_path}" ]; then
-    install_dir="$default_dir/$project_name"  # Use the default directory if no custom path is provided
+    # Use the default directory if no custom path is provided
+    install_dir="$default_dir/$project_name"  
 else
-    install_dir="${custom_path}/$project_name"  # Use the custom path if provided
+    # Use the custom path if provided
+    install_dir="${custom_path}/$project_name"  
 fi
 
 _parent_dir=$(dirname "$install_dir")
 # Check if the installation directory is writable
 if [ -d "$install_dir}" ] && [ ! -w "${install_dir}" ] || [ -d "$_parent_dir" ] && [ ! -w "$_parent_dir" ]; then
-    requireROOT  # Require ROOT user if the directory is not writable
+    # Require ROOT user if the directory is not writable
+    requireROOT "${RED}Error!${RESET} You need to be ROOT to install $project_name in $install_dir"
 fi
 
 # Check if it is already installed
@@ -122,15 +99,39 @@ else
     echo "done."
 fi
 
-# files for each user
+# files for root (installation wide system)
 root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
-user_files=("$HOME/.profile" "$HOME/.bashrc" "$HOME/.bash_profile")
+# files for normal users (/home/username/file)
+user_files=(".profile" ".bashrc" ".bash_profile" ".bash_login" ".zshrc" ".zprofile" ".zlogin" ".login")
+# list of users (UID >= 1000 and home directory in /home)
+user_list=(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
 
-# List of configuration files to check and update
+# Initialize an empty array to hold the configuration files to be checked and updated
+config_files=() 
+
+# Check if the script is run as root or not and populate the config_files array accordingly
 if [ $UID -eq 0 ]; then
-    config_files=("${root_files[@]} ${user_files[@]}")
+    config_files+=("${root_files[@]}")
+    # check if user_list is not empty
+    if [ ! ${#user_list[@]} -eq 0 ]; then
+        # Add user files to config_files for each user in the user_list
+        for user in "${user_list[@]}"; do
+            for file in "${user_files[@]}"; do
+                user_file="/home/$user/$file"
+                if [ -f "$user_file" ] && [ -w "$user_file" ]; then
+                    config_files+=("$user_file")
+                fi
+            done
+        done
+    fi
 else
-    config_files=("${user_files[@]}")
+    # If not root, only check the current user's files
+    for file in "${user_files[@]}"; do
+        user_file="$HOME/$file"
+        if [ -f "$user_file" ] && [ -w "$user_file" ]; then
+            config_files+=("$user_file")
+        fi
+    done
 fi
 
 echo "configuring files: ${config_files[@]}... "
@@ -147,8 +148,8 @@ for file in "${config_files[@]}"; do
             appendFile "$file" 'export '${project_name}'_BIN="${'${project_name}'_PATH}/bin"'  
             appendFile "$file" 'export '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
             appendFile "$file" 'export '${project_name}'_EXAMPLES="${'${project_name}'_PATH}/examples"'  
-            appendFile "$file" 'export PATH="$PATH:$'${project_name}'_PATH:$'${project_name}'_BIN:$'${project_name}'_SCRIPTS:$'${project_name}'_EXAMPLES:$HOME/bin"' 
-            appendFile "$file" 'xinitialize(){ source "${'${project_name}'_PATH}/init" ; }'
+            appendFile "$file" 'export PATH="${PATH}:${'${project_name}'_PATH}:${'${project_name}'_BIN}:${'${project_name}'_SCRIPTS}:${'${project_name}'_EXAMPLES}:${HOME}/bin"' 
+            appendFile "$file" 'xs_init(){ source "${'${project_name}'_PATH}/init" ; }'
             echo "ENV vars added to $file\n"
         else
             echo "\t${YELLOW}Skipping...${RESET} ENV vars already exist in $file"
