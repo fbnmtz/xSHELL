@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/02/18 - 00:44:06
+# Last Modified: Monday, 2026/08/10 - 07:50:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.10.432
+# Version: 0.0.11.461
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,6 +28,7 @@ _xSYS_NOTIFY_ARG=''
 xsys.os(){   
     echo "${_OS_}"
 }
+function xs_os(){ xsys.os; }
 
 # call system notifyer
 xsys.notify(){
@@ -61,11 +62,13 @@ xsys.notify(){
         eval "$_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG"
     fi
 }
+function xs_notify(){ xsys.notify "$@"; }
 
 # write contents on terminal
 xsys.write(){
     echo -e "$@"
 }
+function xs_write(){ xsys.write "$@"; }
 
 # manage System volume
 xsys.vol(){
@@ -97,8 +100,8 @@ xsys.vol(){
 # 
     # echo -e "volume: $($_VOL_APP $_VOL_ARG)"
     eval "$_VOL_APP $_VOL_ARG"
-    
 }
+function xs_vol(){ xsys.vol "$@"; }
 
 # calcVol(){
 #     local val=$1
@@ -121,6 +124,7 @@ xsys.clipboard(){
     esac
     eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
 }
+function xs_clipboard(){ xsys.clipboard "$@"; }
 
 xsys.menu(){
     case $(xsys.os) in
@@ -135,6 +139,7 @@ xsys.menu(){
     esac
     eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
 }
+function xs_menu(){ xsys.menu "$@"; }
 
 # return the path of a binary (utils getPath)
 xsys.path(){
@@ -146,6 +151,7 @@ xsys.path(){
     done
     return 1
 }
+function xs_path(){ xsys.path "$@"; }
 
 # function to return a basepath from a file
 # @param $1 -> file: /etc/hosts
@@ -154,3 +160,4 @@ xsys.basepath(){
     xrequirements rev cut
     echo "$1" | rev | cut -d '/' -f2-30 | rev
 }
+function xs_basepath(){ xsys.basepath "$@"; }
