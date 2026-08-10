@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2025/08/02 - 07:56:50
+# Last Modified: Monday, 2026/08/10 - 07:55:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.28.1899
+# Version: 0.2.29.1901
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -474,6 +474,7 @@ xrun(){
 
             \n\$APP: '$APP'\
             \n\$_REQUIREMENTS_: '$_REQUIREMENTS_'\
+            \n\$_MISSING_REQUIREMENTS_: '$_MISSING_REQUIREMENTS_'\
             
             \n\$APP_PATH: '$0'\
             \n\$APP_DATA: '$APP_DATA'\

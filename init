@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/04 - 13:06:11
+# Last Modified: Monday, 2026/08/10 - 07:55:12
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.22.814
+# Version: 0.1.23.897
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,16 +17,16 @@
 # HISTORY:
 #
 
-# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# _INIT_DEBUG_=false      # set to true or false to DEBUG
+# shellcheck disable=SC1090,SC1091,SC2154,SC2034
+  # `-> SC1090 - Can't follow non-constant source: Use a directive to specify location.
+  # `-> SC1091 - Not following: (error message here)
+  # `-> SC2154 - var is referenced but not assigned: (install script set it on user/system env)
+  # `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
+  
+#  autoload 'colors' if in DEBUG mode
+[ -n "$_INIT_DEBUG_" ] && source "$xSHELL_PATH/colors"   
 
-# shellcheck disable=SC1090   #warning on 'source' usage
-[ -n "$_INIT_DEBUG_" ] && source "$xSHELL_PATH/colors"   #  autoload 'colors' if in DEBUG mode
-  # source /opt/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
-  # source ~/bin/xSHELL/colors   #  autoload 'colors' if in DEBUG mode
-
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# shellcheck disable=SC2034   # unused variable warning
 APP=$(basename "$0")          # application name
 APP_NAME=$APP                 # application name
 APP_PATH=$0                   # application path and name
@@ -37,6 +37,7 @@ APP_DATA=$APP_HOME
 
 # store current app requirements (binaries)
 _REQUIREMENTS_=''
+_MISSING_REQUIREMENTS_=''
 
 # store loaded LIBs
 xSHELL_LIBS=()
@@ -45,59 +46,59 @@ xSHELL_LIBS=()
 xSHELL_DIRS=( 
   "$APP_DIR/" 
   "$APP_DIR/lib/"
+  "$APP_DIR/lib/functions/"
   "$APP_DIR/vendor/"
   "$xSHELL_PATH/"
   "$xSHELL_PATH/lib/" 
+  "$xSHELL_PATH/lib/functions/"
   "$xSHELL_PATH/vendor/"
-  # "/opt/xSHELL/"
-  # "$HOME/bin/xSHELL/"
-  # "$HOME/bin/xSHELL/vendor/" 
-  # "$HOME/bin/vendor/" 
 )
 
-# Função para definir um valor em um array associativo simulado
+# def set_assoc_array(key, value): function to set a value in a simulated associative array
+# ex:
+# set_assoc_array "lib1" "/path/to/lib1"
+# set_assoc_array "lib2" "/path/to/lib2"
 set_assoc_array() {
     local key=$1
     local value=$2
     eval "_xLIB_DIRS_${key}=\"${value}\""
 }
 
-# Função para obter um valor de um array associativo simulado
+# def get_assoc_array(key): function to get a value from a simulated associative array
+# Ex:
+# echo "lib1: $(get_assoc_array lib1)"
+# echo "lib2: $(get_assoc_array lib2)"
+
 get_assoc_array() {
     local key=$1
     eval "echo \$_xLIB_DIRS_${key}"
 }
 
-# Função para converter uma string para maiúsculas
+# def to_uppercase(string): function to convert a string to uppercase
 to_uppercase() {
     echo "$1" | tr '[:lower:]' '[:upper:]'
 }
-
-# # Exemplo de uso
-# set_assoc_array "lib1" "/path/to/lib1"
-# set_assoc_array "lib2" "/path/to/lib2"
-
-# echo "lib1: $(get_assoc_array lib1)"
-# echo "lib2: $(get_assoc_array lib2)"
 
 # declare -A _xLIB_DIRS_
 _CALLER_=''
 _USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# function to create default $APP_DATA and sub folders
+# def xsetHome(subdirs): function to create default $APP_DATA and subfolders
 # ex: setHome {dir1, dir2}
 xsetHome(){
   APP_DATA=$HOME/.xshell/$APP
   APP_HOME=$APP_DATA
   mkdir -p "$APP_DATA/$*"
 }
-# import/use some library
+
+# def use(lib1, lib2, ...): function to import/use some library
 # ex: use args utils mycustomlib
 use(){
   local lib_file lib dir
   
   ((_USE_COUNT_+=1))  # Increment the use counter
-  # check if some lib already loaded
+  
+  # function to check if some lib already loaded (search for a const var _xLIB_NAME_)
   checkLibLoaded(){
     local lib_const
     
@@ -208,12 +209,14 @@ alias load=use
 alias unit=use
 alias xuse=use
 
-# validate required binaries
-# ex: xrequirements bin1 bin2 bin3A|bin3B
+# def xrequirements(bin1, bin2, "bin3A|bin3B"): function to validate required binaries (bin1, bin2, "bin3A|bin3B")
+# ex: xrequirements bin1 bin2 "bin3A|bin3B"
 xrequirements(){
   local missing=""
   local found=''
   
+  # def falil(tools): function to print a error message
+  # ex: fail "bin1"
   fail(){
     local tools=$@
     local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'"
@@ -221,39 +224,45 @@ xrequirements(){
     if source "$xSHELL_PATH/system" 2> /dev/null; then
       xsys.notify "$APP" "$error_msg"
     fi
-    # exit 10
   }
-  # check if a package exists on the system
-  # ex| check bin1
+  
+  # def check(tool): verify if a package exists on the system
+  # ex: check mkdir
   check(){ which "$1" &> /dev/null; }
   
-  _REQUIREMENTS_="$*"
+  _REQUIREMENTS_=$*
 
-  for tool in $*; do
+  # iterate over each tool provided as an argument
+  for tool in $_REQUIREMENTS_; do
+    # check if the current tool contains a pipe character (indicating alternatives binaries - bin1|bin2)
     if [[ "$tool" =~ "|" ]]; then
+      # iterate over each alternative binary in the list (ex: bin1|bin2)
       for t in ${tool//\|/ }; do 
+        # check each alternative binary in the list (ex: bin1)
         if check "$t"; then
+          # if the binary is found, set the 'found' flag to true and break the loop
           found=true
           break;
         else
+          # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
           found=false
-          [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
+          [ -z "$_MISSING_REQUIREMENTS_" ] && _MISSING_REQUIREMENTS_+="$tool" || _MISSING_REQUIREMENTS_+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
+      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport "$_MISSING_REQUIREMENTS_"; exit 10; }
     else
+      # Simple binary (not bin1|bin2) - check if the tool is available on the system
       if ! check "$tool"; then
-        [ -z "$missing" ] && missing+="$tool" || missing+=" $tool"
-
-          found=false
-      #   { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
+        # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
+        [ -z "$_MISSING_REQUIREMENTS_" ] && _MISSING_REQUIREMENTS_+="$tool" || _MISSING_REQUIREMENTS_+=" $tool"
+        found=false
       else 
+        # if the binary is found, set the 'found' flag to true
         found=true
       fi
     fi
   done
 
-  [ "$found" != 'true' ] && { fail "$missing"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport $missing; exit 10; }
-
-  # [ "$found" != 'true' ] && fail "$missing"
+  #  
+  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport "$_MISSING_REQUIREMENTS_"; exit 10; }
 }
