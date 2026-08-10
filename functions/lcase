@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/require_root
-# Created: Sunday, 2026/08/09 - 18:05:33
+# File...: functions/lcase
+# Created: Sunday, 2026/08/09 - 21:11:05
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/09 - 22:06:01
+# Last Modified: Sunday, 2026/08/09 - 21:11:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.1.1
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,13 +17,19 @@
 # HISTORY:
 #
 
-# function to verify if the current user is root
-function requireROOT() {
-    local msg=$1
-    [ -z "$msg" ] && msg="You need to be ROOT to run this script."
-    if [ $UID -ne 0 ]; then
-        echo -e "$msg"
-        exit 1
-    fi
+function lcase() {
+    local input="$1"
+    local output=""
+    local char
+    for (( i=0; i<${#input}; i++ )); do
+        char="${input:i:1}"
+        case "$char" in
+            [A-Z]) 
+                # Converte ASCII: soma 32 (0x20) ao código do caractere
+                printf -v char '%b' "\\$(printf '%03o' $(( $(printf '%d' "'$char") + 32 )) )"
+                ;;
+        esac
+        output+="$char"
+    done
+    printf '%s' "$output"
 }
-function require_root() { requireROOT "$@"; }

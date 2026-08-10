@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/09 - 20:59:45
+# Last Modified: Sunday, 2026/08/09 - 22:04:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.16
+# Version: 0.0.2.20
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,19 +18,19 @@
 #
 
 # def xs_source(name): function to source a script from the repository (local or using curl)
-#   ex: xs_source "init colors functions/upcase"
+#   ex: xs_source "init args colors functions/upcase"
 function xs_source() {
   # iterate over all libs/functions
   for path in "$@"; do
     # test if local path/file exist?
     if [ -f "$path" ]; then
       if ! source "../$path"; then
-        echo "xs_source() - Error sourcing local file: $path" >&2
+        echo "xs_source() - Error sourcing local file: $path" >&2 && exit 1
       fi
     else
-      # not found? load it from web
+      # not found? load it from web (xSHELL repo on github)
       if ! source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/${path})"; then
-        echo "xs_source() - Error sourcing web file: $path" >&2
+        echo "xs_source() - Error sourcing web file: $path" >&2 && exit 1
       fi
     fi
   done

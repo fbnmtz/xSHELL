@@ -6,10 +6,10 @@
 # Created: Sunday, 2024/12/08 - 19:47:49                                      #
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)                                 #
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
-# Last Modified: Sunday, 2026/08/09 - 15:49:43
+# Last Modified: Sunday, 2026/08/09 - 22:05:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
-# Version: 0.0.1.6
+# Version: 0.0.1.7
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~#
 # Description:                                                                #
 #  >                                                                          #
@@ -17,7 +17,7 @@
 # HISTORY:                                                                    #
 #
 # Function to run a command with sudo
-_sudo() {
+function _sudo() {
     _cmd_=$1  # Store the command to be run
     # log "running 'sudo $_cmd_ '"; echo  # Print the command being run
     log "running 'sudo $_cmd_ '"
