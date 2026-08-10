@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 07:55:19
+# Last Modified: Monday, 2026/08/10 - 08:08:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.29.1901
+# Version: 0.2.29.1902
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -598,7 +598,7 @@ xrun(){
                 exit
             ;;
             --xsrequirements | --xrequirements)
-                shift; xsRequirementsReport --colors $_REQUIREMENTS_; exit 0;
+                shift; xs_requirements_report --colors $_REQUIREMENTS_; exit 0;
             ;;
             *)
                 _PARAMS_+=("$1")
@@ -633,7 +633,7 @@ xcase(){
 }
 
 # load function
-source "$xSHELL_PATH/functions/xsRequirementsReport"
+source "$xSHELL_PATH/functions/xs_requirements_report"
 
 # internal helper function to set default values
 # Usage: .xs <argument>

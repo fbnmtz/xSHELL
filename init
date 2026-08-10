@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 07:55:12
+# Last Modified: Monday, 2026/08/10 - 08:08:55
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.23.897
+# Version: 0.1.23.898
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -249,7 +249,7 @@ xrequirements(){
           [ -z "$_MISSING_REQUIREMENTS_" ] && _MISSING_REQUIREMENTS_+="$tool" || _MISSING_REQUIREMENTS_+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport "$_MISSING_REQUIREMENTS_"; exit 10; }
+      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
     else
       # Simple binary (not bin1|bin2) - check if the tool is available on the system
       if ! check "$tool"; then
@@ -264,5 +264,5 @@ xrequirements(){
   done
 
   #  
-  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; source "$xSHELL_PATH/functions/xsRequirementsReport"; xsRequirementsReport "$_MISSING_REQUIREMENTS_"; exit 10; }
+  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; source "$xSHELL_PATH/functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
 }
