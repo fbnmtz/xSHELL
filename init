@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 12:02:09
+# Last Modified: Monday, 2026/08/10 - 20:34:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.23.899
+# Version: 0.1.24.901
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -228,7 +228,7 @@ xrequirements(){
   
   # def check(tool): verify if a package exists on the system
   # ex: check mkdir
-  check(){ which "$1" &> /dev/null; }
+  check(){ command -v "$1" &> /dev/null; }
   
   _REQUIREMENTS_=$*
 
