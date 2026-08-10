@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/07/15 - 15:06:28
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 08:30:44
+# Last Modified: Monday, 2026/08/10 - 13:23:47
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.34
+# Version: 0.0.4.41
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,16 +27,30 @@ xs_requirements_report() {
         [ -n "$RED" ] && xs_disable_colors
     fi
 
-    # Ferramentas que não pertencem a pacotes do Arch Linux
-    declare -A XCUSTOM_TOOLS=(
-        [mdate]="github:fbnmtz/scripts"
-        [mtube]="github:fbnmtz/scripts"
-        [xbackup]="github:fbnmtz/scripts"
-    )
-
+    local custom_tools_file
     local requirement
     local cmd
     local path
+
+    custom_tools_file="${APP_HOME}/requirements.conf"
+    mkdir -p "$(dirname "$custom_tools_file")"
+
+    declare -A XCUSTOM_TOOLS=()
+    if [[ -f "$custom_tools_file" ]]; then
+        # shellcheck disable=SC1090
+        source "$custom_tools_file"
+    else
+        cat > "$custom_tools_file" <<'EOF'
+# xSHELL custom tools mapping
+# Map commands that are not in Arch Linux packages to their source locations.
+# Format: declare -A XCUSTOM_TOOLS=( [cmd]="source" [cmd2]="source2" )
+declare -A XCUSTOM_TOOLS=(
+    [mdate]="github:fbnmtz/scripts"
+    [mtube]="github:fbnmtz/scripts"
+    [xhr]="github:fbnmtz/scripts"
+)
+EOF
+    fi
     local pkg
     local installed
     local alt

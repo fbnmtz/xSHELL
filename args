@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 12:01:59
+# Last Modified: Monday, 2026/08/10 - 13:25:38
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.30.1910
+# Version: 0.2.31.1941
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -468,24 +468,30 @@ xrun(){
     xrunDebug(){
         echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
             \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
-            \n\$xSHELL_PATH: '$xSHELL_PATH'\
-            \n\$xSHELL_LIBS: '$(echo -n "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")' - (count $(echo -n "${xSHELL_LIBS[@]}" | tr -s ' ' '\n' | wc -l | tr -d ' '))\
-            \n\$xSHELL_LIBS: '$(echo -n "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")' - (count ${#xSHELL_LIBS[@]})\
-
-            \n\$APP: '$APP'\
-            \n\$_REQUIREMENTS_: '$_REQUIREMENTS_'\
-            \n\$_MISSING_REQUIREMENTS_: '$_MISSING_REQUIREMENTS_'\
+            \n\$xSHELL_PATH: ${REVERSE} '$xSHELL_PATH' ${RESET}\
             
-            \n\$APP_PATH: '$0'\
-            \n\$APP_DATA: '$APP_DATA'\
+            \n\$xSHELL_LIBS: ${REVERSE} '$(echo -n "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")' ${RESET}\
+            \n\$xSHELL_LIBS - count: ${REVERSE} ${#xSHELL_LIBS[@]} ${RESET}\
+            
+            \n\$xSHELL_DIRS: ${REVERSE} '$(echo -n "${xSHELL_DIRS[@]}")' ${RESET}\
+            \n\$xSHELL_DIRS - count: ${REVERSE} ${#xSHELL_DIRS[@]} ${RESET}\
 
-            \n\$@: '${_ARGS_[*]}'\
-            \n\$_PARAMS_: '${_PARAMS_[*]}'\
-            \n\$xarg: '$xarg'\
+            \n\$APP or \$APP_NAME: ${REVERSE} '$APP' ${RESET}\
+            \n\$_REQUIREMENTS_: ${REVERSE} '$_REQUIREMENTS_' ${RESET}\
+            \n\$_MISSING_REQUIREMENTS_: ${REVERSE} '$_MISSING_REQUIREMENTS_' ${RESET}\
+            
+            \n\$APP_PATH: ${REVERSE} '$APP_PATH' ${RESET}\
+            \n\$APP_DIR.: ${REVERSE} '$APP_DIR' ${RESET}\
+            \n\$APP_HOME: ${REVERSE} '$APP_HOME' ${RESET}\
+            \n\$APP_DATA: ${REVERSE} '$APP_DATA' ${RESET}\
 
-            \n\$_AUTHOR_NAME_: '$_AUTHOR_NAME_'\
-            \n\$_AUTHOR_MAIL_: '$_AUTHOR_MAIL_'\
-            \n\$_VERSION_: '$_VERSION_' ($xs_release_candidate)\
+            \n\$@: ${REVERSE} '${_ARGS_[*]}' ${RESET}\
+            \n\$_PARAMS_: ${REVERSE} '${_PARAMS_[*]}' ${RESET}\
+            \n\$xarg: ${REVERSE} '$xarg' ${RESET}\
+
+            \n\$_AUTHOR_NAME_: ${REVERSE} '$_AUTHOR_NAME_' ${RESET}\
+            \n\$_AUTHOR_MAIL_: ${REVERSE} '$_AUTHOR_MAIL_' ${RESET}\
+            \n\$_VERSION_: ${REVERSE} '$_VERSION_' ($xs_release_candidate) ${RESET}\
             \n$(.xs --hl '-')\n${YELLOW}# 2. xarg function:${RESET}\n\
             \n$(Hash.all "$args_hash" | cut -d '+' -f1)\
             \n$(.xs --hl '-')\n${YELLOW}# 3. xrun function:${RESET}\n\
