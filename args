@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 08:08:43
+# Last Modified: Monday, 2026/08/10 - 12:01:59
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.29.1902
+# Version: 0.2.30.1910
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -170,7 +170,7 @@ xusage(){
     
     # generate default help text if user not difined one
     [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
-    [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}"
+    [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}"
     
     case "$1" in
         -f|--field-error)
@@ -213,7 +213,7 @@ xusage(){
     esac
 
     # print debug info
-    # [ -n "$_ARGS_DEBUG" ] && xrunDebug  "${xRUN_ARGS[@]}" ;
+    # [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug  "${xRUN_ARGS[@]}" ;
     
     # prints initial help text
     echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
@@ -503,7 +503,7 @@ xrun(){
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
         
-        [ -n "$_ARGS_REQUIRED" ] && .xs --require-one "$@" && unset _ARGS_REQUIRED;
+        [ -n "$_XS_ARGS_REQUIRED" ] && .xs --require-one "$@" && unset _XS_ARGS_REQUIRED;
 
         # loop all params 
         while [ "$1" != "" ]; do
@@ -559,11 +559,11 @@ xrun(){
     while [ "$1" != "" ]; do
         # function to force script to receive at last one param/arg
         case "$1" in
-            --xapp-data)
-                shift; xsetHome
+            --xapp-data | --xs-app-home)
+                shift; xs_create_app_home
             ;;
-            --xrequire-one | --xrequire_one | --require-one | --notNull)  
-                shift; _ARGS_REQUIRED=true
+            --xrequire-one | --xrequire_one | --require-one | --notNull | --not-null)  
+                shift; _XS_ARGS_REQUIRED=true
             ;;
             --xreject-unknown | --reject-unknow | --xreject-unknow)
                 shift
@@ -573,13 +573,13 @@ xrun(){
                 shift; _CURRENT_VERSION_=$_VERSIONRC_
             ;;
             --xdebug | --xsdebug) 
-                shift; _ARGS_DEBUG=true; 
+                shift; _XS_ARGS_DEBUG=true; 
             ;;
             --xcolors)
                 shift; use colors;
             ;;
-            --xscolors) 
-                shift; xsColors; exit 0;
+            --xscolors | --xs-show-colors) 
+                shift; xs_show_colors; exit 0;
             ;;
             --xhelp)
                 use utils
@@ -620,7 +620,7 @@ xrun(){
 
     generateCase "${_PARAMS_[@]}"
 
-    [ -n "$_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
+    [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
 }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>

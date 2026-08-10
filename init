@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 08:08:55
+# Last Modified: Monday, 2026/08/10 - 12:02:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.23.898
+# Version: 0.1.23.899
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -83,9 +83,9 @@ to_uppercase() {
 _CALLER_=''
 _USE_COUNT_=0
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# def xsetHome(subdirs): function to create default $APP_DATA and subfolders
+# def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
 # ex: setHome {dir1, dir2}
-xsetHome(){
+xs_create_app_home(){
   APP_DATA=$HOME/.xshell/$APP
   APP_HOME=$APP_DATA
   mkdir -p "$APP_DATA/$*"
