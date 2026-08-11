@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # ############################################################################
-# Project: shell (none)
-# File...: lib/exceptions
+# Project: xSHELL (none)
+# File...: exceptions
 # Created: Saturday, 2023/01/07 - 07:19:02
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2023/01/07 - 23:41:23
+# Last Modified: Sunday, 2026/08/09 - 18:42:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.8
+# Version: 0.0.2.10
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,10 +19,66 @@
 
 _xLIB_EXCEPTIONS_=true
 
-# File Exceptions
-ExFileNotFound=10
-ExFileAlredyExists=11
+# System Exceptions
+ExSystemError=1000
+ExSystemTimeout=1001
+ExSystemResource=1002
+ExSystemCrash=1003
+ExSystemUpdate=1004
+ExSystemCompatibility=1005
 
-# Dir Exceptions
-ExDirNotFound=20
-ExDirAlredyExists=21
+# Network Exceptions
+ExNetworkError=2000
+ExNetworkTimeout=2001
+ExNetworkConnection=2002
+ExNetworkBandwidth=2003
+ExNetworkProtocol=2004
+ExNetworkFirewall=2005
+
+# FileSystem Exceptions
+ExFileNotFound=3000
+ExFileAlreadyExists=3001
+ExFilePermission=3002
+ExFileCorrupted=3003
+ExFileLock=3004
+ExFileFormat=3005
+
+# Directory Exceptions
+ExDirNotFound=4000
+ExDirAlreadyExists=4001
+ExDirPermission=4002
+ExDirCorrupted=4003
+ExDirLock=4004
+ExDirStructure=4005
+
+# Process Exceptions
+ExProcessError=5000
+ExProcessTimeout=5001
+ExProcessResource=5002
+ExProcessDeadlock=5003
+ExProcessTermination=5004
+ExProcessPriority=5005
+
+# Database Exceptions
+ExDatabaseError=6000
+ExDatabaseTimeout=6001
+ExDatabaseConnection=6002
+ExDatabaseQuery=6003
+ExDatabaseTransaction=6004
+ExDatabaseSchema=6005
+
+# Security Exceptions
+ExSecurityError=7000
+ExSecurityPermission=7001
+ExSecurityAuthentication=7002
+ExSecurityEncryption=7003
+ExSecurityIntegrity=7004
+ExSecurityPolicy=7005
+
+# Configuration Exceptions
+ExConfigError=8000
+ExConfigMissing=8001
+ExConfigInvalid=8002
+ExConfigSyntax=8003
+ExConfigValidation=8004
+ExConfigConflict=8005

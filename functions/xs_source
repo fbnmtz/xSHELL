@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 00:51:20
+# Last Modified: Tuesday, 2026/08/11 - 03:56:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.38
+# Version: 0.0.4.73
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,18 +22,38 @@
 function xs_source() {
   local remote="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
   # iterate over all libs/functions
-  for filename in "$@"; do
+  for filename in $@; do
     # test if local filename exist?
-    if [ -f "$filename" ]; then
-      if ! source "$filename" && ! source "../$filename" ; then
-        echo "xs_source() - Error sourcing local file: $filename" >&2 && exit 1
+    success=false
+    for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$xSHELL_PATH/$filename"; do
+      if source "$f" &> /dev/null ; then
+        if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
+          echo "xs_source() - succes! loading local file: $f"
+        fi
+        # [ -n "$XSDEBUG" ] && echo "xs_source() - succes! loading local file: $f"
+        success=true
+        break
       fi
-    else
-      # not found? load it from web (xSHELL repo on github)
+    done
+
+    if [ $success == "false" ]; then
       if ! source /dev/stdin <<< "$(curl -s ${remote}/${filename})"; then
-        echo "xs_source() - Error sourcing web file: $filename" >&2 && exit 1
+        if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
+          echo "xs_source() - Error! loading web file: $filename" >&2 && exit 1
+        fi
+        # [ -n "$XSDEBUG" ] && echo "xs_source() - Error! loading web file: $filename" >&2 && exit 1
       fi
     fi
+    # if [ -f "$filename" ]; then
+    #   if ! source "$filename" || ! source "../$filename" ; then
+    #     echo "xs_source() - Error sourcing local file: $filename" >&2 && exit 1
+    #   fi
+    # else
+    #   # not found? load it from web (xSHELL repo on github)
+    #   if ! source /dev/stdin <<< "$(curl -s ${remote}/${filename})"; then
+    #     echo "xs_source() - Error sourcing web file: $filename" >&2 && exit 1
+    #   fi
+    # fi
   done
 }
 

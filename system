@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 07:50:05
+# Last Modified: Monday, 2026/08/10 - 23:13:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.11.461
+# Version: 0.0.12.464
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,8 +21,16 @@ _xLIB_SYSTEM_=true
 
 # declare variables
 _OS_=$(uname)
+
 _xSYS_NOTIFY_APP=''
 _xSYS_NOTIFY_ARG=''
+
+_xSYS_CLIP_APP=''
+_xSYS_CLIP_ARG=''
+
+_xSYS_MENU_APP=''
+_xSYS_MENU_ARG=''
+
 
 # return current OS
 xsys.os(){   
@@ -114,30 +122,30 @@ function xs_vol(){ xsys.vol "$@"; }
 xsys.clipboard(){
     case $(xsys.os) in
         Darwin) 
-            _xSYS_CLIP_CMD="pbcopy"
+            _xSYS_CLIP_APP="pbcopy"
             _xSYS_CLIP_ARG=""
         ;;
         Linux)  
-            _xSYS_CLIP_CMD="xclip-cmd"
+            _xSYS_CLIP_APP="xclip-cmd"
             _xSYS_CLIP_ARG=""
         ;;
     esac
-    eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
+    eval "$_xSYS_CLIP_APP $_xSYS_CLIP_ARG"
 }
 function xs_clipboard(){ xsys.clipboard "$@"; }
 
 xsys.menu(){
     case $(xsys.os) in
         Darwin) 
-            _xSYS_CLIP_CMD="choose"
-            _xSYS_CLIP_ARG=""
+            _xSYS_MENU_APP="choose"
+            _xSYS_MENU_ARG=""
         ;;
         Linux)  
-            _xSYS_CLIP_CMD="rofi"
-            _xSYS_CLIP_ARG="-no-config -dmenu -fuzzy -p '$1'"
+            _xSYS_MENU_APP="rofi"
+            _xSYS_MENU_ARG="-no-config -dmenu -fuzzy -p '$1'"
         ;;
     esac
-    eval "$_xSYS_CLIP_CMD $_xSYS_CLIP_ARG"
+    eval "$_xSYS_MENU_APP $_xSYS_MENU_ARG"
 }
 function xs_menu(){ xsys.menu "$@"; }
 
