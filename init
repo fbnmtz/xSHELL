@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 20:34:37
+# Last Modified: Monday, 2026/08/10 - 22:38:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.24.901
+# Version: 0.1.25.911
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,6 +23,9 @@
   # `-> SC2154 - var is referenced but not assigned: (install script set it on user/system env)
   # `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
   
+if ! type xs_source &> /dev/null; then
+  source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+fi
 #  autoload 'colors' if in DEBUG mode
 [ -n "$_INIT_DEBUG_" ] && source "$xSHELL_PATH/colors"   
 
@@ -249,7 +252,7 @@ xrequirements(){
           [ -z "$_MISSING_REQUIREMENTS_" ] && _MISSING_REQUIREMENTS_+="$tool" || _MISSING_REQUIREMENTS_+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && { fail "$tool"; source "$xSHELL_PATH/functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
+      [ "$found" != 'true' ] && { fail "$tool"; xs_source "functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
     else
       # Simple binary (not bin1|bin2) - check if the tool is available on the system
       if ! check "$tool"; then
@@ -264,5 +267,7 @@ xrequirements(){
   done
 
   #  
-  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; source "$xSHELL_PATH/functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
+  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; xs_source "functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
 }
+
+function xs_requirements(){ xrequirements "$@"; }
