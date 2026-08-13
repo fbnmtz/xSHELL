@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/11 - 03:28:21
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/11 - 05:47:37
+# Last Modified: Thursday, 2026/08/13 - 18:36:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.9
+# Version: 0.0.2.16
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,14 +17,16 @@
 # HISTORY:
 #
 
+# verify if DEBUG is enabled
 is_debug_enabled(){
-    if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
-        return 0
-    else
-        return 1
-    fi
+  if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
+# show debug message, if its enabled
 xs_debug(){
   if is_debug_enabled; then
     echo -e "$@"

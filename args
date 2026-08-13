@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 13:25:38
+# Last Modified: Thursday, 2026/08/13 - 18:14:00
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.31.1941
+# Version: 0.2.32.2010
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -493,10 +493,14 @@ xrun(){
             \n\$_AUTHOR_MAIL_: ${REVERSE} '$_AUTHOR_MAIL_' ${RESET}\
             \n\$_VERSION_: ${REVERSE} '$_VERSION_' ($xs_release_candidate) ${RESET}\
             \n$(.xs --hl '-')\n${YELLOW}# 2. xarg function:${RESET}\n\
-            \n$(Hash.all "$args_hash" | cut -d '+' -f1)\
+            \n$(Hash.all "$args_hash" | cut -d '+' -f1 | column -s : -t)\
             \n$(.xs --hl '-')\n${YELLOW}# 3. xrun function:${RESET}\n\
-            \n\$@: '${xRUN_ARGS}'\
+            \n\$@: ${REVERSE} '${xRUN_ARGS}' ${RESET}\
+            \n\$APP_ARGS: ${REVERSE} '${_PARAMS_[*]}' ${RESET}\n\
+            \nwhile [ \$1 != \"\" ]; do\
             \n$__runARGS_case_\
+            \nshift\
+            \ndone\
             \n${RED}$(.xs --hl -)\n# xSHELL DEBUG - end\
             \n$(.xs --hl -)${RESET}";
     }
@@ -637,9 +641,6 @@ xcase(){
         eval "$code_block"
     fi
 }
-
-# load function
-source "$xSHELL_PATH/functions/xs_requirements_report"
 
 # internal helper function to set default values
 # Usage: .xs <argument>

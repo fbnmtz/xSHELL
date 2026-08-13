@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/11 - 05:47:13
+# Last Modified: Thursday, 2026/08/13 - 16:46:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.26.1090
+# Version: 0.1.27.1100
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,7 +32,7 @@ if ! type xs_source &> /dev/null; then
   fi
 fi
 
-xs_source functions/xs_debug
+xs_source functions/arrays functions/upcase functions/xs_debug functions/xs_requirements_report 
 
 #  autoload 'colors' if in DEBUG mode
 if is_debug_enabled; then
@@ -57,19 +57,17 @@ xSHELL_LIBS=()
 
 # PATHs to search a LIB
 xSHELL_DIRS=( 
-  "$APP_DIR/" 
-  "$APP_DIR/lib/"
-  # "$APP_DIR/lib/functions/"
-  # "$APP_DIR/functions/"
-  "$APP_DIR/vendor/"
   "$xSHELL_PATH/"
   "$xSHELL_PATH/lib/" 
   # "$xSHELL_PATH/lib/functions/"
   # "$xSHELL_PATH/functions/"
   "$xSHELL_PATH/vendor/"
+  "$APP_DIR/" 
+  "$APP_DIR/lib/"
+  # "$APP_DIR/lib/functions/"
+  # "$APP_DIR/functions/"
+  "$APP_DIR/vendor/"
 )
-
-xs_source functions/arrays functions/upcase
 
 # declare -A _xLIB_DIRS_
 _CALLER_=''
@@ -224,8 +222,6 @@ alias xuse=use
 xrequirements(){
   local missing=""
   local found=''
-
-  xs_source "functions/xs_requirements_report"
   
   # def falil(tools): function to print a error message
   # ex: fail "bin1"
