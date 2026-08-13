@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 22:38:36
+# Last Modified: Tuesday, 2026/08/11 - 05:47:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.25.911
+# Version: 0.1.26.1090
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,10 +24,20 @@
   # `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
   
 if ! type xs_source &> /dev/null; then
-  source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+  _xs="$xSHELL_PATH/functions/xs_source"
+  if [ -f "$_xs" ]; then
+    source "$_xs"
+  else
+    source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+  fi
 fi
+
+xs_source functions/xs_debug
+
 #  autoload 'colors' if in DEBUG mode
-[ -n "$_INIT_DEBUG_" ] && source "$xSHELL_PATH/colors"   
+if is_debug_enabled; then
+  xs_source "$xSHELL_PATH/colors"   
+fi
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 APP=$(basename "$0")          # application name
@@ -49,38 +59,17 @@ xSHELL_LIBS=()
 xSHELL_DIRS=( 
   "$APP_DIR/" 
   "$APP_DIR/lib/"
-  "$APP_DIR/lib/functions/"
+  # "$APP_DIR/lib/functions/"
+  # "$APP_DIR/functions/"
   "$APP_DIR/vendor/"
   "$xSHELL_PATH/"
   "$xSHELL_PATH/lib/" 
-  "$xSHELL_PATH/lib/functions/"
+  # "$xSHELL_PATH/lib/functions/"
+  # "$xSHELL_PATH/functions/"
   "$xSHELL_PATH/vendor/"
 )
 
-# def set_assoc_array(key, value): function to set a value in a simulated associative array
-# ex:
-# set_assoc_array "lib1" "/path/to/lib1"
-# set_assoc_array "lib2" "/path/to/lib2"
-set_assoc_array() {
-    local key=$1
-    local value=$2
-    eval "_xLIB_DIRS_${key}=\"${value}\""
-}
-
-# def get_assoc_array(key): function to get a value from a simulated associative array
-# Ex:
-# echo "lib1: $(get_assoc_array lib1)"
-# echo "lib2: $(get_assoc_array lib2)"
-
-get_assoc_array() {
-    local key=$1
-    eval "echo \$_xLIB_DIRS_${key}"
-}
-
-# def to_uppercase(string): function to convert a string to uppercase
-to_uppercase() {
-    echo "$1" | tr '[:lower:]' '[:upper:]'
-}
+xs_source functions/arrays functions/upcase
 
 # declare -A _xLIB_DIRS_
 _CALLER_=''
@@ -94,37 +83,44 @@ xs_create_app_home(){
   mkdir -p "$APP_DATA/$*"
 }
 
+xs_debug(){
+  if is_debug_enabled; then
+    echo -e "$@"
+    sleep 0.5 
+  fi
+}
+
 # def use(lib1, lib2, ...): function to import/use some library
 # ex: use args utils mycustomlib
+_USE_COUNT_=0
 use(){
   local lib_file lib dir
   
   ((_USE_COUNT_+=1))  # Increment the use counter
+  # _USE_COUNT_=((($_USE_COUNT_+1)))  # Increment the use counter
+  # _USE_COUNT_+=1  # Increment the use counter
+  _USE_ALL_=$@
   
   # function to check if some lib already loaded (search for a const var _xLIB_NAME_)
   checkLibLoaded(){
     local lib_const
     
-    # local lib_const=${1^^}          # convert fist arg to UPCASE 
-    lib_const=$(to_uppercase "$1")  # Convert the argument to uppercase
+    local lib_const=${1^^}          # convert fist arg to UPCASE 
+    # lib_const="$(upcase $1)"        # Convert the argument to uppercase
     lib_const=${lib_const//./_}     # replace '.' for '_'
     lib_const=${lib_const//LIB/}    # remove word 'lib' from filename 
     lib_const="_xLIB_${lib_const}"  # Const for mark lib as loaded
 
     # check last char (needs to be equal '_' underline) 
-    [ ! "${lib_const:-1}" == "_" ]  && lib_const+="_"  # Add an underscore if it's not already there
+    [ ! "${lib_const:0-1}" == "_" ] && lib_const+="_"  # Add an underscore if it's not already there
 
     # check if load lib has a defined var _xLIB_NAME_ and its not null
     if eval "[ -z \"\$${lib_const}\" ]" ; then
-      [ "$_INIT_DEBUG_" == 'true' ] && { 
-        echo -e "${RED}\`-> lib '${1}' not loaded. (const "\
+      xs_debug "${RED}\`-> (${_USE_COUNT_}/${#_USE_ALL_[@]}) - lib '${1}' not loaded. (const "\
           "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"  # Print an error message if the library is not loaded
-      }
       return 1
     else
-      [ "$_INIT_DEBUG_" == 'true' ] && {
-        echo -e "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
-      }
+      xs_debug "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
       return 0
     fi
   }
@@ -138,10 +134,9 @@ use(){
     } || _CALLER_=$_LIB_  # Update the caller and library variables if necessary
   fi
   
-  [ "$_INIT_DEBUG_" == 'true' ] && \
-    echo -e "call ${YELLOW}'use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"  # Print a message indicating that the use function is being called
+  xs_debug "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"  # Print a message indicating that the use function is being called
   
-  for lib_file in "$@"; do
+  for lib_file in $@; do
     
     if ! checkLibLoaded "$lib_file"; then
 
@@ -154,7 +149,7 @@ use(){
       # Iterar sobre cada item do array original
       for dir in "${xSHELL_DIRS[@]}"; do
         # Adicionar o nome do arquivo ao final do path
-        lib_dirs+=("$dir$lib_file")
+        lib_dirs+=("${dir}${lib_file}")
       done
 
       local included=''
@@ -162,25 +157,33 @@ use(){
       # search file in default destinations
       local li=0
       for lib in "${lib_dirs[@]}"; do
+        
+       xs_debug -n "searching '${lib}' --> "
 
         if source "${lib}" 2> /dev/null ; then
+          xs_debug "${GREEN}[success]${RESET}"
+          # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${GREEN}[success]${RESET}"
           xSHELL_LIBS+=($lib)
           _CALLER_=${lib}
           # success? set a flag; break loop
-          [ "$_INIT_DEBUG_" == 'true' ] && { 
-            # printf "     %-${max_length}s   %s\n" "$key" "$desc"
+          xs_debug "${GREEN}  \`-> FOUND! loading '${lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
+          # [ "$_INIT_DEBUG_" == 'true' ] && { 
+          #   # printf "     %-${max_length}s   %s\n" "$key" "$desc"
             
-            # printf "   %s\`-> loading '%s' %-25s - directory: %s/%s"  "${GREEN}" "${xSHELL_DIRS[$li]}" "${RESET}" "${CYAN}" "$((li+1))" "${#xSHELL_DIRS[@]}${RESET}"
+          #   # printf "   %s\`-> loading '%s' %-25s - directory: %s/%s"  "${GREEN}" "${xSHELL_DIRS[$li]}" "${RESET}" "${CYAN}" "$((li+1))" "${#xSHELL_DIRS[@]}${RESET}"
             
-            echo -e "${GREEN}  \`-> loading '${lib}'${RESET} - "\
-              "${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
-          }
+          #   echo -e "${GREEN}  \`-> loading '${lib}'${RESET} - "\
+          #     "${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
+          # }
           included="true"
           
-          # _xLIB_DIRS_[$lib_file]="${lib}"
-          set_assoc_array "${lib_file//./_}" "$lib"
+          # set_assoc_array "${lib_file//./_}" "$lib"
+          # array_set _xLIB_DIRS "${lib_file//./_}" "$lib"
 
           break
+        else
+          xs_debug "${RED}[fail]${RESET}"
+          # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${RED}[fail]${RESET}"
         fi
         li=$((li+1))
       done
@@ -190,13 +193,17 @@ use(){
 
     # not included with success? raise a error 
     test -z "$included" && { 
-      echo -e "\n${RED}Error importing lib '$lib_file' - NOT_FOUND!${RESET}"
-      [ "$_INIT_DEBUG_" == 'true' ] && { 
-          local all_dirs=${xSHELL_DIRS[*]}
-          echo -e "${RED} \`-> searched on dir's:\n   *"\
-            "${all_dirs// /\\n   \* }"\
+      echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${lib_file}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${lib_file^^}_'${RED} NOT EXIST!${RESET}"
+      local all_dirs="${xSHELL_DIRS[@]} "
+      xs_debug "${RED} \`-> searched on:\n   *"\
+            "${all_dirs// /${YELLOW}$lib_file - ${RED}[fail]\\n   \* }"\
             "${RESET}"
-        }
+      # [ "$_INIT_DEBUG_" == 'true' ] && { 
+      #   local all_dirs="${xSHELL_DIRS[@]} "
+      #   echo -e "${RED} \`-> searched on dir's:\n   *"\
+      #     "${all_dirs// /${YELLOW}$lib_file - ${RED}[fail]\\n   \* }"\
+      #     "${RESET}"
+      # } 
       exit 1
     }
   
@@ -217,6 +224,8 @@ alias xuse=use
 xrequirements(){
   local missing=""
   local found=''
+
+  xs_source "functions/xs_requirements_report"
   
   # def falil(tools): function to print a error message
   # ex: fail "bin1"
@@ -252,7 +261,7 @@ xrequirements(){
           [ -z "$_MISSING_REQUIREMENTS_" ] && _MISSING_REQUIREMENTS_+="$tool" || _MISSING_REQUIREMENTS_+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && { fail "$tool"; xs_source "functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
+      [ "$found" != 'true' ] && { fail "$tool"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
     else
       # Simple binary (not bin1|bin2) - check if the tool is available on the system
       if ! check "$tool"; then
@@ -267,7 +276,7 @@ xrequirements(){
   done
 
   #  
-  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; xs_source "functions/xs_requirements_report"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
+  [ -n "$_MISSING_REQUIREMENTS_" ] && { fail "$_MISSING_REQUIREMENTS_"; xs_requirements_report "$_MISSING_REQUIREMENTS_"; exit 10; }
 }
 
 function xs_requirements(){ xrequirements "$@"; }

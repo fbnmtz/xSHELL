@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Monday, 2026/08/10 - 12:02:25
+ Last Modified: Monday, 2026/08/10 - 20:01:34
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.1.558
+ Version: 0.1.1.559
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -116,7 +116,7 @@ export xSHELL_INIT="${xSHELL_PATH}/init"
 export xSHELL_BIN="${xSHELL_PATH}/bin"
 export xSHELL_SCRIPTS="${xSHELL_PATH}/scripts"
 export xSHELL_EXAMPLES="${xSHELL_PATH}/examples"
-export PATH="$PATH:$xSHELL_PATH:$xSHELL_BIN:$xSHELL_SCRIPTS:$xSHELL_EXAMPLES:$HOME/bin"
+export PATH="${PATH}:${xSHELL_PATH}:${xSHELL_BIN}:${xSHELL_SCRIPTS}:${xSHELL_EXAMPLES}:${HOME}/bin"
 xs_init(){ source "${xSHELL_PATH}/init" ; }
 ```
 
@@ -198,7 +198,7 @@ _CURRENT_VERSION_="0.0.1"
 #       -> variables will be created by or library system (don't worry)
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
-source ~/bin/xSHELL/init
+source "$xSHELL_INIT"
 use args
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
