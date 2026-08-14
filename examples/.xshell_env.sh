@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: examples/xshell_env.sh
+# File...: examples/.xshell_env.sh
 # Created: Saturday, 2026/08/08 - 11:33:09
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/14 - 13:51:53
+# Last Modified: Friday, 2026/08/14 - 13:55:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.20
+# Version: 0.0.3.23
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,3 +28,7 @@ export xSHELL_EXAMPLES="${xSHELL_PATH}/examples"
 export PATH="${PATH}:${xSHELL_PATH}:${xSHELL_BIN}:${xSHELL_SCRIPTS}:${xSHELL_EXAMPLES}:${HOME}/bin"
 # shellcheck disable=SC1091
 xs_init(){ source "${xSHELL_PATH}/init" ; }
+
+
+# add BASH_ENV=~/.xshell_env.sh on ~/.profile
+# add BASH_ENV=/etc/profile.d/xshell_env.sh on /etc/profile
