@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/13 - 18:14:00
+# Last Modified: Thursday, 2026/08/13 - 22:20:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.32.2010
+# Version: 0.2.33.2051
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -110,6 +110,17 @@ xusage(){
 
         # Format the options with standard spacing
         for option in "${options[@]}"; do
+            
+            # grouping itens
+            group=$(echo "$option" | cut -d '+' -f2-9)
+            # set default value (if none is configured)
+            [ -z "$group" ] && group="Available Options"
+            # update if this option has a new group
+            if [ "$group" != "$last_group" ]; then
+                printf "${BLUE} \`-> %s ${RESET}\n" "$group"
+                last_group=$group
+            fi
+            
             # Extract the option key (first word) from the option
             local key=$(echo "$option" | cut -d ':' -f 1)
             key=${key/\:/ }
