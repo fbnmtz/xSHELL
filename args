@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/13 - 23:19:49
+# Last Modified: Friday, 2026/08/14 - 00:39:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.34.2060
+# Version: 0.2.35.2083
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,7 +21,7 @@ _xLIB_ARGS_=true;
 
 use hashs system utils
 
-# update text used in function 'xusage'
+# update text used in function 'xs_usage'
     # @param $1 -> string to customize each text of help sections. Use this pattern:
         # -<option>="<text>"
     # <options> identify a section and it can be:
@@ -30,7 +30,7 @@ use hashs system utils
         # -b or --body
         # -f or --footer
 # "<text>" is the string associated to this section and is required to be inside ""
-xhelp(){
+xs_help(){
     # loop all params
     for param in "$@"; do
         # split key and value
@@ -80,7 +80,7 @@ xhelp(){
 }
 
 # show usage information/help
-# usage: xusage <options>
+# usage: xs_usage <options>
 # `-> <options> can be:
 #  -f|--field-error <field_name>  : raise error when a field is empty
 #  -m|--missing-param <param_name> : raise error when a required param is missing
@@ -88,9 +88,9 @@ xhelp(){
 #  -c|--custom <text>              : custom text to show on usage
 #  -h|--help                     : show help message
 #  -v|--version                  : show version of this script
-xusage(){
+xs_usage(){
     # Function to format help options with standard spacing on Darwin systems
-    helpOptionsDarwin() {
+    help_options_darwin() {
         local max_length=0
         local options=()
 
@@ -133,7 +133,7 @@ xusage(){
     }
 
     # Function to format help options with standard spacing on Linux systems
-    helpOptionsLinux(){
+    help_options_linux(){
         for h in $(
             Hash.all "$args_hash" |      # get all hashes \
             sed "s/:/:/g" |             # add blue color to options description':'\
@@ -180,38 +180,38 @@ xusage(){
     }
     
     # generate default help text if user not difined one
-    [ -z "$__HELP_USAGE__" ] && xhelp --long-usage
-    [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}"
+    [ -z "$__HELP_USAGE__" ] && xs_help --long-usage
+    [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}"
     
     case "$1" in
         -f|--field-error)
-            xhelp --long-usage
+            xs_help --long-usage
             # remove header info on this error msg
             __HELP_HEADER__=''
             __exit_code=3 
-            __usage_msg="${RED}Error!${RESET} empty value for ${YELLOW}'$2'${RESET} param.${RESET}\n\n" 
+            __usage_msg="${RED}Error!${RESET} empty value for ${YELLOW}'$2'${RESET} argument.${RESET}\n\n" 
         ;;
 
         -m|--missing-param)
-            xhelp --long-usage
+            xs_help --long-usage
             # remove header info on this error msg
             __HELP_HEADER__=''
             __exit_code=1 
-            __usage_msg="${RED}Error!${RESET} Missing required param.${RESET}\n\n" 
+            __usage_msg="${RED}Error!${RESET} Missing required argument.${RESET}\n\n" 
         ;;
         -r|--reject-unknow)
-            xhelp --long-usage
+            xs_help --long-usage
             # remove header info on this error msg
             __HELP_HEADER__=''
             __usage_msg="${RED}Error!${RESET} invalid option ${YELLOW}($2)${RESET}.${RESET}\n\n" 
         ;;
         -c|--custom)
-            xhelp --long-usage
+            xs_help --long-usage
             __exit_code=4        
             __usage_msg="$2\n\n" 
         ;;
         -h|--help)
-            xhelp
+            xs_help
             __usage_full=true
         ;;
         -v|--version)
@@ -224,7 +224,7 @@ xusage(){
     esac
 
     # print debug info
-    # [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug  "${xRUN_ARGS[@]}" ;
+    # [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug  "${xRUN_ARGS[@]}" ;
     
     # prints initial help text
     echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
@@ -242,9 +242,9 @@ xusage(){
 
         # case sys.os in
         case $(xsys.os) in
-            # Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
-            # Linux ) helpOptionsLinux ;;
-            *) __HELP_OPTIONS_DESCRIPTION__="\n$(helpOptionsDarwin)\n" ;;
+            # Darwin) __HELP_OPTIONS_DESCRIPTION__="\n$(help_options_darwin)\n" ;;
+            # Linux ) help_options_linux ;;
+            *) __HELP_OPTIONS_DESCRIPTION__="\n$(help_options_darwin)\n" ;;
         esac
 
         echo -e "${__HELP_OPTIONS_DESCRIPTION__}${RESET}"
@@ -390,12 +390,12 @@ xarg(){
             -h|--header)
                 method=header
                 .xs --require-value "$1" "$2"
-                xhelp --header="$2"
+                xs_help --header="$2"
             ;;
             -f|--footer)
                 method=footer
                 .xs --require-value "$1" "$2"
-                xhelp --footer="$2"
+                xs_help --footer="$2"
             ;;
             --no-help)
                 no_help=true;
@@ -415,14 +415,14 @@ xarg(){
 
     # bypass when no arguments has been defined
     if [ "$method" != "block" ] && [ "$method" != "longflags" ] && [ "$method" != "footer" ] && [ "$method" != "header" ]; then
-        xhelp --param="${option_default}${desc_var}+${description}+${block}"
+        xs_help --param="${option_default}${desc_var}+${description}+${block}"
     fi
 
     # generate output
     case $method in
-        var ) __runARGS_case_options+=" $option_key) $action_vars    ;; \n" ;;
-        code) __runARGS_case_options+=" $option_key) $option_content ;; \n" ;;
-        # --reject-unknow) __runARGS_case_options+="*) xusage -r \$1 ;; \n" ;;
+        var ) __RUN_ARGS_CASE_OPTIONS__+=" $option_key) $action_vars    ;; \n" ;;
+        code) __RUN_ARGS_CASE_OPTIONS__+=" $option_key) $option_content ;; \n" ;;
+        # --reject-unknow) __RUN_ARGS_CASE_OPTIONS__+="*) xs_usage -r \$1 ;; \n" ;;
     esac
 }
 
@@ -431,7 +431,7 @@ xarg(){
 xrun(){
     xRUN_ARGS="$@"
 
-    xrunHelp(){
+    xs_run_help(){
         echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} "$args_hash" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
         \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
@@ -452,7 +452,7 @@ xrun(){
         
         echo -e "\
         \nExamples:\
-        \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xusage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xusage\"'${RESET}\
+        \n  ${YELLOW}xarg ${CYAN}--id -h,--help ${MAGENTA}--code 'xs_usage --help'  ${CYAN}--desc ${MAGENTA}'run function \"xs_usage\"'${RESET}\
         \n  ${YELLOW}xarg ${CYAN}--id -v,--var  ${MAGENTA}--var  var:value,url+r  ${CYAN}--desc ${MAGENTA}'equivalent to \"var=value; read url\"'${RESET}\
         \n  ${YELLOW}xarg ${CYAN}--block ${MAGENTA}'new block'${RESET}\
         
@@ -470,7 +470,7 @@ xrun(){
         \n  ${CYAN}--xlib-dirs${RESET};show dirs where xshell lib search for LIBs\
         \n  ${CYAN}--xrequirements${RESET};show requirements report\
         \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
-        \n  ${CYAN}--xhelp${RESET};prints this message
+        \n  ${CYAN}--xs_help${RESET};prints this message
         " |  awkColumn "-s=;" 
         # " |  awkColumn "-t=;"
         # " | awk '{ printf "%-8s", $1 } NR % 2 == 0 { printf "\n" }'  
@@ -488,7 +488,7 @@ xrun(){
         exit 0
     }
     
-    xrunDebug(){
+    xs_run_debug(){
         echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
             \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
             \n\$xSHELL_PATH: ${REVERSE} '$xSHELL_PATH' ${RESET}\
@@ -528,10 +528,10 @@ xrun(){
             \n$(.xs --hl -)${RESET}";
     }
     
-    generateCase(){
+    xs_generate_case(){
          # fill case with options (xarg)
         __runARGS_case_='case $1 in \n'
-        __runARGS_case_+=$__runARGS_case_options
+        __runARGS_case_+=$__RUN_ARGS_CASE_OPTIONS__
         __runARGS_case_+='esac'
         # apply escape codes (\n \t) when print
         __runARGS_case_=$(echo -e $__runARGS_case_)
@@ -547,7 +547,7 @@ xrun(){
     }
 
     # Function to handle joint short flags
-    handleJointShortFlags() {
+    handle_joint_short_flags() {
         local joint_flags="$1"  # The joint short flags passed as an argument
         local length=${#joint_flags}  # The length of the joint short flags string
 
@@ -577,7 +577,7 @@ xrun(){
     # gen default help argument
     if [ -z "$no_help" ]; then
         xarg --id "-h,${_arg_prefix_}help"    \
-            --code "xarg+=h ; xusage --help" \
+            --code "xarg+=h ; xs_usage --help" \
             --desc "show this help"
             #  --code "formatHelpOptions" \
     fi
@@ -585,7 +585,7 @@ xrun(){
     if [ -z "$no_version" ]; then
         # gen default version argument
         xarg --id "-v,${_arg_prefix_}version" \
-            --code "xarg+=v ; xusage --version" \
+            --code "xarg+=v ; xs_usage --version" \
             --desc "print version and exit"
     fi
     
@@ -604,7 +604,7 @@ xrun(){
             ;;
             --xreject-unknown | --reject-unknow | --xreject-unknow)
                 shift
-                __runARGS_case_options+="*) xusage --reject-unknow \$1 ;; \n"
+                __RUN_ARGS_CASE_OPTIONS__+="*) xs_usage --reject-unknow \$1 ;; \n"
             ;;
             --xversion-full | --xversionrc)
                 shift; _CURRENT_VERSION_=$_VERSIONRC_
@@ -615,14 +615,14 @@ xrun(){
             --xcolors)
                 shift; use colors;
             ;;
-            --xscolors | --xs-show-colors) 
+            --xscolors | --xs-show-colors | --xs-show-colors) 
                 shift; xs_show_colors; exit 0;
             ;;
-            --xhelp)
+            --xhelp | --xs-help)
                 use utils
                 [ -z "$RED" ] && use colors
                 local _help_viewer=$(xsys.path bat less more cat)
-                shift; xrunHelp | $_help_viewer
+                shift; xs_run_help | $_help_viewer
             ;;
             --xlib-dirs | --xlibs)
                 shift;
@@ -650,14 +650,14 @@ xrun(){
     for arg in "${_PARAMS_[@]}"; do
         # Check if the argument is a joint short flag (e.g., -abc)
         if [[ "$arg" =~ ^-[a-zA-Z]{2,}$ ]]; then
-            handleJointShortFlags "${arg:1}"  # Call the function to handle the joint short flags
+            handle_joint_short_flags "${arg:1}"  # Call the function to handle the joint short flags
             unset _PARAMS_[$arg]  # Remove the joint short flag from the _PARAMS_ array
         fi
     done
 
-    generateCase "${_PARAMS_[@]}"
+    xs_generate_case "${_PARAMS_[@]}"
 
-    [ -n "$_XS_ARGS_DEBUG" ] && xrunDebug "${xRUN_ARGS[@]}";
+    [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}";
 }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
@@ -678,7 +678,7 @@ xcase(){
 #   --hl <char>: prints a horizontal line with the given character
 .xs(){
     # define version of script
-    xsVersion(){
+    xs_version(){
         # set app version (dynamic from header comments or static)
         [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
             grep '# Version:' -m1 | \
@@ -699,7 +699,7 @@ xcase(){
     }
 
     # define when script was created
-    xsCreated(){
+    xs_created(){
         # set app version (dynamic from header comments or static)
         [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
             grep '# Created:' -m1 | \
@@ -722,7 +722,7 @@ xcase(){
     }
 
     # define when script was updated
-    xsUpdated(){
+    xs_updated(){
         # set app version (dynamic from header comments or static)
         [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
             grep '# Last Modified:' -m1 | \
@@ -755,7 +755,7 @@ xcase(){
     }
 
     # define author of script
-    xsAuthorName(){
+    xs_author_name(){
         [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(
             head -n 20 "$0" | \
             grep '# Author.:' -m1 | \
@@ -775,7 +775,7 @@ xcase(){
     }
 
     # define author email
-    xsAuthorMail(){
+    xs_author_mail(){
         [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(
             head -n 20 "$0" | \
             grep '# Author.:' -m1 | \
@@ -793,15 +793,15 @@ xcase(){
     case "${1}" in
         --init)
             shift;
-            xsVersion; xsCreated; xsUpdated; xsAuthorName; xsAuthorMail
+            xs_version; xs_created; xs_updated; xs_author_name; xs_author_mail
         ;;
         --require-value)
             shift;
-            test -z "$1" && { xusage --field-error "$2"; } 
+            test -z "$1" && { xs_usage --field-error "$2"; } 
         ;;
         --require-one)
             shift;
-            test -z "$1" && xusage --missing-param; 
+            test -z "$1" && xs_usage --missing-param; 
         ;;
         --hl | --horizontal-line)
             shift;
