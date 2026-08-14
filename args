@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/13 - 22:20:07
+# Last Modified: Thursday, 2026/08/13 - 23:19:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.33.2051
+# Version: 0.2.34.2060
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -397,6 +397,18 @@ xarg(){
                 .xs --require-value "$1" "$2"
                 xhelp --footer="$2"
             ;;
+            --no-help)
+                no_help=true;
+                block=none
+                method=none
+                key=none
+            ;;
+            --no-version)
+                no_version=true
+                block=none
+                method=none
+                key=none
+            ;;
         esac
         shift
     done
@@ -563,15 +575,19 @@ xrun(){
     fi
 
     # gen default help argument
-    xarg --id "-h,${_arg_prefix_}help"    \
-         --code "xusage --help" \
-         --desc "show this help"
-        #  --code "formatHelpOptions" \
-         
-    # gen default version argument
-    xarg --id "-v,${_arg_prefix_}version" \
-         --code "xusage --version" \
-         --desc "print version and exit"
+    if [ -z "$no_help" ]; then
+        xarg --id "-h,${_arg_prefix_}help"    \
+            --code "xarg+=h ; xusage --help" \
+            --desc "show this help"
+            #  --code "formatHelpOptions" \
+    fi
+
+    if [ -z "$no_version" ]; then
+        # gen default version argument
+        xarg --id "-v,${_arg_prefix_}version" \
+            --code "xarg+=v ; xusage --version" \
+            --desc "print version and exit"
+    fi
     
     # store arguments/params to be passed to the script
     _PARAMS_=()
