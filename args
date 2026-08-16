@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/14 - 00:39:09
+# Last Modified: Sunday, 2026/08/16 - 11:07:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.35.2083
+# Version: 0.2.36.2088
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -507,6 +507,7 @@ xrun(){
             \n\$APP_DIR.: ${REVERSE} '$APP_DIR' ${RESET}\
             \n\$APP_HOME: ${REVERSE} '$APP_HOME' ${RESET}\
             \n\$APP_DATA: ${REVERSE} '$APP_DATA' ${RESET}\
+            \n\$APP_LOG.: ${REVERSE} '$APP_LOG' ${RESET}\
 
             \n\$@: ${REVERSE} '${_ARGS_[*]}' ${RESET}\
             \n\$_PARAMS_: ${REVERSE} '${_PARAMS_[*]}' ${RESET}\

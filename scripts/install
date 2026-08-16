@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 00:18:41
+# Last Modified: Sunday, 2026/08/16 - 11:03:52
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.594
+# Version: 0.1.6.611
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -21,11 +21,19 @@
 # HISTORY:
 #
 
-# install log
-_LOG=/tmp/xshell-install.log
+if ! type xs_source &> /dev/null; then
+  _xs="$xSHELL_PATH/functions/xs_source"
+  if [ -f "$_xs" ]; then
+    source "$_xs"
+  else
+    source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+  fi
+fi
 
-# always with ESCAPE support
-echo(){ builtin echo -e "$@" | tee -a $_LOG; }
+# load additional libraries and functions
+xs_source "init colors functions/echo functions/_sudo functions/append_file functions/check_path functions/require_root functions/upcase" 
+xrequirements git tee awk grep dirname
+
 
 # log
 if [ "$_VERBOSE_" ]; then
@@ -40,34 +48,27 @@ project_name=xSHELL
 repo=fbnmtz/$project_name
 default_dir=/opt
 
-# load function xs_source from the repository
-source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/${repo}/refs/heads/master/functions/xs_source)"
-
-# load additional libraries and functions
-xs_source "init colors functions/_sudo functions/append_file functions/check_path functions/require_root functions/upcase"
-xrequirements git tee awk
-
 # simple arguments handle 
 [ "$1" == "--verbose" ] && { shift; _VERBOSE_=1; shift; }
 [ "$1" == "--dir"     ] && { shift; custom_path=$1; shift; }
 
-echo "$project_name install started..." > $_LOG
+echo "$project_name install started..." > $APP_LOG
 
 # verify if stdin is a interactive shell (TTY) 
 if [ -t 0 ]; then
-    echo "Executado localmente (stdin é terminal ou redirecionado de arquivo)."
+    echo "runnung locally (stdin term or redirected from file)."
     # no custom path?
     if [ -z "$custom_path" ]; then
         # Prompt for the install dir
         echo -n "${BLUE}$project_name install${RESET} - Use default location: ($default_dir) or inform new path? (y/n) "
         read -r choice
         if [[ "$(upcase ${choice})" == "Y" ]]; then
-            echo -n "inform the path to install:"
+            echo -n "inform path to install:"
             read -r custom_path
         fi
     fi
 else
-    echo "Executado via pipe (ex: curl | bash)."
+    echo "runnung by pipe (ex: curl | bash)."
 fi
 
 # Set the installation directory
@@ -91,18 +92,18 @@ if [ -d "$install_dir" ] || [ -L "$install_dir" ]; then
     echo -n "${YELLOW}Warning!${RESET} ${BLUE}$project_name is already installed.${RESET} Do you want to update it? (y/n): "
     read -r choice
     if [ "$(upcase $choice)" == "Y" ]; then  # Check if the user wants to update
-        cd "$install_dir" && git pull >> $_LOG 2>&1 # Update the repository
+        cd "$install_dir" && git pull >> $APP_LOG 2>&1 # Update the repository
     fi
 else
     echo -n "clonning repo... "
-    git clone "${url}/${repo}" "$install_dir" >> $_LOG 2>&1 # Clone the repository if not already installed
+    git clone "${url}/${repo}" "$install_dir" >> $APP_LOG 2>&1 # Clone the repository if not already installed
     echo "done."
 fi
 
 # files for root (installation wide system)
 root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
 # files for normal users (/home/username/file)
-user_files=(".profile" ".bashrc" ".bash_profile" ".bash_login" ".zshrc" ".zprofile" ".zlogin" ".login")
+user_files=(".profile" ".bashrc" ".bash_profile" ".bashAPP_LOGin" ".zshrc" ".zprofile" ".zlogin" ".login")
 # list of users (UID >= 1000 and home directory in /home)
 user_list=(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
 
@@ -140,7 +141,7 @@ for file in "${config_files[@]}"; do
     if [ -f "$file" ] && [ -w "$file" ]; then
         echo "checking $file... "
         # Check if env vars already exists in the file
-        if ! grep -q "export {$project_name}_PATH" "$file" >> $_LOG 2>&1; then
+        if ! grep -q "export {$project_name}_PATH" "$file" >> $APP_LOG 2>&1; then
             echo "Configuring $file... "
             # If the env var does not exist, add it
             appendFile "$file" 'export '${project_name}'_PATH="'${install_dir}'"'  

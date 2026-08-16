@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/13 - 16:46:09
+# Last Modified: Sunday, 2026/08/16 - 11:58:08
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.27.1100
+# Version: 0.1.28.1117
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,11 +32,10 @@ if ! type xs_source &> /dev/null; then
   fi
 fi
 
-xs_source functions/arrays functions/upcase functions/xs_debug functions/xs_requirements_report 
+xs_source functions/arrays functions/check functions/upcase functions/xs_debug functions/xs_requirements_report 
 
-#  autoload 'colors' if in DEBUG mode
 if is_debug_enabled; then
-  xs_source "$xSHELL_PATH/colors"   
+  [ -z "${RED}" ] && xs_source "$xSHELL_PATH/colors"   
 fi
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -47,6 +46,8 @@ APP_DIR=$(dirname "$0")       # application current directory
 APP_HOME="$HOME/.xshell/$APP" # application home (store data)
 APP_DATA=$APP_HOME
 # DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
+
+APP_LOG="/tmp/xshell-$APP.log"
 
 # store current app requirements (binaries)
 _REQUIREMENTS_=''
@@ -79,13 +80,6 @@ xs_create_app_home(){
   APP_DATA=$HOME/.xshell/$APP
   APP_HOME=$APP_DATA
   mkdir -p "$APP_DATA/$*"
-}
-
-xs_debug(){
-  if is_debug_enabled; then
-    echo -e "$@"
-    sleep 0.5 
-  fi
 }
 
 # def use(lib1, lib2, ...): function to import/use some library
@@ -156,7 +150,7 @@ use(){
       local li=0
       for lib in "${lib_dirs[@]}"; do
         
-       xs_debug -n "searching '${lib}' --> "
+       xs_debug -n "searching '${MAGENTA}${lib}${RESET}' --> "
 
         if source "${lib}" 2> /dev/null ; then
           xs_debug "${GREEN}[success]${RESET}"
@@ -233,10 +227,6 @@ xrequirements(){
       xsys.notify "$APP" "$error_msg"
     fi
   }
-  
-  # def check(tool): verify if a package exists on the system
-  # ex: check mkdir
-  check(){ command -v "$1" &> /dev/null; }
   
   _REQUIREMENTS_=$*
 
