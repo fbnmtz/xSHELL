@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/xs_debug
-# Created: Tuesday, 2026/08/11 - 03:28:21
+# File...: functions/check
+# Created: Sunday, 2026/08/16 - 10:25:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 19:26:44
+# Last Modified: Sunday, 2026/08/16 - 10:29:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.21
+# Version: 0.0.1.4
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,21 +17,6 @@
 # HISTORY:
 #
 
-[ -z "${RED}" ] && xs_source "$xSHELL_PATH/colors"   
-
-# verify if DEBUG is enabled
-is_debug_enabled(){
-  if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-# show debug message, if its enabled
-xs_debug(){
-  if is_debug_enabled; then
-    echo -e "$@"
-    sleep 0.5 
-  fi
-}
+# def check(tool): verify if a bin exists on the system
+# ex: check mkdir
+check(){ command -v "$1" &> /dev/null; }
