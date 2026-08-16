@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/echo
-# Created: Sunday, 2025/02/08 - 16:37:02
+# File...: functions/fail
+# Created: Sunday, 2023/02/13 - 00:47:03
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 19:53:09
+# Last Modified: Sunday, 2026/08/16 - 20:10:46
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.7
+# Version: 0.0.1.6
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,5 +17,13 @@
 # HISTORY:
 #
 
-echo(){ builtin echo -e "$@" | tee -a $APP_LOG; }
-function write(){ echo "$@"; }
+# def falil(tools): function to print a error message
+# ex: fail "bin1"
+fail(){
+    local tools=$@
+    local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'"
+    echo -e "$error_msg"
+    if type xsys.notify &> /dev/null; then
+        xsys.notify "$APP" "$error_msg"
+    fi
+}

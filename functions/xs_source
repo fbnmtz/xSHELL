@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 11:51:16
+# Last Modified: Sunday, 2026/08/16 - 20:27:41
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.123
+# Version: 0.0.7.126
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -40,6 +40,8 @@ function xs_source() {
       if source "$f" &> /dev/null ; then
         if is_debug_enabled; then
           xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - local${RESET}"
+        else
+          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
         fi
         success=true
         break

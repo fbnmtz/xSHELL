@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/is_lib_loaded
+# Created: Sunday, 2023/02/13 - 00:47:25
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2026/08/16 - 20:17:26
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.8
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# function to check if some lib already loaded (search for a const var _xLIB_NAME_)
+# def is_lib_loaded(libname)
+# ex: is_lib_loaded args
+is_lib_loaded(){
+    local lib_const
+
+    # convert fist arg to UPCASE 
+    local lib_const=${1^^}          
+    # Convert the argument to uppercase
+    # lib_const="$(upcase $1)"        
+    # replace '.' for '_'
+    lib_const=${lib_const//./_}     
+    # remove word 'lib' from filename 
+    lib_const=${lib_const//LIB/}    
+    # Const for mark lib as loaded
+    lib_const="_xLIB_${lib_const}"  
+
+    # check last char (needs to be equal '_' underline) 
+    [ ! "${lib_const:0-1}" == "_" ] && lib_const+="_"  # Add an underscore if it's not already there
+
+    # check if load lib has a defined var _xLIB_NAME_ and its not null
+    if eval "[ -z \"\$${lib_const}\" ]" ; then
+        xs_debug "${RED}\`-> (${_USE_COUNT_}/${#_USE_ALL_[@]}) - lib '${1}' not loaded. (const "\
+            "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"  # Print an error message if the library is not loaded
+        return 1
+    else
+        xs_debug "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
+        return 0
+    fi
+}
