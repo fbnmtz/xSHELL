@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/11 - 12:25:38
+# Last Modified: Monday, 2026/08/17 - 14:14:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.26.451
+# Version: 0.1.27.467
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,7 +27,6 @@
 source "$xSHELL_INIT"
 
 use args utils colors strings xshell.lib
-xrequirements touch chmod date env grep
 
 xshell_init
 
@@ -42,7 +41,8 @@ xarg --id -l,--lib     --var _xLIB_:true     --desc "new script as LIB type (can
 xarg --id -o,--output  --var dir+r           --desc "output <dir> for new script (default '$DEFAULT_OUTPUT')"
 xarg --id -e,--editor  --var editor+r        --desc "<editor> to open new script (default '$editor')"
 xarg --id -r,--remove  --var name+r          --desc "remove file <name> (backup '$BACKUP_DIR/<name>')"
-xarg --id -E,--env     --desc "show xSHELL enviroment variables"
+xarg --id -s,--show    --desc "show xSHELL enviroment variables"
+xarg --id -c,--config  --desc "config xSHELL enviroment variables on user space"
 
 xarg --header "xSHELL script generator"
 xarg --footer "xSHELL v$_VERSION_ - $today - author: $author_name <$author_mail>"
@@ -57,6 +57,7 @@ xrun --xreject-unknown --xrequire-one --xversionrc "$@"
 
 case "${xarg}" in
     r) action_remove_file "$name" ;;
-    E) env | grep xSHELL ;;
+    s) action_env_show  ;;
+    c) action_env_config  ;;
     *) action_new_file "$name" ;;
 esac
