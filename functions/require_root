@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 18:05:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/09 - 22:06:01
+# Last Modified: Sunday, 2026/08/16 - 21:42:20
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.2.7
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,3 +27,11 @@ function requireROOT() {
     fi
 }
 function require_root() { requireROOT "$@"; }
+
+function is_root() {
+    if [ $UID -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi    
+}

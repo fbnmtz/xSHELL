@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 11:03:52
+# Last Modified: Sunday, 2026/08/16 - 21:44:26
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.611
+# Version: 0.1.7.636
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -31,8 +31,8 @@ if ! type xs_source &> /dev/null; then
 fi
 
 # load additional libraries and functions
-xs_source "init colors functions/echo functions/_sudo functions/append_file functions/check_path functions/require_root functions/upcase" 
-xrequirements git tee awk grep dirname
+xs_source "init colors echo _sudo append_file check_path require_root upcase" 
+xrequirements git tee awk grep dirname curl
 
 
 # log
@@ -100,65 +100,90 @@ else
     echo "done."
 fi
 
-# files for root (installation wide system)
-root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
-# files for normal users (/home/username/file)
-user_files=(".profile" ".bashrc" ".bash_profile" ".bashAPP_LOGin" ".zshrc" ".zprofile" ".zlogin" ".login")
-# list of users (UID >= 1000 and home directory in /home)
+# get user lists
 user_list=(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
 
-# Initialize an empty array to hold the configuration files to be checked and updated
-config_files=() 
-
-# Check if the script is run as root or not and populate the config_files array accordingly
-if [ $UID -eq 0 ]; then
-    config_files+=("${root_files[@]}")
-    # check if user_list is not empty
-    if [ ! ${#user_list[@]} -eq 0 ]; then
-        # Add user files to config_files for each user in the user_list
-        for user in "${user_list[@]}"; do
-            for file in "${user_files[@]}"; do
-                user_file="/home/$user/$file"
-                if [ -f "$user_file" ] && [ -w "$user_file" ]; then
-                    config_files+=("$user_file")
-                fi
-            done
-        done
-    fi
-else
-    # If not root, only check the current user's files
-    for file in "${user_files[@]}"; do
-        user_file="$HOME/$file"
-        if [ -f "$user_file" ] && [ -w "$user_file" ]; then
-            config_files+=("$user_file")
-        fi
+# check if user_list is not empty
+if [ ! ${#user_list[@]} -eq 0 ]; then
+    # iterate over all
+    for user in "${user_list[@]}"; do
+        /home/$user/.xshell_env.sh <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
+        echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.profile
+        echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.bashrc
+        # chmod 644 /home/$user/.xshell_env.sh
+        # chmod 644 /home/$user/.profile
+        # chmod 644 /home/$user/.bashrc
+        chown $user:$user /home/$user/.xshell_env.sh
+        chown $user:$user /home/$user/.profile
+        chown $user:$user /home/$user/.bashrc
     done
 fi
 
-echo "configuring files: ${config_files[@]}... "
-# Loop through each configuration file
-for file in "${config_files[@]}"; do
-    if [ -f "$file" ] && [ -w "$file" ]; then
-        echo "checking $file... "
-        # Check if env vars already exists in the file
-        if ! grep -q "export {$project_name}_PATH" "$file" >> $APP_LOG 2>&1; then
-            echo "Configuring $file... "
-            # If the env var does not exist, add it
-            appendFile "$file" 'export '${project_name}'_PATH="'${install_dir}'"'  
-            appendFile "$file" 'export '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
-            appendFile "$file" 'export '${project_name}'_BIN="${'${project_name}'_PATH}/bin"'  
-            appendFile "$file" 'export '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
-            appendFile "$file" 'export '${project_name}'_EXAMPLES="${'${project_name}'_PATH}/examples"'  
-            appendFile "$file" 'export PATH="${PATH}:${'${project_name}'_PATH}:${'${project_name}'_BIN}:${'${project_name}'_SCRIPTS}:${'${project_name}'_EXAMPLES}:${HOME}/bin"' 
-            appendFile "$file" 'xs_init(){ source "${'${project_name}'_PATH}/init" ; }'
-            echo "ENV vars added to $file\n"
-        else
-            echo "\t${YELLOW}Skipping...${RESET} ENV vars already exist in $file"
-        fi
-    else
-        echo "Error! File $file not found or not writable. Please verify."
-        exit 2
-    fi
-done
+if is_root; then
+    # config files for all system (ROOT)
+    /etc/profile.d/xshell_env.sh <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
+    echo "export BASH_ENV=/etc/profile.d/xshell_env.sh" | tee -a /etc/profile
+fi
 
-echo "configuration done! ${project_name} installed."
+# # files for root (installation wide system)
+# root_files=("/etc/profile" "/etc/bashrc" "/etc/bash.bashrc" "/etc/profile.d/$project_name.sh")
+# # files for normal users (/home/username/file)
+# user_files=(".profile" ".bashrc" ".bash_profile" ".bashAPP_LOGin" ".zshrc" ".zprofile" ".zlogin" ".login")
+# # list of users (UID >= 1000 and home directory in /home)
+# user_list=(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
+
+# # Initialize an empty array to hold the configuration files to be checked and updated
+# config_files=() 
+
+# # Check if the script is run as root or not and populate the config_files array accordingly
+# if [ $UID -eq 0 ]; then
+#     config_files+=("${root_files[@]}")
+#     # check if user_list is not empty
+#     if [ ! ${#user_list[@]} -eq 0 ]; then
+#         # Add user files to config_files for each user in the user_list
+#         for user in "${user_list[@]}"; do
+#             for file in "${user_files[@]}"; do
+#                 user_file="/home/$user/$file"
+#                 if [ -f "$user_file" ] && [ -w "$user_file" ]; then
+#                     config_files+=("$user_file")
+#                 fi
+#             done
+#         done
+#     fi
+# else
+#     # If not root, only check the current user's files
+#     for file in "${user_files[@]}"; do
+#         user_file="$HOME/$file"
+#         if [ -f "$user_file" ] && [ -w "$user_file" ]; then
+#             config_files+=("$user_file")
+#         fi
+#     done
+# fi
+
+# echo "configuring files: ${config_files[@]}... "
+# # Loop through each configuration file
+# for file in "${config_files[@]}"; do
+#     if [ -f "$file" ] && [ -w "$file" ]; then
+#         echo "checking $file... "
+#         # Check if env vars already exists in the file
+#         if ! grep -q "export {$project_name}_PATH" "$file" >> $APP_LOG 2>&1; then
+#             echo "Configuring $file... "
+#             # If the env var does not exist, add it
+#             appendFile "$file" 'export '${project_name}'_PATH="'${install_dir}'"'  
+#             appendFile "$file" 'export '${project_name}'_INIT="${'${project_name}'_PATH}/init"'  
+#             appendFile "$file" 'export '${project_name}'_BIN="${'${project_name}'_PATH}/bin"'  
+#             appendFile "$file" 'export '${project_name}'_SCRIPTS="${'${project_name}'_PATH}/scripts"'  
+#             appendFile "$file" 'export '${project_name}'_EXAMPLES="${'${project_name}'_PATH}/examples"'  
+#             appendFile "$file" 'export PATH="${PATH}:${'${project_name}'_PATH}:${'${project_name}'_BIN}:${'${project_name}'_SCRIPTS}:${'${project_name}'_EXAMPLES}:${HOME}/bin"' 
+#             appendFile "$file" 'xs_init(){ source "${'${project_name}'_PATH}/init" ; }'
+#             echo "ENV vars added to $file\n"
+#         else
+#             echo "\t${YELLOW}Skipping...${RESET} ENV vars already exist in $file"
+#         fi
+#     else
+#         echo "Error! File $file not found or not writable. Please verify."
+#         exit 2
+#     fi
+# done
+
+# echo "configuration done! ${project_name} installed."

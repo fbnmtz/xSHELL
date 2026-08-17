@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 21:02:17
+# Last Modified: Sunday, 2026/08/16 - 21:20:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.8.149
+# Version: 0.0.9.153
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,12 +19,12 @@
 
 # load debug functions
 if ! type is_debug_enabled &> /dev/null; then
-  source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_debug)"
+  source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_debug)"
 fi
 
 # load colors
 if [ -z "${RED}" ] &> /dev/null; then
-  source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/colors)"
+  source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/colors)"
 fi
 
 # def xs_source(filename): function to source a script from the repository (local or using curl)
@@ -49,7 +49,7 @@ function xs_source() {
     # not found yet? try to load from web respository  
     if [ $success == "false" ]; then
       for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
-        if source /dev/stdin <<< "$(curl -s ${f}) &>/dev/null"; then
+        if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
           xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - web${RESET}"
           success=true
           break
