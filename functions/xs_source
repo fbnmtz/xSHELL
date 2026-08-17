@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 21:20:14
+# Last Modified: Sunday, 2026/08/16 - 23:59:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.153
+# Version: 0.0.10.166
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -38,14 +38,16 @@ function xs_source() {
     success=false
     # for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$APP_DIR/$filename " "$xSHELL_PATH/$filename"; do
     for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
-      if source "$f" &> /dev/null ; then
+      if source "${f}" &> /dev/null; then
         xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - local${RESET}"
         success=true
         break
       # else
       #   xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
+      #   [ -f "$f" ] && xs_debug "$f exists but not loaded. (end of line CRLF should be LF)"
       fi
     done
+    
     # not found yet? try to load from web respository  
     if [ $success == "false" ]; then
       for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
