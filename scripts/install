@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 22:00:29
+# Last Modified: Sunday, 2026/08/16 - 22:40:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.645
+# Version: 0.1.10.657
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -31,7 +31,7 @@ if ! type xs_source &> /dev/null; then
 fi
 
 # load additional libraries and functions
-xs_source "init echo _sudo append_file check_path require_root upcase" 
+xs_source "_sudo append_file check_path echo require_root upcase" 
 xrequirements git tee awk grep dirname curl
 
 
@@ -108,14 +108,13 @@ if [ ! ${#user_list[@]} -eq 0 ]; then
     # iterate over all
     for user in "${user_list[@]}"; do
         user_file= /home/$user/.xshell_env.sh
-        touch $user_file
-        $user_file <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
+        curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env.sh -o $user_file
         echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.profile
         echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.bashrc
         # chmod 644$user_file
         # chmod 644 /home/$user/.profile
         # chmod 644 /home/$user/.bashrc
-        chown $user:$user$user_file
+        chown $user:$user $user_file
         chown $user:$user /home/$user/.profile
         chown $user:$user /home/$user/.bashrc
     done
@@ -125,8 +124,9 @@ if is_root; then
     # config files for all system (ROOT)
     root_file=/etc/profile.d/xshell_env.sh
     touch $root_file
-    $root_file <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
+    curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env.sh -o $root_file
     echo "export BASH_ENV=$root_file" | tee -a /etc/profile
+    echo "export BASH_ENV=$root_file" | tee -a /etc/bash.bashrc
 fi
 
 # # files for root (installation wide system)
