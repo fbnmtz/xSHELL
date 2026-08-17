@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 14:14:36
+# Last Modified: Monday, 2026/08/17 - 17:55:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.27.467
+# Version: 0.1.28.468
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,7 +26,7 @@
 
 source "$xSHELL_INIT"
 
-use args utils colors strings xshell.lib
+xs_use args utils colors strings xshell.lib
 
 xshell_init
 

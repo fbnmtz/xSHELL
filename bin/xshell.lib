@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 14:24:26
+# Last Modified: Monday, 2026/08/17 - 17:58:22
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.21.394
+# Version: 0.1.22.401
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -44,12 +44,12 @@ get_author_info() {
 }
 
 xshell_init(){
-    # validates needed tools
-    xrequirements rev cut git touch date mkdir grep sort upcase cp chmod chown
+    # validate needed tools
+    xs_require rev cut git touch date mkdir grep sort upcase cp chmod chown
     
     # set default editor
     editor=$(getPath code micro nano vim neovim ne emacs mcedit tilde atom gedit gvim pico)
-    xrequiremetns $editor
+    xs_require "$editor"
 
     # set default scripts output directory
     [ -z "$dir" ] && dir=$DEFAULT_OUTPUT
@@ -134,7 +134,7 @@ template_script(){
 # shellcheck disable=SC1090,SC2154
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 source \"\$xSHELL_INIT\"
-use args
+xs_use args
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~"
 # [ -n "$arguments" ] && \
@@ -149,7 +149,7 @@ echo "xrun \"\$@\"
 # now put your code below
 "
 }
-# # xrequirements some_binary
+# # xs_require some_binary
 # xarg --id -p,--print   --code \"echo 'test prints'\" --desc \"print some code\"
 # xarg --id -s,--sum     --var expression+r          --desc \"expression to sum\"
 
