@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 20:27:41
+# Last Modified: Sunday, 2026/08/16 - 21:02:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.126
+# Version: 0.0.8.149
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -36,26 +36,26 @@ function xs_source() {
   for filename in $@; do
     # test if local filename exist?
     success=false
-    for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$xSHELL_PATH/$filename"; do
+    # for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$APP_DIR/$filename " "$xSHELL_PATH/$filename"; do
+    for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
       if source "$f" &> /dev/null ; then
-        if is_debug_enabled; then
-          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - local${RESET}"
-        else
-          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
-        fi
+        xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - local${RESET}"
         success=true
         break
       # else
-      #   xs_debug "xs_source() - Error! loading local file: $f"
+      #   xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
       fi
     done
     # not found yet? try to load from web respository  
     if [ $success == "false" ]; then
-      if ! source /dev/stdin <<< "$(curl -s ${remote}/${filename})"; then
-        if is_debug_enabled; then
-          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}" >&2 && exit 1
+      for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
+        if source /dev/stdin <<< "$(curl -s ${f}) &>/dev/null"; then
+          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - web${RESET}"
+          success=true
+          break
         fi
-      fi
+      done
+     [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}" >&2 && exit 1
     fi
   done
 }
