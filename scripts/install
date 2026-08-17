@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 21:56:33
+# Last Modified: Sunday, 2026/08/16 - 22:00:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.8.642
+# Version: 0.1.9.645
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -101,7 +101,7 @@ else
 fi
 
 # get user lists
-user_list=(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
+user_list=$(awk -F: '($3 >= 1000) && ($1 != "nobody") && ($6 ~ /\/home/) {print $1}' /etc/passwd)
 
 # check if user_list is not empty
 if [ ! ${#user_list[@]} -eq 0 ]; then
@@ -123,9 +123,10 @@ fi
 
 if is_root; then
     # config files for all system (ROOT)
-    touch /etc/profile.d/xshell_env.sh
-    /etc/profile.d/xshell_env.sh <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
-    echo "export BASH_ENV=/etc/profile.d/xshell_env.sh" | tee -a /etc/profile
+    root_file=/etc/profile.d/xshell_env.sh
+    touch $root_file
+    $root_file <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env)"
+    echo "export BASH_ENV=$root_file" | tee -a /etc/profile
 fi
 
 # # files for root (installation wide system)
