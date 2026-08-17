@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 20:43:33
+# Last Modified: Monday, 2026/08/17 - 01:34:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.30.1129
+# Version: 0.1.31.1142
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,11 +28,11 @@ if ! type xs_source &> /dev/null; then
   if [ -f "$_xs" ]; then
     source "$_xs"
   else
-    source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
   fi
 fi
 
-xs_source arrays check fail upcase is_lib_loaded xs_debug xs_requirements_report 
+xs_source --local arrays check fail upcase is_lib_loaded xs_debug xs_requirements_report 
 
 if is_debug_enabled; then
   [ -z "${RED}" ] && xs_source "$xSHELL_PATH/colors"   
@@ -102,7 +102,8 @@ use(){
     } || _CALLER_=$_LIB_  # Update the caller and library variables if necessary
   fi
   
-  xs_debug "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}"  # Print a message indicating that the use function is being called
+  # Print a message indicating that the use function is being called
+  xs_debug "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$_CALLER_'${RESET}\n"  
   
   for lib_file in $@; do
     
@@ -126,21 +127,21 @@ use(){
       local li=0
       for lib in "${lib_dirs[@]}"; do
         
-       xs_debug -n "searching '${MAGENTA}${lib}${RESET}' --> "
+       xs_debug "searching '${MAGENTA}${lib}${RESET}' --> "
 
         if source "${lib}" 2> /dev/null ; then
-          xs_debug "${GREEN}[success]${RESET}"
+          xs_debug "${GREEN}[success]${RESET}\n"
           # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${GREEN}[success]${RESET}"
           xSHELL_LIBS+=($lib)
           _CALLER_=${lib}
           # success? set a flag; break loop
-          xs_debug "${GREEN}  \`-> FOUND! loading '${lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})"
+          xs_debug "${GREEN}  \`-> FOUND! loading '${lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})\n"
 
           included="true"
         
           break
         else
-          xs_debug "${RED}[fail]${RESET}"
+          xs_debug "${RED}[fail]${RESET}\n"
         fi
         li=$((li+1))
       done
@@ -154,7 +155,7 @@ use(){
       local all_dirs="${xSHELL_DIRS[@]} "
       xs_debug "${RED} \`-> searched on:\n   *"\
             "${all_dirs// /${YELLOW}$lib_file - ${RED}[fail]\\n   \* }"\
-            "${RESET}"
+            "${RESET}\n"
       exit 1
     }
   

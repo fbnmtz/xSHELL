@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 23:59:10
+# Last Modified: Monday, 2026/08/17 - 01:56:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.10.166
+# Version: 0.0.11.235
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,9 +17,16 @@
 # HISTORY:
 #
 
+XS_SOURCE_FILES=''
+
 # load debug functions
 if ! type is_debug_enabled &> /dev/null; then
-  source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_debug)"
+  _xs="$xSHELL_PATH/functions/xs_debug"
+  if [ -f "$_xs" ]; then
+    source "$_xs"
+  else
+    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_debug)"
+  fi
 fi
 
 # load colors
@@ -28,36 +35,62 @@ if [ -z "${RED}" ] &> /dev/null; then
 fi
 
 # def xs_source(filename): function to source a script from the repository (local or using curl)
-#   ex: xs_source "args system colors functions/upcase"
+#   ex: xs_source "args system colors upcase"
 function xs_source() {
+  # define remote source
   local remote="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
-  xs_debug "${REVERSE} $0 ${RESET} - ${YELLOW}xs_source '${CYAN}$@${RESET}'"
+
+  # define how source files will be done
+  case "${1}" in
+    -b | --both  | --allow-both) shift; XS_SOURCE_FLAG=both  ;;
+    -w | --web   | --only-web  ) shift; XS_SOURCE_FLAG=web   ;;
+    -l | --local | --only-local) shift; XS_SOURCE_FLAG=local ;;
+    *) shift; XS_SOURCE_FLAG=none ;;
+  esac
+
+  # debug header
+  xs_debug "${REVERSE} $0 ${RESET} (FLAG: ${XS_SOURCE_FLAG}) - ${YELLOW}xs_source ${RESET}'${CYAN}$*${RESET}'\n"
+  
+  XS_SOURCE_FILES+=$@
+
   # iterate over all libs/functions
   for filename in $@; do
     # test if local filename exist?
     success=false
-    # for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$APP_DIR/$filename " "$xSHELL_PATH/$filename"; do
-    for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
-      if source "${f}" &> /dev/null; then
-        xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - local${RESET}"
-        success=true
-        break
-      # else
-      #   xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
-      #   [ -f "$f" ] && xs_debug "$f exists but not loaded. (end of line CRLF should be LF)"
-      fi
-    done
+
+    if [ "$XS_SOURCE_FLAG" == "local" ] || [ "$XS_SOURCE_FLAG" == "both" ] || [ "$XS_SOURCE_FLAG" == "none" ]; then
+    
+      # for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$APP_DIR/$filename " "$xSHELL_PATH/$filename"; do
+      for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
+        if source "${f}" &> /dev/null; then
+          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
+          success=true
+          break
+        # else
+        #   xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
+        #   [ -f "$f" ] && xs_debug "$f exists but not loaded. (end of line CRLF should be LF)"
+        fi
+      done
+      
+    fi
     
     # not found yet? try to load from web respository  
     if [ $success == "false" ]; then
-      for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
-        if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
-          xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${GREEN}success - web${RESET}"
-          success=true
-          break
-        fi
-      done
-     [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}" >&2 && exit 1
+      
+      # can source from web?
+      if [ "$XS_SOURCE_FLAG" == "web" ] || [ "$XS_SOURCE_FLAG" == "both" ] || [ "$XS_SOURCE_FLAG" == "none" ]; then
+        
+        for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
+          if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
+            xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}%-45${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (web)"
+
+            success=true
+            break
+          fi
+        done
+        
+      fi
+     [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
     fi
   done
 }

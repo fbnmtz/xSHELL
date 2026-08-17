@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 22:40:49
+# Last Modified: Monday, 2026/08/17 - 00:55:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.10.657
+# Version: 0.1.11.659
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -26,7 +26,7 @@ if ! type xs_source &> /dev/null; then
   if [ -f "$_xs" ]; then
     source "$_xs"
   else
-    source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
   fi
 fi
 

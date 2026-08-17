@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/13 - 00:47:25
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 23:52:58
+# Last Modified: Monday, 2026/08/17 - 01:04:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.10
+# Version: 0.0.3.13
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 # function to check if some lib already loaded (search for a const var _xLIB_NAME_)
 # def is_lib_loaded(libname)
-# ex: is_lib_loaded args
+#   ex: is_lib_loaded args
 is_lib_loaded(){
     local lib_const
 
@@ -40,10 +40,10 @@ is_lib_loaded(){
     # check if load lib has a defined var _xLIB_NAME_ and its not null
     if eval "[ -z \"\$${lib_const}\" ]" ; then
         xs_debug "${RED}\`-> (${_USE_COUNT_}/${#_USE_ALL_[@]}) - lib '${1}' not loaded. (const "\
-            "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}"  # Print an error message if the library is not loaded
+            "'${BGRED}${BLACK}$lib_const${RESET}${RED}' not found)${RESET}\n"  # Print an error message if the library is not loaded
         return 1
     else
-        xs_debug "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}"  # Print a message if the library is already loaded
+        xs_debug "${YELLOW}\`-> skipping '${1}' -> Lib already loaded. (const '${BGYELLOW}${BLACK}$lib_const${RESET}${YELLOW}' found)${RESET}\n"  # Print a message if the library is already loaded
         return 0
     fi
 }

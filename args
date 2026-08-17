@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 11:07:23
+# Last Modified: Monday, 2026/08/17 - 01:59:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.36.2088
+# Version: 0.2.37.2094
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -498,6 +498,9 @@ xrun(){
             
             \n\$xSHELL_DIRS: ${REVERSE} '$(echo -n "${xSHELL_DIRS[@]}")' ${RESET}\
             \n\$xSHELL_DIRS - count: ${REVERSE} ${#xSHELL_DIRS[@]} ${RESET}\
+
+            \n\$XS_SOURCE_FLAG.: ${REVERSE} '$XS_SOURCE_FLAG' ${RESET}\
+            \n\$XS_SOURCE_FILES: ${REVERSE} '$XS_SOURCE_FILES' ${RESET}\
 
             \n\$APP or \$APP_NAME: ${REVERSE} '$APP' ${RESET}\
             \n\$_REQUIREMENTS_: ${REVERSE} '$_REQUIREMENTS_' ${RESET}\

@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/11 - 03:28:21
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 19:38:39
+# Last Modified: Monday, 2026/08/17 - 01:34:01
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.24
+# Version: 0.0.5.40
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -28,8 +28,15 @@ is_debug_enabled(){
 
 # show debug message, if its enabled
 xs_debug(){
+  # define sleep time
+  case "${1}" in
+    -s | --sleep | -t | --time | --timeout) shift; XS_DEBUG_SLEEP=${2}; shift; ;;
+    *) XS_DEBUG_SLEEP=0.3 ;;
+  esac
+  
   if is_debug_enabled; then
-    echo -e "$@"
-    sleep 0.5 
+    # echo -e "$@"
+    printf "$@"
+    sleep $XS_DEBUG_SLEEP 
   fi
 }
