@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 11:07:37
+# Last Modified: Monday, 2026/08/17 - 12:41:58
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.13.242
+# Version: 0.0.14.251
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,14 +18,15 @@
 #
 
 XS_SOURCE_FILES=''
+XS_SOURCE_BASE_URL="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
 
 # load debug functions
 if ! type is_debug_enabled &> /dev/null; then
-  _xs="$xSHELL_PATH/functions/xs_debug"
-  if [ -f "$_xs" ]; then
-    source "$_xs"
+  _xd="$xSHELL_PATH/functions/xs_debug"
+  if [ -f "$_xd" ]; then
+    source "$_xd"
   else
-    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_debug)"
+    source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/functions/xs_debug)"
   fi
 fi
 
@@ -35,17 +36,14 @@ if [ -z "${RED}" ] &> /dev/null; then
   if [ -f "$_xc" ]; then
     source "$_xc"
   else
-    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/colors)"
+    source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/colors)"
   fi
 fi
 
 # def xs_source(filename): function to source a script from the repository (local or using curl)
 #   ex: xs_source "args system colors upcase"
 function xs_source() {
-  # define remote source
-  local remote="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
-
-  # define how source files will be done
+  # define how source files will be get
   case "${1}" in
     -b | --both  | --allow-both) shift; XS_SOURCE_FLAG=both  ;;
     -w | --web   | --only-web  ) shift; XS_SOURCE_FLAG=web   ;;
@@ -85,7 +83,7 @@ function xs_source() {
       # can source from web?
       if [ "$XS_SOURCE_FLAG" == "web" ] || [ "$XS_SOURCE_FLAG" == "both" ]; then
         
-        for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
+        for f in "${XS_SOURCE_BASE_URL}/${filename}" "${XS_SOURCE_BASE_URL}/functions/${filename}"; do
           if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
             xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}%-45${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (web)"
 
