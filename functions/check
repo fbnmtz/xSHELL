@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/16 - 10:25:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 10:29:07
+# Last Modified: Monday, 2026/08/17 - 08:41:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.2.12
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,3 +20,5 @@
 # def check(tool): verify if a bin exists on the system
 # ex: check mkdir
 check(){ command -v "$1" &> /dev/null; }
+function is_installed(){ check "$@"; }
+function is_on_system_path(){ check "$@"; }

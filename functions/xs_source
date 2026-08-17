@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 01:56:19
+# Last Modified: Monday, 2026/08/17 - 08:50:27
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.11.235
+# Version: 0.0.12.238
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -78,7 +78,7 @@ function xs_source() {
     if [ $success == "false" ]; then
       
       # can source from web?
-      if [ "$XS_SOURCE_FLAG" == "web" ] || [ "$XS_SOURCE_FLAG" == "both" ] || [ "$XS_SOURCE_FLAG" == "none" ]; then
+      if [ "$XS_SOURCE_FLAG" == "web" ] || [ "$XS_SOURCE_FLAG" == "both" ]; then
         
         for f in "${remote}/${filename}" "${remote}/functions/${filename}"; do
           if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
@@ -89,8 +89,8 @@ function xs_source() {
           fi
         done
         
+        [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
       fi
-     [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
     fi
   done
 }

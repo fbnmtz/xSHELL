@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 01:59:54
+# Last Modified: Monday, 2026/08/17 - 08:50:38
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.37.2094
+# Version: 0.2.38.2097
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -503,8 +503,8 @@ xrun(){
             \n\$XS_SOURCE_FILES: ${REVERSE} '$XS_SOURCE_FILES' ${RESET}\
 
             \n\$APP or \$APP_NAME: ${REVERSE} '$APP' ${RESET}\
-            \n\$_REQUIREMENTS_: ${REVERSE} '$_REQUIREMENTS_' ${RESET}\
-            \n\$_MISSING_REQUIREMENTS_: ${REVERSE} '$_MISSING_REQUIREMENTS_' ${RESET}\
+            \n\$XS_REQUIREMENTS: ${REVERSE} '$XS_REQUIREMENTS' ${RESET}\
+            \n\$XS_MISSING_REQUIREMENTS: ${REVERSE} '$XS_MISSING_REQUIREMENTS' ${RESET}\
             
             \n\$APP_PATH: ${REVERSE} '$APP_PATH' ${RESET}\
             \n\$APP_DIR.: ${REVERSE} '$APP_DIR' ${RESET}\
