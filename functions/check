@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/16 - 10:25:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 08:41:57
+# Last Modified: Monday, 2026/08/17 - 14:56:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.12
+# Version: 0.0.3.17
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,8 +17,16 @@
 # HISTORY:
 #
 
-# def check(tool): verify if a bin exists on the system
-# ex: check mkdir
-check(){ command -v "$1" &> /dev/null; }
-function is_installed(){ check "$@"; }
-function is_on_system_path(){ check "$@"; }
+func_name="check"
+
+if ! type $func_name &> /dev/null; then
+
+  # def check(tool): verify if a bin exists on the system
+  # ex: check mkdir
+  check(){ command -v "$1" &> /dev/null; }
+  function is_installed(){ check "$@"; }
+  function is_on_system_path(){ check "$@"; }
+
+else
+  xs_debug "xs_source() error! Function '$func_name' already defined.\n"
+fi

@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 09:13:40
+# Last Modified: Monday, 2026/08/17 - 16:15:55
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.32.1173
+# Version: 0.1.33.1177
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,7 +32,7 @@ if ! type xs_source &> /dev/null; then
   fi
 fi
 
-xs_source --local arrays check fail upcase is_lib_loaded xs_debug xs_requirements_report 
+xs_source --local-only check fail upcase is_lib_loaded xs_requirements_report 
 
 if is_debug_enabled; then
   [ -z "${RED}" ] && xs_source "$xSHELL_PATH/colors"   

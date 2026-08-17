@@ -6,10 +6,10 @@
 # Created: Sunday, 2024/12/08 - 04:43:49
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/11 - 03:34:09
+# Last Modified: Monday, 2026/08/17 - 14:56:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.20
+# Version: 0.0.3.30
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,22 +17,30 @@
 # HISTORY:
 #
 
-# Função para definir um valor em um array associativo simulado
-# array_set name key value
-function array_set() {
-    local name=$1
-    local key=$2
-    local value=$3
-    type xs_debug 2> /dev/null  && xs_debug "${name}_${key}=\"${value}\""
-    # xs_debug "${name}_${key}=\"${value}\""
-    # echo -e "${name}_${key}=\"${value}\""
-    eval "${name}_${key}=\"${value}\""
-}
+func_name="array_set"
 
-# Função para obter um valor de um array associativo simulado
-# array_get name key
-function array_get() {
-    local name=$1
-    local key=$2
-    eval "echo ${name}_${key}"
-}
+if ! type "$func_name" &> /dev/null; then
+
+    # Função para definir um valor em um array associativo simulado
+    # array_set name key value
+    function array_set() {
+        local name=$1
+        local key=$2
+        local value=$3
+        type xs_debug 2> /dev/null  && xs_debug "${name}_${key}=\"${value}\""
+        # xs_debug "${name}_${key}=\"${value}\""
+        # echo -e "${name}_${key}=\"${value}\""
+        eval "${name}_${key}=\"${value}\""
+    }
+
+    # Função para obter um valor de um array associativo simulado
+    # array_get name key
+    function array_get() {
+        local name=$1
+        local key=$2
+        eval "echo ${name}_${key}"
+    }
+
+else
+    xs_debug "xs_source() error! Function's '$func_name' already defined.\n"
+fi
