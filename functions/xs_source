@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 16:06:33
+# Last Modified: Tuesday, 2026/08/18 - 01:15:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.16.324
+# Version: 0.0.17.328
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -54,9 +54,10 @@ if ! type xs_source &> /dev/null; then
     esac
 
     # debug header
-    xs_debug "${REVERSE} $0 ${RESET} (FLAG: ${XS_SOURCE_FLAG}) - ${YELLOW}xs_source ${RESET}'${CYAN}$*${RESET}'\n"
+    xs_debug "${REVERSE} $0 ${RESET} - ${YELLOW}xs_source ${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
     
-    XS_SOURCE_FILES+=$@
+    # store functions loaded by xs_source among multiple calls 
+    [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+=$@ || XS_SOURCE_FILES+=" $@"
 
     # iterate over all libs/functions
     for filename in "$@"; do

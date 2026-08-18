@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 08:50:38
+# Last Modified: Tuesday, 2026/08/18 - 01:50:27
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.38.2097
+# Version: 0.2.39.2116
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -50,9 +50,6 @@ xs_help(){
             --long-usage) __HELP_SHOW_ARGS__=true ;;
         esac
     done
-
-    # set vars VERSION, _CREATED_AT_, _AUTHOR_NAME_
-    .xs --init
 
     __HELP_USAGE__="usage: \n  ${GREEN}$APP${RESET} "
     if [ $(Hash.count "$args_hash") -le 10 ] || [ -n "$__HELP_SHOW_ARGS__" ]; then
@@ -215,7 +212,7 @@ xs_usage(){
             __usage_full=true
         ;;
         -v|--version)
-            echo "$_CURRENT_VERSION_"; exit
+            echo "$XS_CURRENT_VERSION"; exit
         ;;
         *) 
             __exit_code=0      
@@ -251,7 +248,7 @@ xs_usage(){
         
         # not null? prints footer 
         [ -n "$__HELP_FOOTER__" ] && echo -e "${__HELP_FOOTER__}\n" 
-        echo -e "${GREEN}v${_CURRENT_VERSION_}${RESET} on ${YELLOW}${_UPDATED_AT_}${RESET} - writen by ${BOLD}${CYAN}${_AUTHOR_NAME_}${RESET}"
+        echo -e "${GREEN}v${XS_CURRENT_VERSION}${RESET} on ${YELLOW}${XS_UPDATED_AT}${RESET} - writen by ${BOLD}${CYAN}${XS_AUTHOR_NAME}${RESET}"
     
     else
         echo -e ""
@@ -516,9 +513,10 @@ xrun(){
             \n\$_PARAMS_: ${REVERSE} '${_PARAMS_[*]}' ${RESET}\
             \n\$xarg: ${REVERSE} '$xarg' ${RESET}\
 
-            \n\$_AUTHOR_NAME_: ${REVERSE} '$_AUTHOR_NAME_' ${RESET}\
-            \n\$_AUTHOR_MAIL_: ${REVERSE} '$_AUTHOR_MAIL_' ${RESET}\
-            \n\$_VERSION_: ${REVERSE} '$_VERSION_' ($xs_release_candidate) ${RESET}\
+            \n\$XS_AUTHOR_NAME: ${REVERSE} '$XS_AUTHOR_NAME' ${RESET}\
+            \n\$XS_AUTHOR_MAIL: ${REVERSE} '$XS_AUTHOR_MAIL' ${RESET}\
+            \n\$XS_VERSION: ${REVERSE} '$XS_VERSION' ${RESET}\
+            \n\$XS_VERSION_RC: ${REVERSE} '$XS_VERSION_RC' ${RESET}\
             \n$(.xs --hl '-')\n${YELLOW}# 2. xarg function:${RESET}\n\
             \n$(Hash.all "$args_hash" | cut -d '+' -f1 | column -s : -t)\
             \n$(.xs --hl '-')\n${YELLOW}# 3. xrun function:${RESET}\n\
@@ -561,7 +559,7 @@ xrun(){
             _PARAMS_+=("-$flag")  # Add the individual flag to the _PARAMS_ array
         done
     }
-
+    
     # set default grouping (has more than zero entries with groups? user defined)
     if [ "$(Hash.all | grep -Ei '\+[a-z]' | wc -l)" -gt 0 ]; then
         # create this group for --help and --version options
@@ -571,7 +569,7 @@ xrun(){
         xarg --block "Available Options"
     fi
     # set default args for any script
-    _CURRENT_VERSION_=$_VERSION_
+    XS_CURRENT_VERSION=$XS_VERSION
 
     # add support to logflags without '--' prefix
     if [ -z "$_xARGS_NO_DAHS"  ]; then 
@@ -611,7 +609,7 @@ xrun(){
                 __RUN_ARGS_CASE_OPTIONS__+="*) xs_usage --reject-unknow \$1 ;; \n"
             ;;
             --xversion-full | --xversionrc)
-                shift; _CURRENT_VERSION_=$_VERSIONRC_
+                shift; XS_CURRENT_VERSION=$XS_VERSION_RC
             ;;
             --xdebug | --xsdebug) 
                 shift; _XS_ARGS_DEBUG=true; 
@@ -684,7 +682,7 @@ xcase(){
     # define version of script
     xs_version(){
         # set app version (dynamic from header comments or static)
-        [ -z "$_VERSION_" ] && _VERSION_="$(head -n 20 "$0" | \
+        [ -z "$XS_VERSION" ] && XS_VERSION="$(head -n 20 "$0" | \
             grep '# Version:' -m1 | \
             tr -d ' ' | \
             cut -d ':' -f2 | \
@@ -698,14 +696,14 @@ xcase(){
             cut -d '.' -f4 \
         )"
 
-        _VERSIONRC_="$_VERSION_-rc$xs_release_candidate"
-        [ -z "$_VERSION_" ] && _VERSION_='0.0.1'
+        XS_VERSION_RC="$XS_VERSION-rc$xs_release_candidate"
+        [ -z "$XS_VERSION" ] && XS_VERSION='0.0.1'
     }
 
     # define when script was created
     xs_created(){
         # set app version (dynamic from header comments or static)
-        [ -z "$_CREATED_AT_" ] && _CREATED_AT_="$(head -n 20 "$0" | \
+        [ -z "$XS_CREATED_AT" ] && XS_CREATED_AT="$(head -n 20 "$0" | \
             grep '# Created:' -m1 | \
             tr -d ' ' | \
             cut -d ':' -f2 | \
@@ -714,21 +712,21 @@ xcase(){
             cut -d '/' -f1 \
         )"
         # not found date in header comments, try filestats
-        [ -z "$_CREATED_AT_" ] && \
-            _CREATED_AT_="$(stat "$0" | \
+        [ -z "$XS_CREATED_AT" ] && \
+            XS_CREATED_AT="$(stat "$0" | \
                 grep Birth  | \
                 cut -d ' ' -f3 | \
                 cut -d '.' -f1 | \
                 cut -d '-' -f1 \
             )"
         # still null? set as unknown, to be filed later
-        [ -z "$_CREATED_AT_" ] && _CREATED_AT_='<unknown>'
+        [ -z "$XS_CREATED_AT" ] && XS_CREATED_AT='<unknown>'
     }
 
     # define when script was updated
     xs_updated(){
         # set app version (dynamic from header comments or static)
-        [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
+        [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT="$(head -n 20 "$0" | \
             grep '# Last Modified:' -m1 | \
             tr -d ' ' | \
             cut -d ':' -f2 | \
@@ -736,7 +734,7 @@ xcase(){
             cut -d '-' -f1 | \
             tr -d '/'
         )"
-        # [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_="$(head -n 20 "$0" | \
+        # [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT="$(head -n 20 "$0" | \
         #     grep '# Last Modified:' -m1 | \
         #     cut -d ',' -f2 | \
         #     tr -d ' ' | \
@@ -747,20 +745,20 @@ xcase(){
         # )"
             # cut -d '/' -f1 \
         # not found date in header comments, try filestats
-        [ -z "$_UPDATED_AT_" ] && \
-            _UPDATED_AT_="$(stat "$0" | \
+        [ -z "$XS_UPDATED_AT" ] && \
+            XS_UPDATED_AT="$(stat "$0" | \
                 grep Birth  | \
                 cut -d ' ' -f3 | \
                 cut -d '.' -f1 | \
                 cut -d '-' -f1 \
             )"
         # still null? set as unknown, to be filed later
-        [ -z "$_UPDATED_AT_" ] && _UPDATED_AT_='<unknown>'
+        [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT='<unknown>'
     }
 
     # define author of script
     xs_author_name(){
-        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(
             head -n 20 "$0" | \
             grep '# Author.:' -m1 | \
             cut -d ':' -f2 |\
@@ -768,19 +766,19 @@ xcase(){
             cut -c2-
         )
         # not found author in header comments, try get by git config
-        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.name)
-        # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global user.email)
-        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.name)
-        # [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_=$(git config --global author.email)
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global user.name)
+        # [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global user.email)
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global author.name)
+        # [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global author.email)
         # still null? try by $USER variable
-        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_="$USER"
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME="$USER"
         # null? set as unknown, to be filled in later
-        [ -z "$_AUTHOR_NAME_" ] && _AUTHOR_NAME_='<unknown>'
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME='<unknown>'
     }
 
     # define author email
     xs_author_mail(){
-        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(
             head -n 20 "$0" | \
             grep '# Author.:' -m1 | \
             cut -d ':' -f2 |\
@@ -788,10 +786,10 @@ xcase(){
             tr -d '(' | tr -d ')' | tr -d ' '
         )
         # not found author in header comments, try get by git config
-        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global user.email)
-        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_=$(git config --global author.email)
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(git config --global user.email)
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(git config --global author.email)
         # null? set as unknown, to be filled in later
-        [ -z "$_AUTHOR_MAIL_" ] && _AUTHOR_MAIL_='<unknown>'
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL='<unknown>'
     }
 
     case "${1}" in
@@ -818,6 +816,9 @@ xcase(){
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # initialize var 'xarg'
 xarg=''
+
+# fill vars VERSION, XS_CREATED_AT, XS_AUTHOR_NAME
+.xs --init
 
 # define current_cmd at start
 xcmd=main

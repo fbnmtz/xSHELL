@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 18:13:47
+# Last Modified: Tuesday, 2026/08/18 - 02:26:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.34.1192
+# Version: 0.1.35.1194
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -213,7 +213,7 @@ xs_requirements(){
   local found=''
   
   # store all requirements for thus app/script
-  XS_REQUIREMENTS+=$*
+  [ -z "$XS_REQUIREMENTS" ] && XS_REQUIREMENTS+=$@ || XS_REQUIREMENTS+=" $@"
 
   # iterate over each tool provided as an argument
   for tool in "$@"; do

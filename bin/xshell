@@ -5,10 +5,10 @@
 # Created: Thursday, 2020/02/18 - 20:44:58
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 17:55:11
+# Last Modified: Tuesday, 2026/08/18 - 00:42:06
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.28.468
+# Version: 0.1.29.470
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -45,7 +45,7 @@ xarg --id -s,--show    --desc "show xSHELL enviroment variables"
 xarg --id -c,--config  --desc "config xSHELL enviroment variables on user space"
 
 xarg --header "xSHELL script generator"
-xarg --footer "xSHELL v$_VERSION_ - $today - author: $author_name <$author_mail>"
+xarg --footer "xSHELL v$XS_VERSION - $today - author: $author_name <$author_mail>"
 
 # TODO: planning new features
 # xarg --block "xSHELL Packages"

@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/13 - 00:47:03
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/16 - 23:53:08
+# Last Modified: Tuesday, 2026/08/18 - 01:35:06
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.9
+# Version: 0.0.3.12
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,13 +17,21 @@
 # HISTORY:
 #
 
-# def falil(tools): function to print a error message
-# ex: fail "bin1"
-fail(){
-    local tools=$@
-    local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'"
-    echo -e "$error_msg"
-    if type xsys.notify &> /dev/null; then
-        xsys.notify "$APP" "$error_msg"
-    fi
-}
+func_name="fail"
+
+if ! type "$func_name" &> /dev/null; then
+    
+    # def falil(tools): function to print a error message
+    # ex: fail "bin1"
+    fail(){
+        local tools=$@
+        local error_msg="requirements error! please install missing tools: '${tools//\|/' or '}'"
+        echo -e "$error_msg"
+        if type xsys.notify &> /dev/null; then
+            xsys.notify "$APP" "$error_msg"
+        fi
+    }
+
+else
+    xs_debug "xs_source() error! Function's '$func_name' already defined.\n"
+fi

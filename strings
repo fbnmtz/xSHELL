@@ -6,16 +6,18 @@
 # Created: Friday, 2021/05/21 - 21:09:41
 # Author.: Fabiano Matos, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2025/02/18 - 01:27:08
+# Last Modified: Tuesday, 2026/08/18 - 02:02:33
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.109
+# Version: 0.1.6.113
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
 # ############################################################################
 # HISTORY:
 #
+# Tuesday, 2026/08/18 - 02:01:26: (@fbnmtz)
+#  -> fix 'End of Line Sequence' from 'CRLF' to 'LF'
 
 _xLIB_STRINGS_=true
 

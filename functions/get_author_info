@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/append_file
-# Created: Sunday, 2025/02/14 - 00:37:39
+# File...: functions/get_author_info
+# Created: ..., 2024/12/09 - 15:26:56
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 01:39:38
+# Last Modified: Tuesday, 2026/08/18 - 02:23:07
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.11
+# Version: 0.0.1.5
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,24 +17,30 @@
 # HISTORY:
 #
 
-func_name="append_file"
+func_name="get_author_info"
 
 if ! type "$func_name" &> /dev/null; then
-    
-    # def append_file(filename, content)
-    function appendFile(){
-        local file=$1; shift
-        local content="$@"
-        local cmd=""
-        local content_cmd="echo -e '$content'"
-        local tee_cmd="tee -a $file"
-        ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
-        cmd="$content_cmd | $tee_cmd"
-        echo "\tadding '${content/\\n/}' to '$file'."
-        eval "$cmd" >> $APP_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
-    }
+    # Function to get author information
+    get_author_info() {
+        local type=$1
+        local config_keys=("user.$type" "author.$type")
+        local default_value=$USER
+        local fallback='<unknown>'
 
-    function append_file(){ appendFile "$@"; }
+        for key in "${config_keys[@]}"; do
+            local value=$(git config --global "$key")
+            if [ -n "$value" ]; then
+                echo "$value"
+                return
+            fi
+        done
+
+        if [ -n "$default_value" ]; then
+            echo "$default_value"
+        else
+            echo "$fallback"
+        fi
+    }
 
 else
     xs_debug "xs_source() error! Function's '$func_name' already defined.\n"

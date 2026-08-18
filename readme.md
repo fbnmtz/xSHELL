@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Monday, 2026/08/10 - 20:01:34
+ Last Modified: Tuesday, 2026/08/18 - 00:42:56
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.1.559
+ Version: 0.1.2.563
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -186,9 +186,9 @@ xshell -f libsExample \
 #!/usr/bin/env bash
 # script: libsExample
 
-_AUTHOR_="@fbnmtz"
-_CREATED_AT_="2023"
-_CURRENT_VERSION_="0.0.1"
+XS_AUTHOR="@fbnmtz"
+XS_CREATED_AT="2023"
+XS_CURRENT_VERSION="0.0.1"
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # shellcheck disable=SC1090,SC2154
@@ -285,13 +285,13 @@ libsExapmle --math "2*2"
       `create a usage information based on defined parameters with function 'xarg'`
    2. --version
 
-      `show de version defined by variable ${_CURRENT_VERSION_`}
+      `show de version defined by variable ${XS_CURRENT_VERSION`}
 2. some values come from the header information. If you don't use the same header, please define this variables before call `xrun` function:
 
    ```bash
-   _AUTHOR_="YourNme"
-   _CREATED_AT_="year"
-   _CURRENT_VERSION_="X.X.X"
+   XS_AUTHOR="YourNme"
+   XS_CREATED_AT="year"
+   XS_CURRENT_VERSION="X.X.X"
    ```
 [Go Back](#summary) -->
 
@@ -358,7 +358,7 @@ Functions
   # Examples of usage of 'xarg' function:
 
   xarg --id "-h,--help"    --code "xusage --help"                      --desc "show this help"
-  xarg --id "-v,--version" --code "echo "$_CURRENT_VERSION_"; exit" --desc "print version and exit"
+  xarg --id "-v,--version" --code "echo "$XS_CURRENT_VERSION"; exit" --desc "print version and exit"
 
   ```
 * `xrun`

@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 17:58:22
+# Last Modified: Tuesday, 2026/08/18 - 00:51:36
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.22.401
+# Version: 0.1.23.410
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,31 +21,10 @@ _xLIB_XSHELL_=true
 DEFAULT_OUTPUT=$HOME/bin
 BACKUP_DIR=$(basepath "$APP_DATA")/trash
 
-# Function to get author information
-get_author_info() {
-    local type=$1
-    local config_keys=("user.$type" "author.$type")
-    local default_value=$USER
-    local fallback='<unknown>'
-
-    for key in "${config_keys[@]}"; do
-        local value=$(git config --global "$key")
-        if [ -n "$value" ]; then
-            echo "$value"
-            return
-        fi
-    done
-
-    if [ -n "$default_value" ]; then
-        echo "$default_value"
-    else
-        echo "$fallback"
-    fi
-}
-
 xshell_init(){
     # validate needed tools
     xs_require rev cut git touch date mkdir grep sort upcase cp chmod chown
+    xs_source --local-only get_author_info
     
     # set default editor
     editor=$(getPath code micro nano vim neovim ne emacs mcedit tilde atom gedit gvim pico)
@@ -95,10 +74,10 @@ parse_args(){
 # add some iformations to script without our default header
 template_header_simple(){
     echo -e "
-_AUTHOR_=\"$author_name\"
-_CREATED_AT_=\"$today\"
-_UPDATED_AT_=\"$today\"
-_CURRENT_VERSION_=\"0.0.1\""
+XS_AUTHOR=\"$author_name\"
+XS_CREATED_AT=\"$today\"
+XS_UPDATED_AT=\"$today\"
+XS_CURRENT_VERSION=\"0.0.1\""
 }
 
 # default header for scripts
