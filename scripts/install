@@ -6,10 +6,10 @@
 # Created: Friday, 2023/01/06 - 23:38:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/17 - 00:55:14
+# Last Modified: Thursday, 2026/08/20 - 06:59:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.11.659
+# Version: 0.1.12.663
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  > install script for xSHELL. Run directly from the repository or download it from the web.
@@ -31,7 +31,7 @@ if ! type xs_source &> /dev/null; then
 fi
 
 # load additional libraries and functions
-xs_source "_sudo append_file check_path echo require_root upcase" 
+xs_source "init _sudo append_file check_path echo require_root upcase" 
 xrequirements git tee awk grep dirname curl
 
 
@@ -108,7 +108,7 @@ if [ ! ${#user_list[@]} -eq 0 ]; then
     # iterate over all
     for user in "${user_list[@]}"; do
         user_file= /home/$user/.xshell_env.sh
-        curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env.sh -o $user_file
+        curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/xshell_env.sh -o $user_file
         echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.profile
         echo "export BASH_ENV=~/.xshell_env.sh" | tee -a /home/$user/.bashrc
         # chmod 644$user_file
@@ -124,7 +124,7 @@ if is_root; then
     # config files for all system (ROOT)
     root_file=/etc/profile.d/xshell_env.sh
     touch $root_file
-    curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/.xshell_env.sh -o $root_file
+    curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/examples/xshell_env.sh -o $root_file
     echo "export BASH_ENV=$root_file" | tee -a /etc/profile
     echo "export BASH_ENV=$root_file" | tee -a /etc/bash.bashrc
 fi

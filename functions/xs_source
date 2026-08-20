@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 01:15:43
+# Last Modified: Thursday, 2026/08/20 - 07:02:35
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.17.328
+# Version: 0.0.18.332
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -30,17 +30,18 @@ if ! type xs_source &> /dev/null; then
     else
       source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/functions/xs_debug)"
     fi
+    # load colors
+    if [ -z "${RED}" ] &> /dev/null; then
+      _xc="$xSHELL_PATH/colors"
+      if [ -f "$_xc" ]; then
+        source "$_xc"
+      else
+        source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/colors)"
+      fi
+    fi
+    
   fi
 
-  # load colors
-  if [ -z "${RED}" ] &> /dev/null; then
-    _xc="$xSHELL_PATH/colors"
-    if [ -f "$_xc" ]; then
-      source "$_xc"
-    else
-      source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/colors)"
-    fi
-  fi
 
   # def xs_source(filename): function to source a script from the repository (local or using curl)
   #   ex: xs_source "args system colors upcase"
@@ -114,7 +115,9 @@ if ! type xs_source &> /dev/null; then
     done
   }
 
-  function xsource () { xs_source "$@"; }
+  function xsource(){ xs_source "$@"; }
+  function xs_func(){ xs_source "$@"; }
+  function xs_def(){ xs_source "$@"; }
 
 else
   xs_debug "Error! Function 'xs_source' already defined.\n"
