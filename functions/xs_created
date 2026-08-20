@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xs_created
+# Created: Tuesday, 2026/08/18 - 12:42:01
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 12:42:30
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.1
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# define when script was created
+    xs_created(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$XS_CREATED_AT" ] && XS_CREATED_AT="$(head -n 20 "$0" | \
+            grep '# Created:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d ',' -f2 | \
+            cut -d '-' -f1 | \
+            cut -d '/' -f1 \
+        )"
+        # not found date in header comments, try filestats
+        [ -z "$XS_CREATED_AT" ] && \
+            XS_CREATED_AT="$(stat "$0" | \
+                grep Birth  | \
+                cut -d ' ' -f3 | \
+                cut -d '.' -f1 | \
+                cut -d '-' -f1 \
+            )"
+        # still null? set as unknown, to be filed later
+        [ -z "$XS_CREATED_AT" ] && XS_CREATED_AT='<unknown>'
+    }

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xs_version
+# Created: --, 2025/02/18 - 01:49:45
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 12:37:32
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.4
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# define version of script
+    xs_version(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$XS_VERSION" ] && XS_VERSION="$(head -n 20 "$0" | \
+            grep '# Version:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d '.' -f1-3 \
+        )"
+        # get release candidate 
+        xs_release_candidate="$(head -n 20 "$0" | \
+            grep '# Version:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d '.' -f4 \
+        )"
+
+        XS_VERSION_RC="$XS_VERSION-rc$xs_release_candidate"
+        [ -z "$XS_VERSION" ] && XS_VERSION='0.0.1'
+    }

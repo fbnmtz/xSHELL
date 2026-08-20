@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xs_updated
+# Created: Tuesday, 2026/08/18 - 12:44:00
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 12:44:10
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.1
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# define when script was updated
+    xs_updated(){
+        # set app version (dynamic from header comments or static)
+        [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT="$(head -n 20 "$0" | \
+            grep '# Last Modified:' -m1 | \
+            tr -d ' ' | \
+            cut -d ':' -f2 | \
+            cut -d ',' -f2 | \
+            cut -d '-' -f1 | \
+            tr -d '/'
+        )"
+        # [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT="$(head -n 20 "$0" | \
+        #     grep '# Last Modified:' -m1 | \
+        #     cut -d ',' -f2 | \
+        #     tr -d ' ' | \
+        #     tr -d ':' | \
+        #     tr -d ',' | \
+        #     tr -d '-' | \
+        #     tr -d '/'
+        # )"
+            # cut -d '/' -f1 \
+        # not found date in header comments, try filestats
+        [ -z "$XS_UPDATED_AT" ] && \
+            XS_UPDATED_AT="$(stat "$0" | \
+                grep Birth  | \
+                cut -d ' ' -f3 | \
+                cut -d '.' -f1 | \
+                cut -d '-' -f1 \
+            )"
+        # still null? set as unknown, to be filed later
+        [ -z "$XS_UPDATED_AT" ] && XS_UPDATED_AT='<unknown>'
+    }

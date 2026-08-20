@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xs_author_mail
+# Created: Tuesday, 2026/08/18 - 12:49:46
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 12:49:53
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.1
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# define author email
+    xs_author_mail(){
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(
+            head -n 20 "$0" | \
+            grep '# Author.:' -m1 | \
+            cut -d ':' -f2 |\
+            cut -d ',' -f2 |\
+            tr -d '(' | tr -d ')' | tr -d ' '
+        )
+        # not found author in header comments, try get by git config
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(git config --global user.email)
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL=$(git config --global author.email)
+        # null? set as unknown, to be filled in later
+        [ -z "$XS_AUTHOR_MAIL" ] && XS_AUTHOR_MAIL='<unknown>'
+    }

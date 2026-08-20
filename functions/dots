@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/require_root
-# Created: Sunday, 2026/08/09 - 18:05:33
+# File...: functions/dots
+# Created: Thursday, 2022/12/29 - 23:06:02
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/08/19 - 18:02:27
+# Last Modified: Tuesday, 2026/08/18 - 08:48:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.17
+# Version: 0.0.1.14
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,38 +17,15 @@
 # HISTORY:
 #
 
-func_name="require_root"
+func_name="dots"
 
 if ! type "$func_name" &> /dev/null; then
-
-    # function to verify if the current user is root
-    function require_root() {
-        local msg=$1
-
-        XS_LAST_USER=$(last | head -n1 | awk '{print $1}')
-
-        [ -z "$msg" ] && msg="You need to be ROOT to run this script."
-        
-        if [ $UID -ne 0 ]; then
-            echo -e "$msg"
-            exit 1
-        fi
-
+    # print msg with dots
+    dots() {
+        local pad=$(printf "%0.1s" "."{1..60})
+        printf " * %s%*.*s" "$1" 0 $((60-${#1})) "$pad"
         return 0
     }
-    function requireROOT() { require_root "$@"; }
-
-    # function to check if current user is ROOT 
-    function is_root() {
-        if [ $UID -eq 0 ]; then
-            return 0
-            # echo true 
-        else
-            return 1
-            # echo false
-        fi    
-    }
-    function isROOT?(){ is_root "$@"; }
     
 else
     xs_debug "xs_source() error! Function's '$func_name' already defined.\n"

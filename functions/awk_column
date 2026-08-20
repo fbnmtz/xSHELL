@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/awk_column
+# Created: ..., 2023/02/04 - 15:43:01
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Wednesday, 2026/08/19 - 00:53:06
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.9
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# column replacement
+awk_column(){
+    xrequirements awk cut
+
+    local arg ARGS
+    local char="$(echo $1 | cut -d '=' -f2)"; shift
+
+    while read -r arg; do
+        ARGS+=($arg)
+    done
+
+    echo -e "${ARGS[@]}" | awk -v FS="$char" -v OFS="\t" '
+    {
+        for (i = 1; i <= NF; i++) {
+            col_width[i] = (length($i) > col_width[i]) ? length($i) : col_width[i];
+            data[NR, i] = $i;
+        }
+        row_count = NR;
+        col_count = (NF > col_count) ? NF : col_count;
+    }
+    END {
+        for (i = 1; i <= row_count; i++) {
+            for (j = 1; j <= col_count; j++) {
+                printf "%-*s%s", col_width[j], data[i, j], (j < col_count ? OFS : "");
+            }
+            print "";
+        }
+    }'
+}
+
+awkColumn(){ awk_column "$@"; }

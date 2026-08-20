@@ -6,10 +6,10 @@
 # Created: Thursday, 2023/01/05 - 21:11:59
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 23:13:37
+# Last Modified: Tuesday, 2026/08/18 - 10:49:20
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.12.464
+# Version: 0.0.13.466
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -61,10 +61,10 @@ xsys.notify(){
     esac
     
     
-    if [ -n "$_xLASTUSER_" ] && [ "$_xLASTUSER_" != "$USER" ]; then
-        # echo -e '\ncmd: su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"\"\' '
-        # su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"; bash\"'"
-        su - "$_xLASTUSER_" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \" echo \"$_xSYS_NOTIFY_ARG\" && sleep 10 \"'"
+    if [ -n "$XS_LAST_USER" ] && [ "$XS_LAST_USER" != "$USER" ]; then
+        # echo -e '\ncmd: su - "$XS_LAST_USER" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"\"\' '
+        # su - "$XS_LAST_USER" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \"$_xSYS_NOTIFY_APP \"$_xSYS_NOTIFY_ARG\"; bash\"'"
+        su - "$XS_LAST_USER" -c "xterm -geometry +1+1 -n login -display :0 -e 'bash -c \" echo \"$_xSYS_NOTIFY_ARG\" && sleep 10 \"'"
     else
         # echo -e "\ncmd: $_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG\n"
         eval "$_xSYS_NOTIFY_APP $_xSYS_NOTIFY_ARG"

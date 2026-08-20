@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/tern
+# Created: Thursday, 2022/12/29 - 23:10:02
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 10:48:51
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.16
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+func_name="tern"
+
+if ! type "$func_name" &> /dev/null; then
+    # ternary operator
+    # tern "expr" "true value" "false value"
+    tern(){
+        if eval "$1"; then echo "$2"; else echo "$3"; fi
+    }
+    
+else
+    xs_debug "xs_source() error! Function's '$func_name' already defined.\n"
+fi

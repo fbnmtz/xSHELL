@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/get_path
+# Created: Thursday, 2022/12/29 - 23:06:02
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 08:34:23
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.6
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+func_name="get_path"
+
+if ! type "$func_name" &> /dev/null; then
+    get_path(){
+        # DEPRECATED: moved to system as xsys.path
+        for tool in "$@"; do
+            if which "$tool" &> /dev/null; then
+                which "$tool"
+                return 0
+            fi
+        done
+        return 1
+    }
+
+    function getPath(){ get_path "$@"; }
+    
+else
+    xs_debug "xs_source() error! Function's '$func_name' already defined.\n"
+fi

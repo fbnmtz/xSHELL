@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/xs_author_name
+# Created: Tuesday, 2026/08/18 - 12:47:55
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 12:48:03
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.1
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# define author of script
+    xs_author_name(){
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(
+            head -n 20 "$0" | \
+            grep '# Author.:' -m1 | \
+            cut -d ':' -f2 |\
+            cut -d ',' -f1 |\
+            cut -c2-
+        )
+        # not found author in header comments, try get by git config
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global user.name)
+        # [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global user.email)
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global author.name)
+        # [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME=$(git config --global author.email)
+        # still null? try by $USER variable
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME="$USER"
+        # null? set as unknown, to be filled in later
+        [ -z "$XS_AUTHOR_NAME" ] && XS_AUTHOR_NAME='<unknown>'
+    }

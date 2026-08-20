@@ -6,10 +6,10 @@
 # Created: Saturday, 2026/08/08 - 11:33:09
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/14 - 13:55:56
+# Last Modified: Wednesday, 2026/08/19 - 21:10:10
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.23
+# Version: 0.0.4.54
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -25,10 +25,43 @@ export xSHELL_INIT="${xSHELL_PATH}/init"
 export xSHELL_BIN="${xSHELL_PATH}/bin"
 export xSHELL_SCRIPTS="${xSHELL_PATH}/scripts"
 export xSHELL_EXAMPLES="${xSHELL_PATH}/examples"
+
+export BASH_ENV="${xSHELL_PATH}/examples/.xshell_env.sh"
+
 export PATH="${PATH}:${xSHELL_PATH}:${xSHELL_BIN}:${xSHELL_SCRIPTS}:${xSHELL_EXAMPLES}:${HOME}/bin"
+
 # shellcheck disable=SC1091
-xs_init(){ source "${xSHELL_PATH}/init" ; }
+xs_init(){ source "${xSHELL_PATH}/init"; }
 
+# xSHELL is installed?
+if [ -n "$xSHELL_PATH" ] && [ -f "${xSHELL_PATH}/examples/.xshell_env.sh" ]; then
 
-# add BASH_ENV=~/.xshell_env.sh on ~/.profile
-# add BASH_ENV=/etc/profile.d/xshell_env.sh on /etc/profile
+    # config BASH_ENV on current user
+    if ! grep -q 'export BASH_ENV="$HOME/.xshell_env.sh"' ~/.profile; then
+        cp "${xSHELL_PATH}/examples/.xshell_env.sh" ~/
+        echo 'export BASH_ENV="$HOME/.xshell_env.sh"' >> ~/.profile
+    fi
+    
+    # config BASH_ENV on etc
+    if [ "$(id -u)" -eq 0 ]; then
+        if ! grep -q 'export BASH_ENV=/etc/profile.d/xshell_env.sh' /etc/profile; then
+            cp "${xSHELL_PATH}/examples/.xshell_env.sh" /etc/profile.d/xshell_env.sh
+            echo 'export BASH_ENV=/etc/profile.d/xshell_env.sh' >> /etc/profile
+        fi
+    fi
+
+fi
+
+# # config BASH_ENV on current user
+# if ! grep -q 'export BASH_ENV="$HOME/.xshell_env.sh"' ~/.profile; then
+#     cp "${xSHELL_EXAMPLES}/.xshell_env.sh" ~/
+#     echo 'export BASH_ENV="$HOME/.xshell_env.sh"' >> ~/.profile
+# fi
+
+# # config BASH_ENV on etc
+# if [ "$(id -u)" -eq 0 ]; then
+#     if ! grep -q 'export BASH_ENV=/etc/profile.d/xshell_env.sh' /etc/profile; then
+#         cp "${xSHELL_EXAMPLES}/.xshell_env.sh" /etc/profile.d/xshell_env.sh
+#         echo 'export BASH_ENV=/etc/profile.d/xshell_env.sh' >> /etc/profile
+#     fi
+# fi

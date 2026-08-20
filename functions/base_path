@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/base_path
+# Created: Thursday, 2022/12/29 - 23:06:02
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/08/18 - 08:37:24
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.11
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+func_name="base_path"
+
+if ! type "$func_name" &> /dev/null; then
+    # function to return a base_path from a file
+    # @param $1 -> file: /etc/hosts
+    # @return path to file -> /etc
+    base_path(){
+        # DEPRECATED: moved to system as xsys.baspath
+        echo "$1" | rev | cut -d '/' -f2-30 | rev
+    }
+
+    function basepath(){ base_path "$@"; }
+    
+else
+    xs_debug "xs_source() error! Function's '$func_name' already defined.\n"
+fi

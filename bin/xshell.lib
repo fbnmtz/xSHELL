@@ -6,10 +6,10 @@
 # Created: Sunday, 2022/02/20 - 18:44:18
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 00:51:36
+# Last Modified: Wednesday, 2026/08/19 - 21:09:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.23.410
+# Version: 0.1.24.413
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -77,7 +77,7 @@ template_header_simple(){
 XS_AUTHOR=\"$author_name\"
 XS_CREATED_AT=\"$today\"
 XS_UPDATED_AT=\"$today\"
-XS_CURRENT_VERSION=\"0.0.1\""
+XS_VERSION=\"0.0.1\""
 }
 
 # default header for scripts
