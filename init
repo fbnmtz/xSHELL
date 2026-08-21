@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 02:26:51
+# Last Modified: Friday, 2026/08/21 - 03:20:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.35.1194
+# Version: 0.1.36.1219
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -32,21 +32,18 @@ if ! type xs_source &> /dev/null; then
   fi
 fi
 
-xs_source --local-only check fail upcase is_lib_loaded xs_requirements_report 
-
-if is_debug_enabled; then
-  [ -z "${RED}" ] && xs_source "$xSHELL_PATH/colors"   
-fi
+xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report 
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+XS_HOME="$HOME/.xshell"
+
 APP=$(basename "$0")          # application name
 APP_NAME=$APP                 # application name
 APP_PATH=$0                   # application path and name
 APP_DIR=$(dirname "$0")       # application current directory
-APP_HOME="$HOME/.xshell/$APP" # application home (store data)
+APP_HOME="$XS_HOME/$APP"      # application home (store data)
 APP_DATA=$APP_HOME
 # DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
-
 APP_LOG="/tmp/xshell-$APP.log"
 
 # store current app requirements (binaries)
@@ -77,9 +74,9 @@ XS_USE_COUNT=0
 # def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
 # ex: setHome {dir1, dir2}
 xs_create_app_home(){
-  APP_DATA=$HOME/.xshell/$APP
-  APP_HOME=$APP_DATA
-  mkdir -p "$APP_DATA/$*"
+  for dir in "$@"; do
+    mkdir -p "$APP_DATA/$dir"
+  done
 }
 
 # def use(lib1, lib2, ...): function to import/use some library

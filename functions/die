@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/die
+# Created: Thursday, 2026/08/20 - 23:47:33
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2026/08/20 - 23:54:42
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.17
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+function die(){
+    # handle args
+    case "${1}" in
+      -m | --msg ) shift; XS_DIE_MSG="$1"; shift;  ;;
+      -e | --exit) shift; XS_DIE_CODE="$1"; shift; ;;
+    esac
+    
+    [ -z "$XS_DIE_MSG"  ] && XS_DIE_MSG="$@"
+    [ -z "$XS_DIE_CODE" ] && XS_DIE_CODE=99
+
+    echo "$XS_DIE_MSG" > &2 
+    exit $XS_DIE_CODE
+}

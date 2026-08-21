@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/20 - 22:42:04
+# Last Modified: Friday, 2026/08/21 - 03:21:01
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.42.2167
+# Version: 0.2.42.2176
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -486,8 +486,13 @@ xrun(){
     }
     
     xs_run_debug(){
+            # \n\$BASH_COMMAND: ${REVERSE} '${BASH_COMMAND[@]}' ${RESET}\
         echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
             \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
+            \n\$BASH_SOURCE: ${REVERSE} '$BASH_SOURCE' ${RESET}\
+            \n\$DIRSTACK: ${REVERSE} '$DIRSTACK' ${RESET}\
+            \n\$FUNCNAME: ${REVERSE} '${FUNCNAME[@]}' ${RESET}\
+            
             \n\$xSHELL_PATH: ${REVERSE} '$xSHELL_PATH' ${RESET}\
             
             \n\$xSHELL_LIBS: ${REVERSE} '$(echo -n "${xSHELL_LIBS[@]/$xSHELL_PATH\/}")' ${RESET}\
