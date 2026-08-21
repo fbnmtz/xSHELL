@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/08/19 - 18:00:39
+# Last Modified: Thursday, 2026/08/20 - 22:32:23
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.40.2136
+# Version: 0.2.41.2165
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -693,7 +693,17 @@ xcase(){
         ;;
         --require-one)
             shift;
-            test -z "$1" && xs_usage --missing-param; 
+            # no arg given?
+            if [ -z "$1" ]; then
+                # but stdin is a term (then its a pipe / redirect)
+                if [[ ! -t 0 ]]; then
+                    # has data to be handled by app/script, so ignore and continue
+                    return true
+                else
+                    # raise error
+                    xs_usage --missing-param
+                fi
+            fi
         ;;
         --hl | --horizontal-line)
             shift;
