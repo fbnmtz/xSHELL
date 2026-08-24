@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/23 - 22:08:53
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/23 - 22:10:33
+# Last Modified: Monday, 2026/08/24 - 00:52:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.2.6
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,27 +17,42 @@
 # HISTORY:
 #
 
-# show aliases (functions)
-ifname() {
-    local base_index=-1
-    local current_index=0
+ # show aliases (functions)
+    ifname() {
+        local base_index=-1
 
-    for ((i=0; i<${#FUNCNAME[@]}; i++)); do
-        if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
-            base_index=$i
-            break
-        fi
-    done
-
-    if [ "$base_index" -ne -1 ]; then
-        local distance=$((base_index - current_index))
-        if [ "$distance" -eq 1 ]; then
-            echo "${FUNCNAME[current_index]}"
+        for ((i=0; i<${#FUNCNAME[@]}; i++)); do
+            if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
+                base_index=$i
+                break
+            fi
+        done
+        
+        local current_index=''
+        if [ "${FUNCNAME[0]}" == "ifname" ]; then
+          current_index=1
         else
-            local intermediate_index=$((base_index - 1))
-            echo "${FUNCNAME[intermediate_index]}"
+          current_index=0
         fi
-    else
-        echo "${FUNCNAME[2]}"
-    fi
-}
+       
+        if [ "$base_index" -ne -1 ]; then
+        
+            local index=$((base_index - current_index))
+            if [ "$index" -eq 1 ] ; then
+            # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
+                # echo "ci ${FUNCNAME[*]}"
+                echo "${FUNCNAME[index]}"
+            elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
+                local index=$((current_index + 1))
+                echo "${FUNCNAME[index]}"
+            elif [ "${FUNCNAME[current_index]}" == "main" ]; then
+            #  [ "$index" -eq "$base_index" ]; then
+                local index=$((index + 2))
+                # echo "bi-2 ${FUNCNAME[*]}"
+                echo "${FUNCNAME[index]}"
+            fi
+        else
+            # echo "i=2 ${FUNCNAME[*]}"
+            echo "${FUNCNAME[2]}"
+        fi
+    }
