@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/21 - 03:02:01
+# Last Modified: Monday, 2026/08/24 - 00:16:53
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.19.412
+# Version: 0.0.20.503
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -42,19 +42,68 @@ if ! type xs_source &> /dev/null; then
     
   fi
 
-  # show aliases (functions)
-  xs_sname(){
-    if [ "${FUNCNAME[3]}" == "source" ]; then
-      echo "${FUNCNAME[2]} -> ${FUNCNAME[1]}"
-    else
-      echo "${FUNCNAME[1]}"
-    fi
-  }
+
 
 
   # def xs_source(filename): function to source a script from the repository (local or using curl)
   #   ex: xs_source "args system colors upcase"
   function xs_source() {
+
+    # show aliases (functions)
+    ifname() {
+        local base_index=-1
+
+        for ((i=0; i<${#FUNCNAME[@]}; i++)); do
+            if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
+                base_index=$i
+                break
+            fi
+        done
+        
+        local current_index=''
+        if [ "${FUNCNAME[0]}" == "ifname" ]; then
+          current_index=1
+        else
+          current_index=0
+        fi
+       
+        if [ "$base_index" -ne -1 ]; then
+        
+            local index=$((base_index - current_index))
+            if [ "$index" -eq 1 ] ; then
+            # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
+                # echo "ci ${FUNCNAME[*]}"
+                echo "${FUNCNAME[index]}"
+            elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
+                local index=$((current_index + 1))
+                echo "${FUNCNAME[index]}"
+            elif [ "${FUNCNAME[current_index]}" == "main" ]; then
+            #  [ "$index" -eq "$base_index" ]; then
+                local index=$((index + 2))
+                # echo "bi-2 ${FUNCNAME[*]}"
+                echo "${FUNCNAME[index]}"
+            fi
+        else
+            # echo "i=2 ${FUNCNAME[*]}"
+            echo "${FUNCNAME[2]}"
+        fi
+    }
+    
+    # # show aliases (functions)
+    # ifname(){
+    #   if [ "${FUNCNAME[4]}" == "source" ]; then
+    #     # echo "${FUNCNAME[2]} -> ${FUNCNAME[1]}"
+    #     echo "${FUNCNAME[3]}"
+    #   else
+    #     echo "${FUNCNAME[2]}"
+    #   fi
+    # }
+    if [ "$1" != "ifname" ]; then
+      xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    # else
+    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    fi
+
     # define how source files will be get
     case "${1}" in
       -b | --both  | --both-allow) shift; XS_SOURCE_FLAG=both  ;;
@@ -64,7 +113,7 @@ if ! type xs_source &> /dev/null; then
     esac
 
     # debug header
-    xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(xs_sname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
+    # xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(ifname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
     
     # store functions loaded by xs_source among multiple calls 
     [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+=$@ || XS_SOURCE_FILES+=" $@"
@@ -83,7 +132,7 @@ if ! type xs_source &> /dev/null; then
           for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
             
             if source "${f}" &> /dev/null; then
-              xs_debug " \`-> ${YELLOW}$(xs_sname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
+              xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
               success=true
               break
             # else
@@ -104,7 +153,7 @@ if ! type xs_source &> /dev/null; then
             for f in "${XS_SOURCE_BASE_URL}/${filename}" "${XS_SOURCE_BASE_URL}/functions/${filename}"; do
 
                 if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
-                  xs_debug " \`-> ${YELLOW}$(xs_sname)${RESET} ${CYAN}%-65s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (web)"
+                  xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-65s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (web)"
 
                   success=true
                   break
@@ -112,13 +161,13 @@ if ! type xs_source &> /dev/null; then
                 
             done
             
-            [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}$(xs_sname)${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
+            [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
           fi
         fi
 
       # type $filename true? this function is defined. 
       else
-        xs_debug "${YELLOW} !!! $(xs_sname) - function already defined! ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[ignore] (unknown)"
+        xs_debug "${YELLOW} !!! $(ifname) - function already defined! ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[ignore] (unknown)"
       fi
 
     done
@@ -130,5 +179,5 @@ if ! type xs_source &> /dev/null; then
   function xs_def(){ xs_source "$@"; }
 
 else
-  xs_debug "Error! Function '$(xs_sname)' already defined.\n"
+  xs_debug "Error! Function '$(ifname)' already defined.\n"
 fi

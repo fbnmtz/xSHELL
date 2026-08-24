@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/21 - 03:21:01
+# Last Modified: Monday, 2026/08/24 - 00:45:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.42.2176
+# Version: 0.2.43.2202
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -272,6 +272,10 @@ xs_usage(){
     # @param $3: description to generate help for this arg/action
 #   --> desc="text" 
 xarg(){
+    
+    xs_func ifname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    
     #TODO: refactor code below
     while [ "$1" != "" ]; do
         case $1 in
@@ -426,6 +430,9 @@ xarg(){
 # xrun "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xrun(){
+    
+    xs_func ifname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
     xRUN_ARGS="$@"
 
     xs_run_help(){
@@ -671,6 +678,8 @@ xrun(){
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
 xcase(){
+    xs_func ifname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
     local value="$1"; shift
     local code_block="$@"
     if [[ "$xarg" =~ $value ]]; then

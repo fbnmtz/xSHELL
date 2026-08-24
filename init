@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/21 - 03:20:54
+# Last Modified: Sunday, 2026/08/23 - 21:40:00
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.36.1219
+# Version: 0.1.37.1260
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,13 +27,12 @@ if ! type xs_source &> /dev/null; then
   _xs="$xSHELL_PATH/functions/xs_source"
   if [ -f "$_xs" ]; then
     source "$_xs"
+    xs_debug "xs_source [local]\n"
   else
     source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+    xs_debug "xs_source [web]\n"
   fi
 fi
-
-xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report 
-
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 XS_HOME="$HOME/.xshell"
 
@@ -70,6 +69,11 @@ xSHELL_DIRS=(
 # declare -A _xLIB_DIRS_
 XS_USE_CALLER=''
 XS_USE_COUNT=0
+
+xs_debug "${BG_GREEN}${BLACK} APP_NAME: $APP_NAME ${RESET}\n"
+xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE: $BASH_SOURCE - xs_func() ${RESET}\n"
+xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report 
+
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
 # ex: setHome {dir1, dir2}
@@ -103,6 +107,9 @@ xs_use(){
       XS_USE_CALLER=$XS_LIB  
     fi
   fi
+
+  xs_debug "${REVERSE} ${BASH_SOURCE} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
+  # xs_debug "${REVERSE}$0 - ${BASH_SOURCE[1]} $XS_USE_CALLER - xs_use() $* ${RESET}\n"
   
   # [ "$XS_USE_CALLLER" == "$0" ] && xs_debug "\n"
   # Print a message indicating that the use function is being called
@@ -206,6 +213,7 @@ function xs_unit(){ xs_use "$@"; }
 # def xs_requirements(bin1, bin2, "bin3A|bin3B"): function to validate required binaries (bin1, bin2, "bin3A|bin3B")
 # ex: xs_requirements bin1 bin2 "bin3A|bin3B"
 xs_requirements(){
+  xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
   local missing=""
   local found=''
   
