@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 08:32:49
+# Last Modified: Tuesday, 2026/08/25 - 19:36:52
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.4.118
+# Version: 1.0.5.124
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -138,6 +138,29 @@ xs_enable_colors(){
   FGCYAN=${CYAN}
   FGWHITE=${WHITE}
   FGGREY=${GREY}
+
+  # Short semantic aliases: fg one-letter, bg two-letter ('b'+color)
+  # Foreground (one-letter)
+  k=${BLACK}
+  r=${RED}
+  g=${GREEN}
+  y=${YELLOW}
+  b=${BLUE}
+  m=${MAGENTA}
+  c=${CYAN}
+  w=${WHITE}
+  e=${GREY}
+
+  # Background (two-letter: 'b'+color)
+  bk=${BGBLACK}
+  br=${BGRED}
+  bg=${BGGREEN}
+  by=${BGYELLOW}
+  bb=${BGBLUE}
+  bm=${BGMAGENTA}
+  bc=${BGCYAN}
+  bw=${BGWHITE}
+  be=${BGGREY}
 
 }
 
