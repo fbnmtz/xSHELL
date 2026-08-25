@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/18 - 12:54:16
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/08/19 - 17:57:55
+# Last Modified: Monday, 2026/08/24 - 23:25:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.6
+# Version: 0.0.2.18
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > return 'horizontal line' with current screen size
@@ -17,7 +17,16 @@
 # HISTORY:
 #
 
+# def xs_hl(char)
+#   @return a line wiht current columns number with <char>
 function xs_hl(){
-    xs_require seq tput
-    for i in $(seq 1 "$(($(tput cols)-3))"); do echo -n "$1"; done
+    # ensure char have olny one charactere
+    local char="${1:0:1}"
+    # get columns by default env variable $COLUMNS. If its not set, defaults to 80
+    local cols=${COLUMNS:-80}
+    # use a simple for instead seq
+    for ((i=1; i<cols-3; i++)); do
+        echo -n $char
+    done
+
 }
