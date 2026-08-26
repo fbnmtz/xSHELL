@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/25 - 19:36:52
+# Last Modified: Tuesday, 2026/08/25 - 22:35:42
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.5.124
+# Version: 1.0.6.174
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -175,6 +175,7 @@ xs_disable_colors(){
     BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY \
     BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY \
     BG_BLACK_BRIGTH BG_RED_BRIGTH BG_GREEN_BRIGTH BG_YELLOW_BRIGTH BG_BLUE_BRIGTH BG_MAGENTA_BRIGTH BG_CYAN_BRIGTH BG_WHITE_BRIGTH BG_GREY_BRIGTH \
+    k r g y b m c w e bk br bg by bb bm bc bw be \
   ; do 
     unset $var
   done
@@ -182,33 +183,69 @@ xs_disable_colors(){
 
 # print all colors/attributes in this library
 xs_show_colors(){
-  echo -e "${BOLD}BOLD${RESET}"
-  echo -e "${DIM}DIM${RESET}"
-  echo -e "${ITALIC}ITALIC${RESET}"
-  echo -e "${UNDERLINED}UNDERLINED${RESET}"
-  echo -e "${BLINK}BLINK${RESET}"
-  echo -e "${REVERSE}REVERSE${RESET}"
-  echo -e "${HIDDEN}HIDDEN${RESET}"
+  # xs_func xs_hl
+  xs_hl -
+  echo -e "\nCOLORS LIB - VARIABLES"
+  xs_hl -
   echo -e ""
-  echo -e "${BLACK}BLACK${RESET}"
-  echo -e "${RED}RED${RESET}"
-  echo -e "${GREEN}GREEN${RESET}"
-  echo -e "${YELLOW}YELLOW${RESET}"
-  echo -e "${BLUE}BLUE${RESET}"
-  echo -e "${MAGENTA}MAGENTA${RESET}"
-  echo -e "${CYAN}CYAN${RESET}"
-  echo -e "${WHITE}WHITE${RESET}"
-  echo -e "${GREY}GREY${RESET}"
+  echo -e "${BOLD}BOLD or ATTR_BOLD${RESET}"
+  echo -e "${DIM}DIM or ATTR_DIM${RESET}"
+  echo -e "${ITALIC}ITALIC or ATTR_ITALIC${RESET}"
+  echo -e "${UNDERLINED}UNDERLINED or ATTR_UNDERLINED${RESET}"
+  echo -e "${BLINK}BLINK or ATTR_BLINK${RESET}"
+  echo -e "${REVERSE}REVERSE or ATTR_REVERSE${RESET}"
+  echo -e "${HIDDEN}HIDDEN or ATTR_HIDDEN${RESET}"
   echo -e ""
-  echo -e "${BGBLACK}BGBLACK${RESET}"
-  echo -e "${BGRED}BGRED${RESET}"
-  echo -e "${BGGREEN}BGGREEN${RESET}"
-  echo -e "${BGYELLOW}BGYELLOW${RESET}"
-  echo -e "${BGBLUE}BGBLUE${RESET}"
-  echo -e "${BGMAGENTA}BGMAGENTA${RESET}"
-  echo -e "${BGCYAN}BGCYAN${RESET}"
-  echo -e "${BGWHITE}BGWHITE${RESET}"
-  echo -e "${BGGREY}BGGREY${RESET}"
+  echo -e "${bw}${BLACK}BLACK or FG_BLACK or FGBLACK or k ${RESET}"
+  echo -e "${RED}RED or FG_RED or FGRED or r ${RESET}"
+  echo -e "${GREEN}GREEN or FG_GREEN or FGGREEN or g ${RESET}"
+  echo -e "${YELLOW}YELLOW or FG_YELLOW or FGYELLOW or y ${RESET}"
+  echo -e "${BLUE}BLUE or FG_BLUE or FGBLUE or b ${RESET}"
+  echo -e "${MAGENTA}MAGENTA or FG_MAGENTA or FGMAGENTA or m ${RESET}"
+  echo -e "${CYAN}CYAN or FG_CYAN or FGCYAN or c ${RESET}"
+  echo -e "${WHITE}WHITE or FG_WHITE or FGWHITE or w ${RESET}"
+  echo -e "${GREY}GREY or FG_GREY or FGGREY or e ${RESET}"
+  echo -e ""
+  echo -e "${BGBLACK}BG_BLACK or BGBLACK or bk ${RESET}"
+  echo -e "${BGRED}BG_RED or BGRED or br ${RESET}"
+  echo -e "${BGGREEN}BG_GREEN or BGGREEN or bg ${RESET}"
+  echo -e "${BGYELLOW}BG_YELLOW or BGYELLOW or by ${RESET}"
+  echo -e "${BGBLUE}BG_BLUE or BGBLUE or bb ${RESET}"
+  echo -e "${BGMAGENTA}BG_MAGENTA or BGMAGENTA or bm ${RESET}"
+  echo -e "${BGCYAN}BG_CYAN or BGCYAN or bc ${RESET}"
+  echo -e "${BGWHITE}${k}BG_WHITE or BGWHITE or bw ${RESET}"
+  echo -e "${BGGREY}BG_GREY or BGGREY or be ${RESET}"
+  xs_hl -
+  echo -e "\nEND"
+  xs_hl -
+  echo -e ""
+  # show new aliases 
+  # xs_show_colors_aliases
+}
+
+# short aliases for colors
+xs_show_colors_aliases(){
+  echo -e "------- ALIASES ------- "
+  echo -e "${bw}${k}\$k alias to BLACK ${RESET}"
+  echo -e "${r}\$r alias to RED ${RESET}"
+  echo -e "${g}\$g alias to GREEN ${RESET}"
+  echo -e "${y}\$y alias to YELLOW ${RESET}"
+  echo -e "${b}\$b alias to BLUE ${RESET}"
+  echo -e "${m}\$m alias to MAGENTA ${RESET}"
+  echo -e "${c}\$c alias to CYAN ${RESET}"
+  echo -e "${w}\$w alias to WHITE ${RESET}"
+  echo -e "${e}\$e alias to GREY ${RESET}"
+  echo -e ""
+  echo -e "${bk}\$bk alias to BG_BLACK ${RESET}"
+  echo -e "${br}\$br alias to BG_RED ${RESET}"
+  echo -e "${bg}\$bg alias to BG_GREEN ${RESET}"
+  echo -e "${by}\$by alias to BG_YELLOW ${RESET}"
+  echo -e "${bb}\$bb alias to BG_BLUE ${RESET}"
+  echo -e "${bm}\$bm alias to BG_MAGENTA ${RESET}"
+  echo -e "${bc}\$bc alias to BG_CYAN ${RESET}"
+  echo -e "${bw}${k}\$bw alias to BG_WHITE ${RESET}"
+  echo -e "${be}\$be alias to BG_GREY ${RESET}"
+  echo -e "------- END ------- "
 }
 
 # enable colors by default (when this file/library is loaded)
