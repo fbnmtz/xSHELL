@@ -6,10 +6,10 @@
 # Created: Thursday, 2026/08/20 - 23:47:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/20 - 23:54:42
+# Last Modified: Wednesday, 2026/08/26 - 00:01:27
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.17
+# Version: 0.0.2.24
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,6 +27,6 @@ function die(){
     [ -z "$XS_DIE_MSG"  ] && XS_DIE_MSG="$@"
     [ -z "$XS_DIE_CODE" ] && XS_DIE_CODE=99
 
-    echo "$XS_DIE_MSG" > &2 
+    echo "die() - $XS_DIE_MSG" > /dev/stderr
     exit $XS_DIE_CODE
 }
