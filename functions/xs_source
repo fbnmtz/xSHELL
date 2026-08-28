@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/24 - 00:16:53
+# Last Modified: Thursday, 2026/08/27 - 23:08:37
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.20.503
+# Version: 0.0.21.540
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -41,8 +41,6 @@ if ! type xs_source &> /dev/null; then
     fi
     
   fi
-
-
 
 
   # def xs_source(filename): function to source a script from the repository (local or using curl)
@@ -89,15 +87,6 @@ if ! type xs_source &> /dev/null; then
         fi
     }
     
-    # # show aliases (functions)
-    # ifname(){
-    #   if [ "${FUNCNAME[4]}" == "source" ]; then
-    #     # echo "${FUNCNAME[2]} -> ${FUNCNAME[1]}"
-    #     echo "${FUNCNAME[3]}"
-    #   else
-    #     echo "${FUNCNAME[2]}"
-    #   fi
-    # }
     if [ "$1" != "ifname" ]; then
       xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
     # else
@@ -132,12 +121,18 @@ if ! type xs_source &> /dev/null; then
           for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
             
             if source "${f}" &> /dev/null; then
-              xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
+              xs_debug --level 2 " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
               success=true
               break
-            # else
-            #   xs_debug " \`-> ${YELLOW}xs_source${RESET} ${CYAN}$f${RESET} - ${RED}Error - local${RESET}"
-            #   [ -f "$f" ] && xs_debug "$f exists but not loaded. (end of line CRLF should be LF)"
+            else
+              # xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
+              if [ -f "$f" ]; then 
+                xs_debug --level 2 "${br}$f exists but cant source. (end of line CRLF should be LF)${RESET}\n"
+                [ ! -x "$f" ] && xs_debug  --level 2 "not executable! (need chmod +x $f)\n"
+                exit 3
+              # else
+              #   xs_debug "$f not found!\n"; exit 2
+              fi
             fi
               
           done
@@ -161,13 +156,13 @@ if ! type xs_source &> /dev/null; then
                 
             done
             
-            [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
+          [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
           fi
         fi
 
       # type $filename true? this function is defined. 
       else
-        xs_debug "${YELLOW} !!! $(ifname) - function already defined! ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[ignore] (unknown)"
+        xs_debug "${YELLOW} !!! $(ifname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
       fi
 
     done
@@ -179,5 +174,5 @@ if ! type xs_source &> /dev/null; then
   function xs_def(){ xs_source "$@"; }
 
 else
-  xs_debug "Error! Function '$(ifname)' already defined.\n"
+  xs_debug "Error! Function '$(ifname)' already defined.\n" && exit 3
 fi

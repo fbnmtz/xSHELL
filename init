@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/08/23 - 21:40:00
+# Last Modified: Thursday, 2026/08/27 - 23:09:08
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.37.1260
+# Version: 0.1.38.1269
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -72,7 +72,8 @@ XS_USE_COUNT=0
 
 xs_debug "${BG_GREEN}${BLACK} APP_NAME: $APP_NAME ${RESET}\n"
 xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE: $BASH_SOURCE - xs_func() ${RESET}\n"
-xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report 
+
+xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report die 
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders

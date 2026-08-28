@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/25 - 22:35:42
+# Last Modified: Thursday, 2026/08/27 - 14:50:51
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.6.174
+# Version: 1.0.7.199
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -139,28 +139,45 @@ xs_enable_colors(){
   FGWHITE=${WHITE}
   FGGREY=${GREY}
 
-  # Short semantic aliases: fg one-letter, bg two-letter ('b'+color)
+# Comparison Summary
+# State [[ -z "$var" ]]	[[ -z "${var+x}" ]]	[[ ! -v var ]]
+# Unset true	true	true
+# Set (empty)	true	false	false
+# Set (value)	false	false	false
+
+  # Short semantic aliases: 
+  [ -z "$R" ] && R=${RESET}
+  
+  # attributes
+  [ -z "$B" ] && B=${BOLD}
+  [ -z "$M" ] && M=${DIM}
+  [ -z "$I" ] && I=${ITALIC}
+  [ -z "$U" ] && U=${UNDERLINED}
+  [ -z "$K" ] && K=${BLINK}
+  [ -z "$V" ] && V=${REVERSE}
+  [ -z "$H" ] && H=${HIDDEN}
+
   # Foreground (one-letter)
-  k=${BLACK}
-  r=${RED}
-  g=${GREEN}
-  y=${YELLOW}
-  b=${BLUE}
-  m=${MAGENTA}
-  c=${CYAN}
-  w=${WHITE}
-  e=${GREY}
+  [ -z "$k" ] && k=${BLACK}
+  [ -z "$r" ] && r=${RED}
+  [ -z "$g" ] && g=${GREEN}
+  [ -z "$y" ] && y=${YELLOW}
+  [ -z "$b" ] && b=${BLUE}
+  [ -z "$m" ] && m=${MAGENTA}
+  [ -z "$c" ] && c=${CYAN}
+  [ -z "$w" ] && w=${WHITE}
+  [ -z "$e" ] && e=${GREY}
 
   # Background (two-letter: 'b'+color)
-  bk=${BGBLACK}
-  br=${BGRED}
-  bg=${BGGREEN}
-  by=${BGYELLOW}
-  bb=${BGBLUE}
-  bm=${BGMAGENTA}
-  bc=${BGCYAN}
-  bw=${BGWHITE}
-  be=${BGGREY}
+  [ -z "$bk" ] && bk=${BGBLACK}
+  [ -z "$br" ] && br=${BGRED}
+  [ -z "$bg" ] && bg=${BGGREEN}
+  [ -z "$by" ] && by=${BGYELLOW}
+  [ -z "$bb" ] && bb=${BGBLUE}
+  [ -z "$bm" ] && bm=${BGMAGENTA}
+  [ -z "$bc" ] && bc=${BGCYAN}
+  [ -z "$bw" ] && bw=${BGWHITE}
+  [ -z "$be" ] && be=${BGGREY}
 
 }
 
@@ -176,6 +193,7 @@ xs_disable_colors(){
     BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY \
     BG_BLACK_BRIGTH BG_RED_BRIGTH BG_GREEN_BRIGTH BG_YELLOW_BRIGTH BG_BLUE_BRIGTH BG_MAGENTA_BRIGTH BG_CYAN_BRIGTH BG_WHITE_BRIGTH BG_GREY_BRIGTH \
     k r g y b m c w e bk br bg by bb bm bc bw be \
+    R B M I U K V H \
   ; do 
     unset $var
   done
@@ -185,16 +203,16 @@ xs_disable_colors(){
 xs_show_colors(){
   # xs_func xs_hl
   xs_hl -
-  echo -e "\nCOLORS LIB - VARIABLES"
+  echo -e "\nxSHELL LIB: COLORS LIB - VARIABLES"
   xs_hl -
   echo -e ""
-  echo -e "${BOLD}BOLD or ATTR_BOLD${RESET}"
-  echo -e "${DIM}DIM or ATTR_DIM${RESET}"
-  echo -e "${ITALIC}ITALIC or ATTR_ITALIC${RESET}"
-  echo -e "${UNDERLINED}UNDERLINED or ATTR_UNDERLINED${RESET}"
-  echo -e "${BLINK}BLINK or ATTR_BLINK${RESET}"
-  echo -e "${REVERSE}REVERSE or ATTR_REVERSE${RESET}"
-  echo -e "${HIDDEN}HIDDEN or ATTR_HIDDEN${RESET}"
+  echo -e "${BOLD}BOLD or ATTR_BOLD or B ${RESET}"
+  echo -e "${DIM}DIM or ATTR_DIM or M ${RESET}"
+  echo -e "${ITALIC}ITALIC or ATTR_ITALIC or I ${RESET}"
+  echo -e "${UNDERLINED}UNDERLINED or ATTR_UNDERLINED or U ${RESET}"
+  echo -e "${BLINK}BLINK or ATTR_BLINK or K ${RESET}"
+  echo -e "${REVERSE}REVERSE or ATTR_REVERSE or V ${RESET}"
+  echo -e "${HIDDEN}HIDDEN or ATTR_HIDDEN or H ${RESET}"
   echo -e ""
   echo -e "${bw}${BLACK}BLACK or FG_BLACK or FGBLACK or k ${RESET}"
   echo -e "${RED}RED or FG_RED or FGRED or r ${RESET}"
@@ -215,6 +233,7 @@ xs_show_colors(){
   echo -e "${BGCYAN}BG_CYAN or BGCYAN or bc ${RESET}"
   echo -e "${BGWHITE}${k}BG_WHITE or BGWHITE or bw ${RESET}"
   echo -e "${BGGREY}BG_GREY or BGGREY or be ${RESET}"
+  echo -e "${RESET}RESET or R"
   xs_hl -
   echo -e "\nEND"
   xs_hl -

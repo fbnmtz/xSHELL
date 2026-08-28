@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/11 - 03:28:21
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/21 - 02:58:43
+# Last Modified: Thursday, 2026/08/27 - 23:06:48
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.94
+# Version: 0.0.8.123
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,9 +17,20 @@
 # HISTORY:
 #
 
+if [ -n "$D" ]; then
+  XS_DEBUG_LEVEL=$D
+else
+  [ -z "$XS_DEBUG_LEVEL" ] && export XS_DEBUG_LEVEL=1
+fi
+
 # verify if DEBUG is enabled
 is_debug_enabled(){
   if [[ -n "$XSDEBUG" ]] || [[ -n "$D" ]] || [[ -n "$DEBUG" ]]; then
+    # if [ -n "$D" ]; then
+    #   XS_DEBUG_LEVEL=$D
+    # else
+    #   [ -z "$XS_DEBUG_LEVEL" ] && export XS_DEBUG_LEVEL=1
+    # fi
     return 0
   else
     return 1
@@ -30,15 +41,21 @@ is_debug_enabled(){
 xs_debug(){
   # define sleep time
   case "$1" in
-    -s | --sleep ) shift; XS_DEBUG_SLEEP=$1; shift;  ;;
-    -d | --detail) shift; XS_DEBUG_DETAILS=1; ;;
-    *) XS_DEBUG_SLEEP=0.3; ;;
+    -s | --sleep ) shift; XS_DEBUG_SLEEP=$1; shift; ;;
+    -d | --detail) shift; XS_DEBUG_DETAILS=1;       ;;
+    -l | --level ) shift; XS_DEBUG_NOW=$1;   shift  ;;
+    *) 
+      XS_DEBUG_SLEEP=0.3
+      XS_DEBUG_NOW=1
+    ;;
   esac
   
   if is_debug_enabled; then
-    # echo -e "$@"
-    printf "$@"
-    sleep $XS_DEBUG_SLEEP 
+    
+    if [[ "$XS_DEBUG_NOW" -le "$XS_DEBUG_LEVEL" ]]; then
+      printf "$@"
+      sleep $XS_DEBUG_SLEEP 
+    fi
     
     # more details requested?
     if [ -n "$XS_DEBUG_DETAILS" ]; then
