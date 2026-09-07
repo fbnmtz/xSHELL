@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/autoload_vendor
+# Created: Saturday, 2026/08/29 - 09:17:04
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Monday, 2026/09/07 - 15:15:28
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.18
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+
+# Autoload all scripts in the vendor folders and their subdirectories
+autoload_vendor() {
+  local vendor_paths=("$xSHELL_PATH/vendor/" "$APP_DIR/vendor/")
+  for vendor_path in "${vendor_paths[@]}"; do
+    if [ -d "$vendor_path" ]; then
+      find "$vendor_path" -type f -print0 | while IFS= read -r -d '' script; do
+        if [ -f "$script" ] && [ -r "$script" ]; then
+          # Check if the file has a bash or sh shebang
+          if head -n 1 "$script" | grep -q '^#!/.*\(bash\|sh\)'; then
+            if source "$script"; then
+              xs_debug -l 1 "${bg}${FUNCANEM[0]} - Success sourcing script: $script${R}"
+            else
+              xs_debug -l 1 "${br}${FUNCANEM[0]} - Error sourcing script: $script${R}"
+            fi
+          fi
+        fi
+      done
+    fi
+  done
+}
+
+# Call the autoload function
+# autoload_vendor
