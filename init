@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/27 - 23:09:08
+# Last Modified: Monday, 2026/09/07 - 15:16:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.38.1269
+# Version: 0.1.39.1277
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,10 +27,10 @@ if ! type xs_source &> /dev/null; then
   _xs="$xSHELL_PATH/functions/xs_source"
   if [ -f "$_xs" ]; then
     source "$_xs"
-    xs_debug "xs_source [local]\n"
+    xs_debug " init -> xs_source [local]\n"
   else
     source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
-    xs_debug "xs_source [web]\n"
+    xs_debug " init -> xs_source [web]\n"
   fi
 fi
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -73,7 +73,7 @@ XS_USE_COUNT=0
 xs_debug "${BG_GREEN}${BLACK} APP_NAME: $APP_NAME ${RESET}\n"
 xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE: $BASH_SOURCE - xs_func() ${RESET}\n"
 
-xs_func --local-only check fail upcase is_lib_loaded xs_requirements_report die 
+xs_func --local-only check die fail is_lib_loaded upcase xs_requirements_report
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
@@ -114,7 +114,7 @@ xs_use(){
   
   # [ "$XS_USE_CALLLER" == "$0" ] && xs_debug "\n"
   # Print a message indicating that the use function is being called
-  xs_debug "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$XS_USE_CALLER'${RESET}\n"  
+  xs_debug --level 2 "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$XS_USE_CALLER'${RESET}\n"  
   
   # verify each lib file passed to use() function
   for current_lib in $@; do
@@ -140,21 +140,21 @@ xs_use(){
       local li=0
       for search_lib in "${lib_path[@]}"; do
         
-        xs_debug "  \`-> searching \'${MAGENTA}${search_lib}${RESET}\' --> "
+        xs_debug --level 2 "  \`-> searching \'${MAGENTA}${search_lib}${RESET}\' --> "
 
         if source "${search_lib}" 2> /dev/null ; then
-          xs_debug "${GREEN}[success]${RESET}\n"
+          xs_debug --level 2 "${GREEN}[success]${RESET}\n"
           # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${GREEN}[success]${RESET}"
           xSHELL_LIBS+=($search_lib)
           XS_USE_CALLER=${search_lib}
           # success? set a flag; break loop
-          xs_debug "${GREEN}  \`-> Loading '${search_lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})\n"
+          xs_debug --level 2 "${GREEN}  \`-> Loading '${search_lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})\n"
 
           included="true"
         
           break
         else
-          xs_debug "${RED}[fail]${RESET}\n"
+          xs_debug --level 2 "${RED}[fail]${RESET}\n"
         fi
         li=$((li+1))
       done
@@ -170,7 +170,7 @@ xs_use(){
       
       echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${current_lib}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${current_lib^^}_'${RED} NOT EXIST!${RESET}"
       
-      xs_debug "${RED} \`-> searched on:\n   *"\
+      xs_debug --level 2 "${RED} \`-> searched on:\n   *"\
             "${all_dirs// /${YELLOW}$current_lib - ${RED}[fail]\\n   \* }"\
             "${RESET}\n"
       

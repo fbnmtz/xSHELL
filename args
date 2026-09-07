@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/24 - 00:45:56
+# Last Modified: Monday, 2026/09/07 - 15:15:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.43.2202
+# Version: 0.2.44.2206
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -509,6 +509,7 @@ xrun(){
             \n\$xSHELL_DIRS - count: ${REVERSE} ${#xSHELL_DIRS[@]} ${RESET}\
 
             \n\$XS_SOURCE_FLAG.: ${REVERSE} '$XS_SOURCE_FLAG' ${RESET}\
+            \nl=local, w=web, b=both, n=none\
             \n\$XS_SOURCE_FILES: ${REVERSE} '$XS_SOURCE_FILES' ${RESET}\
 
             \n\$APP or \$APP_NAME: ${REVERSE} '$APP' ${RESET}\
