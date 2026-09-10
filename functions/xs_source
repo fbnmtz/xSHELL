@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/07 - 15:15:45
+# Last Modified: Wednesday, 2026/09/09 - 21:27:53
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.22.559
+# Version: 0.0.23.612
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,26 +22,15 @@ if ! type xs_source &> /dev/null; then
   XS_SOURCE_FILES=''
   XS_SOURCE_BASE_URL="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
 
-  # load debug functions
-  if ! type is_debug_enabled &> /dev/null; then
-    _xd="$xSHELL_PATH/functions/xs_debug"
-    if [ -f "$_xd" ]; then
-      source "$_xd"
+  # load debug functions and colors
+  for file in "functions/xs_debug" "colors"; do
+    _path="$xSHELL_PATH/$file"
+    if [ -f "$_path" ]; then
+      source "$_path"
     else
-      source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/functions/xs_debug)"
+      source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/$file)"
     fi
-    # load colors
-    if [ -z "${RED}" ] &> /dev/null; then
-      _xc="$xSHELL_PATH/colors"
-      if [ -f "$_xc" ]; then
-        source "$_xc"
-      else
-        source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/colors)"
-      fi
-    fi
-    
-  fi
-
+  done
 
   # def xs_source(filename): function to source a script from the repository (local or using curl)
   #   ex: xs_source "args system colors upcase"
@@ -95,8 +84,8 @@ if ! type xs_source &> /dev/null; then
 
     # define how source files will be get
     case "${1}" in
-      -b | --both  | --both-allow) shift; XS_SOURCE_FLAG=b  ;;
-      -w | --web   | --web-only  ) shift; XS_SOURCE_FLAG=w   ;;
+      -b | --both  | --both-allow) shift; XS_SOURCE_FLAG=b ;;
+      -w | --web   | --web-only  ) shift; XS_SOURCE_FLAG=w ;;
       -l | --local | --local-only) shift; XS_SOURCE_FLAG=l ;;
       *) shift; XS_SOURCE_FLAG=n ;;
     esac
@@ -109,62 +98,54 @@ if ! type xs_source &> /dev/null; then
       [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+="$current_file:$XS_SOURCE_FLAG" || XS_SOURCE_FILES+=" $current_file:$XS_SOURCE_FLAG"
     done
 
+    XS_SOURCE_PATHS=()
+    # define paths for local search
+    if [ "$XS_SOURCE_FLAG" == "l" ] || [ "$XS_SOURCE_FLAG" == "b" ] || [ "$XS_SOURCE_FLAG" == "n" ]; then
+      XS_SOURCE_PATHS+=("$xSHELL_PATH" "$xSHELL_PATH/functions")
+    fi
+
+    # define paths for web search
+    if [ "$XS_SOURCE_FLAG" == "w" ] || [ "$XS_SOURCE_FLAG" == "b" ]; then
+      XS_SOURCE_PATHS+=("${XS_SOURCE_BASE_URL}" "${XS_SOURCE_BASE_URL}/functions")
+    fi
+    
     # iterate over all libs/functions
     for filename in "$@"; do
 
       if ! type $filename &> /dev/null; then
+       
+       for location in "${XS_SOURCE_PATHS[@]}"; do
 
-        # test if local filename exist?
-        success=false
+        f="${location}/${filename}"
 
-        if [ "$XS_SOURCE_FLAG" == "l" ] || [ "$XS_SOURCE_FLAG" == "b" ] || [ "$XS_SOURCE_FLAG" == "n" ]; then
-        
-          # for f in "$filename" "./$filename" "./lib/$filename" "./vendor/$filename" "../$filename" "$APP_DIR/$filename " "$xSHELL_PATH/$filename"; do
-          for f in "$xSHELL_PATH/$filename" "$xSHELL_PATH/functions/$filename"; do
-            
-            if source "${f}"  &> /dev/null; then
-              xs_debug --level 2 " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (local)"
-              success=true
-              break
-            else
-              # xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
-              if [ -f "$f" ]; then 
-                xs_debug --level 2 "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
-                [ ! -x "$f" ] && xs_debug --level 2 "not executable! (need chmod +x $f)\n"
-                [ ! -R "$f" ] && xs_debug --level 2 "can not read! (need chmod +r $f)\n"
-                exit 3
-              # else
-              #   xs_debug "$f not found!\n"; exit 2
-              fi
-            fi
-              
-          done
-          
+        if [[ "$f" =~ ^https?:// ]]; then
+          XS_SOURCE_CMD='source /dev/stdin <<< "$(curl -sSL "$f")" &> /dev/null'
+          XS_SOURCE_FROM=web
+        else
+          XS_SOURCE_CMD='source "$f"  &> /dev/null'
+          XS_SOURCE_FROM=local
         fi
-        
-        # not found yet? try to load from web respository  
-        if [ $success == "false" ]; then
-          
-          # can source from web?
-          if [ "$XS_SOURCE_FLAG" == "w" ] || [ "$XS_SOURCE_FLAG" == "b" ]; then
-            
-            for f in "${XS_SOURCE_BASE_URL}/${filename}" "${XS_SOURCE_BASE_URL}/functions/${filename}"; do
 
-                if source /dev/stdin <<< "$(curl -sSL ${f}) &>/dev/null"; then
-                  xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-65s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] (web)"
-
-                  success=true
-                  break
-                fi
-                
-            done
-            
-          [ "$success" == "false" ] && xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}$filename${RESET} - ${RED}Error - web${RESET}\n" >&2 && exit 1
+        if eval "$XS_SOURCE_CMD"; then
+          xs_debug --level 2 " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] ($XS_SOURCE_FROM)"
+          # success=true
+          break
+        else
+          # xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
+          if [ -f "$f" ]; then 
+            xs_debug --level 2 "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
+            [ ! -x "$f" ] && xs_debug --level 2 "not executable! (need chmod +x $f)\n"
+            [ ! -r "$f" ] && xs_debug --level 2 "can not read! (need chmod +r $f)\n"
+            exit 3
+          # else
+          #   xs_debug "$f not found!\n"; exit 2
           fi
         fi
+        
+       done
 
-      # type $filename true? this function is defined. 
       else
+        # type $filename true? this function is defined. 
         xs_debug "${YELLOW} !!! $(ifname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
       fi
 
@@ -174,7 +155,7 @@ if ! type xs_source &> /dev/null; then
   function xsource(){ xs_source "$@"; }
   function xs_file(){ xs_source "$@"; }
   function xs_func(){ xs_source "$@"; }
-  function xs_def(){ xs_source "$@"; }
+  function xs_def() { xs_source "$@"; }
 
 else
   xs_debug "Error! Function '$(ifname)' already defined.\n" && exit 3
