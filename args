@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/09/10 - 22:27:19
+# Last Modified: Friday, 2026/09/11 - 17:21:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.45.2231
+# Version: 0.2.46.2240
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -273,8 +273,8 @@ xs_usage(){
 #   --> desc="text" 
 xs_arg(){
     
-    xs_func ifname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    xs_func get_fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     
     #TODO: refactor code below
     while [ "$1" != "" ]; do
@@ -433,8 +433,8 @@ xarg(){ xs_arg "$@"; }
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xs_run(){
     
-    xs_func ifname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    xs_func get_fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     xRUN_ARGS="$@"
 
     xs_run_help(){
@@ -528,6 +528,10 @@ xs_run(){
             \n\$@ .......: ${REVERSE} '${XS_ARGS[*]}' ${RESET}\
             \n\$XS_PARAMS: ${REVERSE} '${XS_PARAMS[*]}' ${RESET}\
             \n\$xarg ....: ${REVERSE} '$xarg' ${RESET}\
+            
+            \n\$XS_USE_COUNT.: ${REVERSE} '$XS_USE_COUNT' ${RESET}\
+            \n\$XS_USE_CALLER: ${REVERSE} '$XS_USE_CALLER' ${RESET}\
+            \n\$XS_USE_ALL...: ${REVERSE} '$XS_USE_ALL' ${RESET}\
 
             \n\$XS_AUTHOR_NAME: ${REVERSE} '$XS_AUTHOR_NAME' ${RESET}\
             \n\$XS_AUTHOR_MAIL: ${REVERSE} '$XS_AUTHOR_MAIL' ${RESET}\
@@ -685,8 +689,8 @@ xrun(){ xs_run "$@"; }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
 xs_case(){
-    xs_func ifname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    xs_func get_fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     local value="$1"; shift
     local code_block="$@"
     if [[ "$xarg" =~ $value ]]; then

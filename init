@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 10:25:27
+# Last Modified: Friday, 2026/09/11 - 11:03:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.40.1286
+# Version: 0.1.41.1298
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -86,14 +86,12 @@ xs_create_app_home(){
 
 # def use(lib1, lib2, ...): function to import/use some library
 # ex: use args utils mycustomlib
-XS_USE_COUNT=0
 xs_use(){
-  local current_lib current_dir lib lib_path
+  local current_lib current_dir lib lib_path search_lib
   
-  ((XS_USE_COUNT+=1))  # Increment the use counter
-  # XS_USE_COUNT=((($XS_USE_COUNT+1)))  # Increment the use counter
-  # XS_USE_COUNT+=1  # Increment the use counter
-  XS_USE_ALL=$@
+  # Increment the use counter
+  ((XS_USE_COUNT+=1))
+  XS_USE_ALL="$@"
 
   # trackback function caller
   if [ "$XS_USE_COUNT" -eq 1 ]; then 
@@ -192,24 +190,18 @@ xs_use(){
 }
 
 # create some aliases for use/import libraries
-function use(){ xs_use "$@"; }
-function xuse(){ xs_use "$@"; }
-function include(){ xs_use "$@"; }
-function xs_include(){ xs_use "$@"; }
-function import(){ xs_use "$@"; }
-function xs_import(){ xs_use "$@"; }
-function load(){ xs_use "$@"; }
-function xs_load(){ xs_use "$@"; }
-function unit(){ xs_use "$@"; }
-function xs_unit(){ xs_use "$@"; }
-# function require(){ xs_use "$@"; }
-
-# alias include=use
-# alias import=use
-# alias require=use
-# alias load=use
-# alias unit=use
-# alias xuse=use
+function use()        { xs_use "$@"; }
+function xuse()       { xs_use "$@"; }
+function include()    { xs_use "$@"; }
+function xs_include() { xs_use "$@"; }
+function import()     { xs_use "$@"; }
+function xs_import()  { xs_use "$@"; }
+function load()       { xs_use "$@"; }
+function xs_load()    { xs_use "$@"; }
+function unit()       { xs_use "$@"; }
+function xs_unit()    { xs_use "$@"; }
+function lib()        { xs_use "$@"; }
+function xs_lib()     { xs_use "$@"; }
 
 # def xs_requirements(bin1, bin2, "bin3A|bin3B"): function to validate required binaries (bin1, bin2, "bin3A|bin3B")
 # ex: xs_requirements bin1 bin2 "bin3A|bin3B"

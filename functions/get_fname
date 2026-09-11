@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/ifname
+# File...: functions/get_fname
 # Created: Sunday, 2026/08/23 - 22:08:53
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/24 - 00:52:57
+# Last Modified: Friday, 2026/09/11 - 17:21:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.6
+# Version: 0.0.3.9
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,7 +18,7 @@
 #
 
  # show aliases (functions)
-    ifname() {
+    get_fname() {
         local base_index=-1
 
         for ((i=0; i<${#FUNCNAME[@]}; i++)); do
@@ -29,7 +29,7 @@
         done
         
         local current_index=''
-        if [ "${FUNCNAME[0]}" == "ifname" ]; then
+        if [ "${FUNCNAME[0]}" == "get_fname" ]; then
           current_index=1
         else
           current_index=0

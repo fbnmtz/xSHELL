@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 10:10:50
+# Last Modified: Friday, 2026/09/11 - 17:22:18
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.24.648
+# Version: 0.0.25.651
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -38,7 +38,7 @@ if ! type xs_source &> /dev/null; then
     local filename location current_file f
 
     # show aliases (functions)
-    ifname() {
+    get_fname() {
         local base_index=-1
         local current_index index
 
@@ -50,7 +50,7 @@ if ! type xs_source &> /dev/null; then
         done
         
         local current_index=''
-        if [ "${FUNCNAME[0]}" == "ifname" ]; then
+        if [ "${FUNCNAME[0]}" == "get_fname" ]; then
           current_index=1
         else
           current_index=0
@@ -96,16 +96,16 @@ if ! type xs_source &> /dev/null; then
       -d | --debug | --debug-level) shift; XS_SOURCE_DEBUG_LEVEL=$1; shift ;;
     esac
 
-    if [ "$1" != "ifname" ]; then 
+    if [ "$1" != "get_fname" ]; then 
       if [ -z "$XS_SOURCE_SILENT" ]; then
-        xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+        xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
       fi
     # else
-    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     fi
 
     # debug header
-    # xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(ifname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
+    # xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(get_fname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
     
     # store functions loaded by xs_source among multiple calls 
     for current_file in "$@"; do
@@ -142,12 +142,12 @@ if ! type xs_source &> /dev/null; then
 
         if eval "$XS_SOURCE_CMD"; then
           if [ -z "$XS_SOURCE_SILENT" ]; then
-            xs_debug --level $XS_SOURCE_DEBUG_LEVEL " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] ($XS_SOURCE_FROM)"
+            xs_debug --level $XS_SOURCE_DEBUG_LEVEL " \`-> ${YELLOW}$(get_fname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] ($XS_SOURCE_FROM)"
           fi
           # success=true
           break
         else
-          # xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
+          # xs_debug " \`-> ${YELLOW}$(get_fname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
           if [ -f "$f" ]; then 
             xs_debug --level $XS_SOURCE_DEBUG_LEVEL "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
             [ ! -x "$f" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "not executable! (need chmod +x $f)\n"
@@ -162,7 +162,7 @@ if ! type xs_source &> /dev/null; then
 
       else
         # type $filename true? this function is defined. 
-        xs_debug "${YELLOW} !!! $(ifname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
+        xs_debug "${YELLOW} !!! $(get_fname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
       fi
 
     done
@@ -174,5 +174,5 @@ if ! type xs_source &> /dev/null; then
   function xs_def() { xs_source "$@"; }
 
 else
-  xs_debug "Error! Function '$(ifname)' already defined.\n" && exit 3
+  xs_debug "Error! Function '$(get_fname)' already defined.\n" && exit 3
 fi
