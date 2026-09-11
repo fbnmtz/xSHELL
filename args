@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/07 - 15:15:57
+# Last Modified: Thursday, 2026/09/10 - 22:27:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.44.2206
+# Version: 0.2.45.2231
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -271,7 +271,7 @@ xs_usage(){
     #       create a var 'myVar1' and require another param as value. If next arg was empyt raise a error.
     # @param $3: description to generate help for this arg/action
 #   --> desc="text" 
-xarg(){
+xs_arg(){
     
     xs_func ifname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
@@ -427,21 +427,24 @@ xarg(){
     esac
 }
 
+xarg(){ xs_arg "$@"; }
+
 # xrun "$@"
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
-xrun(){
+xs_run(){
     
     xs_func ifname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
     xRUN_ARGS="$@"
 
     xs_run_help(){
+        xs_func --local --silent awk_column
         echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} "$args_hash" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
         \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
         \n\nAvailable options:\
         "
-        echo "\
+        echo -e "\
         \n${CYAN} -i, --id   ${MAGENTA} <VALUE>${RESET}; short and long key. ex: '-h,--help'\
         \n${CYAN} -c, --code ${MAGENTA} <VALUE>${RESET}; shell code to run by 'eval'\
         \n${CYAN} -v, --var  ${MAGENTA} <VALUE>${RESET}; define vars\
@@ -465,7 +468,7 @@ xrun(){
         \n\nAvailable options:\
         "
         
-        echo "\
+        echo -e "\
         \n  ${CYAN}--xapp-data${RESET};create default directory for \$APP data ($HOME/.xshell/$APP)\
         \n  ${CYAN}--xrequire-one${RESET};script will require at least one argument\
         \n  ${CYAN}--xreject-unknown${RESET};raise an error if your script receives args not defined\
@@ -497,8 +500,8 @@ xrun(){
         echo -e "${RED}$(.xs --hl '-')\n# xSHELL DEBUG - begin\
             \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
             \n\$BASH_SOURCE: ${REVERSE} '$BASH_SOURCE' ${RESET}\
-            \n\$DIRSTACK: ${REVERSE} '$DIRSTACK' ${RESET}\
-            \n\$FUNCNAME: ${REVERSE} '${FUNCNAME[@]}' ${RESET}\
+            \n\$DIRSTACK...: ${REVERSE} '$DIRSTACK' ${RESET}\
+            \n\$FUNCNAME...: ${REVERSE} '${FUNCNAME[@]}' ${RESET}\
             
             \n\$xSHELL_PATH: ${REVERSE} '$xSHELL_PATH' ${RESET}\
             
@@ -512,8 +515,8 @@ xrun(){
             \nl=local, w=web, b=both, n=none\
             \n\$XS_SOURCE_FILES: ${REVERSE} '$XS_SOURCE_FILES' ${RESET}\
 
-            \n\$APP or \$APP_NAME: ${REVERSE} '$APP' ${RESET}\
-            \n\$XS_REQUIREMENTS: ${REVERSE} '$XS_REQUIREMENTS' ${RESET}\
+            \n\$APP or \$APP_NAME.......: ${REVERSE} '$APP' ${RESET}\
+            \n\$XS_REQUIREMENTS........: ${REVERSE} '$XS_REQUIREMENTS' ${RESET}\
             \n\$XS_MISSING_REQUIREMENTS: ${REVERSE} '$XS_MISSING_REQUIREMENTS' ${RESET}\
             
             \n\$APP_PATH: ${REVERSE} '$APP_PATH' ${RESET}\
@@ -522,20 +525,20 @@ xrun(){
             \n\$APP_DATA: ${REVERSE} '$APP_DATA' ${RESET}\
             \n\$APP_LOG.: ${REVERSE} '$APP_LOG' ${RESET}\
 
-            \n\$@: ${REVERSE} '${XS_ARGS[*]}' ${RESET}\
+            \n\$@ .......: ${REVERSE} '${XS_ARGS[*]}' ${RESET}\
             \n\$XS_PARAMS: ${REVERSE} '${XS_PARAMS[*]}' ${RESET}\
-            \n\$xarg: ${REVERSE} '$xarg' ${RESET}\
+            \n\$xarg ....: ${REVERSE} '$xarg' ${RESET}\
 
             \n\$XS_AUTHOR_NAME: ${REVERSE} '$XS_AUTHOR_NAME' ${RESET}\
             \n\$XS_AUTHOR_MAIL: ${REVERSE} '$XS_AUTHOR_MAIL' ${RESET}\
             \n\$XS_CREATED_AT.: ${REVERSE} '$XS_CREATED_AT' ${RESET}\
             \n\$XS_UPDATED_AT.: ${REVERSE} '$XS_UPDATED_AT' ${RESET}\
-            \n\$XS_VERSION: ${REVERSE} '$XS_VERSION' ${RESET}\
-            \n\$XS_VERSION_RC: ${REVERSE} '$XS_VERSION_RC' ${RESET}\
+            \n\$XS_VERSION....: ${REVERSE} '$XS_VERSION' ${RESET}\
+            \n\$XS_VERSION_RC.: ${REVERSE} '$XS_VERSION_RC' ${RESET}\
             \n$(.xs --hl '-')\n${YELLOW}# 2. xarg function:${RESET}\n\
             \n$(Hash.all "$args_hash" | cut -d '+' -f1 | column -s : -t)\
             \n$(.xs --hl '-')\n${YELLOW}# 3. xrun function:${RESET}\n\
-            \n\$@: ${REVERSE} '${xRUN_ARGS}' ${RESET}\
+            \n\$@ ......: ${REVERSE} '${xRUN_ARGS}' ${RESET}\
             \n\$APP_ARGS: ${REVERSE} '${XS_PARAMS[*]}' ${RESET}\n\
             \nwhile [ \$1 != \"\" ]; do\
             \n$__runARGS_case_\
@@ -676,9 +679,12 @@ xrun(){
 
     [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}";
 }
+
+xrun(){ xs_run "$@"; }
+
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
-xcase(){
+xs_case(){
     xs_func ifname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
     local value="$1"; shift
@@ -687,6 +693,8 @@ xcase(){
         eval "$code_block"
     fi
 }
+
+xcase(){ xs_case "$@"; }
 
 # internal helper function to set default values
 # Usage: .xs <argument>

@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/11 - 03:28:21
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/09/09 - 21:43:41
+# Last Modified: Friday, 2026/09/11 - 10:27:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.130
+# Version: 0.0.10.136
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -42,13 +42,14 @@ if ! type xs_debug &> /dev/null; then
   # show debug message, if its enabled
   xs_debug(){
     # define sleep time
+    XS_DEBUG_SLEEP=0.3
+    
     case "$1" in
       -s | --sleep ) shift; XS_DEBUG_SLEEP=$1; shift; ;;
       -d | --detail) shift; XS_DEBUG_DETAILS=1;       ;;
       -l | --level ) shift; XS_DEBUG_NOW=$1;   shift  ;;
-      *) 
-        XS_DEBUG_SLEEP=0.3
-        XS_DEBUG_NOW=1
+      # *) 
+      #   XS_DEBUG_NOW=1
       ;;
     esac
     

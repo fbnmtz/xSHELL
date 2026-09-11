@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/07 - 15:16:03
+# Last Modified: Friday, 2026/09/11 - 10:25:27
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.39.1277
+# Version: 0.1.40.1286
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -70,10 +70,10 @@ xSHELL_DIRS=(
 XS_USE_CALLER=''
 XS_USE_COUNT=0
 
-xs_debug "${BG_GREEN}${BLACK} APP_NAME: $APP_NAME ${RESET}\n"
-xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE: $BASH_SOURCE - xs_func() ${RESET}\n"
+xs_debug "${BG_GREEN}${BLACK} APP_NAME....: $APP_NAME ${RESET}\n"
+xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE.: $BASH_SOURCE - xs_func() ${RESET}\n"
 
-xs_func --local-only check die fail is_lib_loaded upcase xs_requirements_report
+xs_func --local-only check die fail is_lib_loaded upcase
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
@@ -88,7 +88,7 @@ xs_create_app_home(){
 # ex: use args utils mycustomlib
 XS_USE_COUNT=0
 xs_use(){
-  local current_lib current_dir lib
+  local current_lib current_dir lib lib_path
   
   ((XS_USE_COUNT+=1))  # Increment the use counter
   # XS_USE_COUNT=((($XS_USE_COUNT+1)))  # Increment the use counter
@@ -238,7 +238,7 @@ xs_requirements(){
           [ -z "$XS_MISSING_REQUIREMENTS" ] && XS_MISSING_REQUIREMENTS+="$tool" || XS_MISSING_REQUIREMENTS+=" $tool"
         fi
       done
-      [ "$found" != 'true' ] && { fail "$tool"; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
+      [ "$found" != 'true' ] && { fail "$tool"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
     else
       # Simple binary (not bin1|bin2) - check if the tool is available on the system
       if ! check "$tool"; then
@@ -253,11 +253,11 @@ xs_requirements(){
   done
 
   #  
-  [ -n "$XS_MISSING_REQUIREMENTS" ] && { fail "$XS_MISSING_REQUIREMENTS"; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
+  [ -n "$XS_MISSING_REQUIREMENTS" ] && { fail "$XS_MISSING_REQUIREMENTS"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
 }
 
 # aliases
-function xs_require(){ xs_requirements "$@"; }
-function xrequirements(){ xs_requirements "$@"; }
-function xrequire(){ xs_requirements "$@"; }
-function require(){ xs_requirements "$@"; }
+function xs_require()    { xs_requirements "$@"; }
+function xrequirements() { xs_requirements "$@"; }
+function xrequire()      { xs_requirements "$@"; }
+function require()       { xs_requirements "$@"; }

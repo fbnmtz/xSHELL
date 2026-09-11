@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/09/09 - 21:27:53
+# Last Modified: Friday, 2026/09/11 - 10:10:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.23.612
+# Version: 0.0.24.648
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,22 +23,24 @@ if ! type xs_source &> /dev/null; then
   XS_SOURCE_BASE_URL="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
 
   # load debug functions and colors
-  for file in "functions/xs_debug" "colors"; do
-    _path="$xSHELL_PATH/$file"
-    if [ -f "$_path" ]; then
-      source "$_path"
+  for _f in "functions/xs_debug" "colors"; do
+    _p="$xSHELL_PATH/$_f"
+    if [ -f "$_p" ]; then
+      source "$_p"
     else
-      source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/$file)"
+      source /dev/stdin <<< "$(curl -sSL ${XS_SOURCE_BASE_URL}/$_f)"
     fi
   done
 
   # def xs_source(filename): function to source a script from the repository (local or using curl)
   #   ex: xs_source "args system colors upcase"
   function xs_source() {
+    local filename location current_file f
 
     # show aliases (functions)
     ifname() {
         local base_index=-1
+        local current_index index
 
         for ((i=0; i<${#FUNCNAME[@]}; i++)); do
             if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
@@ -75,13 +77,9 @@ if ! type xs_source &> /dev/null; then
             echo "${FUNCNAME[2]}"
         fi
     }
-    
-    if [ "$1" != "ifname" ]; then
-      xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
-    # else
-    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
-    fi
 
+    XS_SOURCE_DEBUG_LEVEL=2
+    
     # define how source files will be get
     case "${1}" in
       -b | --both  | --both-allow) shift; XS_SOURCE_FLAG=b ;;
@@ -89,6 +87,22 @@ if ! type xs_source &> /dev/null; then
       -l | --local | --local-only) shift; XS_SOURCE_FLAG=l ;;
       *) shift; XS_SOURCE_FLAG=n ;;
     esac
+
+    case "${1}" in
+      -s | --silent) shift; XS_SOURCE_SILENT=1 ;;
+    esac
+
+    case "${1}" in
+      -d | --debug | --debug-level) shift; XS_SOURCE_DEBUG_LEVEL=$1; shift ;;
+    esac
+
+    if [ "$1" != "ifname" ]; then 
+      if [ -z "$XS_SOURCE_SILENT" ]; then
+        xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+      fi
+    # else
+    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(ifname)() '$*' ${RESET}\n"
+    fi
 
     # debug header
     # xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(ifname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
@@ -127,15 +141,17 @@ if ! type xs_source &> /dev/null; then
         fi
 
         if eval "$XS_SOURCE_CMD"; then
-          xs_debug --level 2 " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] ($XS_SOURCE_FROM)"
+          if [ -z "$XS_SOURCE_SILENT" ]; then
+            xs_debug --level $XS_SOURCE_DEBUG_LEVEL " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${GREEN}%15s${RESET}\n" $f "[success] ($XS_SOURCE_FROM)"
+          fi
           # success=true
           break
         else
           # xs_debug " \`-> ${YELLOW}$(ifname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
           if [ -f "$f" ]; then 
-            xs_debug --level 2 "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
-            [ ! -x "$f" ] && xs_debug --level 2 "not executable! (need chmod +x $f)\n"
-            [ ! -r "$f" ] && xs_debug --level 2 "can not read! (need chmod +r $f)\n"
+            xs_debug --level $XS_SOURCE_DEBUG_LEVEL "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
+            [ ! -x "$f" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "not executable! (need chmod +x $f)\n"
+            [ ! -r "$f" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "can not read! (need chmod +r $f)\n"
             exit 3
           # else
           #   xs_debug "$f not found!\n"; exit 2
