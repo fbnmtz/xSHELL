@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/08/27 - 14:50:51
+# Last Modified: Friday, 2026/09/11 - 09:32:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.7.199
+# Version: 1.0.8.220
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -146,38 +146,38 @@ xs_enable_colors(){
 # Set (value)	false	false	false
 
   # Short semantic aliases: 
-  [ -z "$R" ] && R=${RESET}
+  [ -z "$R" ] && R=${RESET}       ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$R already defined.\n${R}"
   
   # attributes
-  [ -z "$B" ] && B=${BOLD}
-  [ -z "$M" ] && M=${DIM}
-  [ -z "$I" ] && I=${ITALIC}
-  [ -z "$U" ] && U=${UNDERLINED}
-  [ -z "$K" ] && K=${BLINK}
-  [ -z "$V" ] && V=${REVERSE}
-  [ -z "$H" ] && H=${HIDDEN}
+  [ -z "$B" ] && B=${BOLD}        ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$B already defined.\n${R}"
+  [ -z "$M" ] && M=${DIM}         ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$M already defined.\n${R}"
+  [ -z "$I" ] && I=${ITALIC}      ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$I already defined.\n${R}"
+  [ -z "$U" ] && U=${UNDERLINED}  ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$U already defined.\n${R}"
+  [ -z "$K" ] && K=${BLINK}       ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$K already defined.\n${R}"
+  [ -z "$V" ] && V=${REVERSE}     ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$V already defined.\n${R}"
+  [ -z "$H" ] && H=${HIDDEN}      ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$H already defined.\n${R}"
 
   # Foreground (one-letter)
-  [ -z "$k" ] && k=${BLACK}
-  [ -z "$r" ] && r=${RED}
-  [ -z "$g" ] && g=${GREEN}
-  [ -z "$y" ] && y=${YELLOW}
-  [ -z "$b" ] && b=${BLUE}
-  [ -z "$m" ] && m=${MAGENTA}
-  [ -z "$c" ] && c=${CYAN}
-  [ -z "$w" ] && w=${WHITE}
-  [ -z "$e" ] && e=${GREY}
+  [ -z "$k" ] && k=${BLACK}       ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$k already defined.\n${R}"
+  [ -z "$r" ] && r=${RED}         ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$r already defined.\n${R}"
+  [ -z "$g" ] && g=${GREEN}       ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$g already defined.\n${R}"
+  [ -z "$y" ] && y=${YELLOW}      ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$y already defined.\n${R}"
+  [ -z "$b" ] && b=${BLUE}        ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$b already defined.\n${R}"
+  [ -z "$m" ] && m=${MAGENTA}     ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$m already defined.\n${R}"
+  [ -z "$c" ] && c=${CYAN}        ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$c already defined.\n${R}"
+  [ -z "$w" ] && w=${WHITE}       ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$w already defined.\n${R}"
+  [ -z "$e" ] && e=${GREY}        ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$e already defined.\n${R}"
 
   # Background (two-letter: 'b'+color)
-  [ -z "$bk" ] && bk=${BGBLACK}
-  [ -z "$br" ] && br=${BGRED}
-  [ -z "$bg" ] && bg=${BGGREEN}
-  [ -z "$by" ] && by=${BGYELLOW}
-  [ -z "$bb" ] && bb=${BGBLUE}
-  [ -z "$bm" ] && bm=${BGMAGENTA}
-  [ -z "$bc" ] && bc=${BGCYAN}
-  [ -z "$bw" ] && bw=${BGWHITE}
-  [ -z "$be" ] && be=${BGGREY}
+  [ -z "$bk" ] && bk=${BGBLACK}   ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bk already defined.\n${R}"
+  [ -z "$br" ] && br=${BGRED}     ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$br already defined.\n${R}"
+  [ -z "$bg" ] && bg=${BGGREEN}   ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bg already defined.\n${R}"
+  [ -z "$by" ] && by=${BGYELLOW}  ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$by already defined.\n${R}"
+  [ -z "$bb" ] && bb=${BGBLUE}    ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bb already defined.\n${R}"
+  [ -z "$bm" ] && bm=${BGMAGENTA} ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bm already defined.\n${R}"
+  [ -z "$bc" ] && bc=${BGCYAN}    ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bc already defined.\n${R}"
+  [ -z "$bw" ] && bw=${BGWHITE}   ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$bw already defined.\n${R}"
+  [ -z "$be" ] && be=${BGGREY}    ||  xs_debug --level 2 "${y}${V}lib 'colors' Warning! variable \$be already defined.\n${R}"
 
 }
 
