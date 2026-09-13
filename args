@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 13:25:21
+# Last Modified: Sunday, 2026/09/13 - 14:06:20
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.48.2253
+# Version: 0.2.49.2255
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -640,7 +640,7 @@ xs_run(){
                 shift; use colors;
             ;;
             --xscolors | --xs-show-colors | --xs-show-colors) 
-                shift; xs_show_colors; exit 0;
+                shift; xs_colors_show; exit 0;
             ;;
             --xhelp | --xs-help)
                 use utils

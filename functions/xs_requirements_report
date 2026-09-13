@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/07/15 - 15:06:28
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/08/10 - 13:23:47
+# Last Modified: Sunday, 2026/09/13 - 14:06:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.41
+# Version: 0.0.5.43
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,7 +24,7 @@ xs_requirements_report() {
         shift
         source "$xSHELL_PATH/colors"
     else
-        [ -n "$RED" ] && xs_disable_colors
+        [ -n "$RED" ] && xs_colors_disable
     fi
 
     local custom_tools_file

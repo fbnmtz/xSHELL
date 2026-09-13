@@ -6,10 +6,10 @@
 # Created: Sunday, 2023/02/05 - 22:36:36
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 09:32:17
+# Last Modified: Sunday, 2026/09/13 - 14:04:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.8.220
+# Version: 1.0.9.225
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > xshell colors library
@@ -23,7 +23,7 @@ _xLIB_COLORS_=true
 # `-> ignore alert about declared variables but not used
 
 # setup colors (define variables)
-xs_enable_colors(){
+xs_colors_enable(){
   # Reset all attributes
   RESET='\033[0m'
 
@@ -182,7 +182,7 @@ xs_enable_colors(){
 }
 
 # unset all colors/attributes 
-xs_disable_colors(){
+xs_colors_disable(){
   for var in RESET BOLD DIM ITALIC UNDERLINE BLINK REVERSE HIDDEN \
     ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
     BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
@@ -200,7 +200,7 @@ xs_disable_colors(){
 }
 
 # print all colors/attributes in this library
-xs_show_colors(){
+xs_colors_show(){
   # xs_func xs_hl
   xs_hl -
   echo -e "\nxSHELL LIB: COLORS LIB - VARIABLES"
@@ -239,11 +239,11 @@ xs_show_colors(){
   xs_hl -
   echo -e ""
   # show new aliases 
-  # xs_show_colors_aliases
+  # xs_colors_show_aliases
 }
 
 # short aliases for colors
-xs_show_colors_aliases(){
+xs_colors_show_aliases(){
   echo -e "------- ALIASES ------- "
   echo -e "${bw}${k}\$k alias to BLACK ${RESET}"
   echo -e "${r}\$r alias to RED ${RESET}"
@@ -268,4 +268,4 @@ xs_show_colors_aliases(){
 }
 
 # enable colors by default (when this file/library is loaded)
-xs_enable_colors
+xs_colors_enable
