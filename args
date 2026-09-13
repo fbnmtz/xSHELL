@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 14:06:20
+# Last Modified: Sunday, 2026/09/13 - 16:04:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.49.2255
+# Version: 0.2.50.2257
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -273,8 +273,8 @@ xs_usage(){
 #   --> desc="text" 
 xs_arg(){
     
-    xs_func --local-only get_fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname --debug)() '$*' ${RESET}\n"
+    xs_func --local-only fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname --debug)() '$*' ${RESET}\n"
     
     #TODO: refactor code below
     while [ "$1" != "" ]; do
@@ -433,8 +433,8 @@ xarg(){ xs_arg "$@"; }
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xs_run(){
     
-    xs_func --local-only get_fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname --debug)() '$*' ${RESET}\n"
+    xs_func --local-only fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname --debug)() '$*' ${RESET}\n"
     xRUN_ARGS="$*"
 
     xs_run_help(){
@@ -691,8 +691,8 @@ xrun(){ xs_run "$@"; }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
 xs_case(){
-    xs_func --local-only get_fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
+    xs_func --local-only fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname)() '$*' ${RESET}\n"
     local value="$1"; shift
     local code_block="$*"
     if [[ "$xarg" =~ $value ]]; then

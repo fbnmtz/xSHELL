@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: functions/get_fname
+# File...: functions/fname
 # Created: Sunday, 2026/08/23 - 22:08:53
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 13:19:09
+# Last Modified: Sunday, 2026/09/13 - 16:06:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.5.36
+# Version: 0.0.6.42
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -18,17 +18,12 @@
 #
 
 # show aliases (functions)
-get_fname() {
+fname() {
     local base_index=-1
 
-    # define how source files will be get
+    # debug FUNCNAME stack
     case "${1}" in
-        -d | --debug) 
-            shift; 
-            # XS_FNAME_DEBUG=true 
-            echo -e "\n${R}${br}get_fname() DEBUG - '${FUNCNAME[*]}'${R}${V}"
-        ;;
-        # *) shift; XS_SOURCE_FLAG=n ;;
+        -d | --debug) shift; echo -e "\n${R}${br}fname() DEBUG - '${FUNCNAME[*]}'${R}${V}" ;;
     esac
 
     # echo "${FUNCNAME[2]}"
@@ -41,7 +36,7 @@ get_fname() {
     done
     
     local current_index=''
-    if [ "${FUNCNAME[0]}" == "get_fname" ]; then
+    if [ "${FUNCNAME[0]}" == "fname" ]; then
         current_index=1
     else
         current_index=0
@@ -70,7 +65,7 @@ get_fname() {
 }
 
 # # show aliases (functions)
-# get_fname() {
+# fname() {
 #     local base_index=-1
 #     local current_index index
 
@@ -92,7 +87,7 @@ get_fname() {
 #     done
     
 #     local current_index=''
-#     if [ "${FUNCNAME[0]}" == "get_fname" ]; then
+#     if [ "${FUNCNAME[0]}" == "fname" ]; then
 #       current_index=1
 #     else
 #       current_index=0

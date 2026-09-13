@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 14:17:13
+# Last Modified: Sunday, 2026/09/13 - 15:04:50
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.44.1324
+# Version: 0.1.45.1343
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,16 +23,21 @@
   # `-> SC2154 - var is referenced but not assigned: (install script set it on user/system env)
   # `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
   
+# variable to source from web
+XS_SOURCE_BASE_URL="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
+
+# load xs_source function by default (local file or via web)
 if ! type xs_source &> /dev/null; then
-  _xs="$xSHELL_PATH/functions/xs_source"
-  if [ -f "$_xs" ]; then
-    source "$_xs"
+  _f_xss="$xSHELL_PATH/functions/xs_source"
+  if [ -f "$_f_xss" ]; then
+    source "$_f_xss"
     xs_debug "${bg}${k} init -> xs_source [local] ${R}\n"
   else
-    source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
+    source /dev/stdin <<< "$(curl -sSL $XS_SOURCE_BASE_URL/functions/xs_source)"
     xs_debug "${by}${k} init -> xs_source [web] ${R}\n"
   fi
 fi
+
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 XS_HOME="$HOME/.xshell"
 
@@ -211,8 +216,8 @@ function lib()        { xs_use "$@"; }
 # ex: xs_requirements bin1 bin2 "bin3A|bin3B"
 xs_requirements(){
   xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
-  local missing=""
-  local found=''
+  local found missing tool t
+  found=''; missing=""
   
   # store all requirements for thus app/script
   [ -z "$XS_REQUIREMENTS" ] && XS_REQUIREMENTS+=$* || XS_REQUIREMENTS+=" $*"
