@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 17:22:18
+# Last Modified: Sunday, 2026/09/13 - 11:45:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.25.651
+# Version: 0.0.26.668
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -36,56 +36,23 @@ if ! type xs_source &> /dev/null; then
   #   ex: xs_source "args system colors upcase"
   function xs_source() {
     local filename location current_file f
+    local get_fname_path="$xSHELL_PATH/functions/get_fname"
+    
+    if [  -f "$get_fname_path" ]; then
+      source "$get_fname_path"
+    fi
 
-    # show aliases (functions)
-    get_fname() {
-        local base_index=-1
-        local current_index index
-
-        for ((i=0; i<${#FUNCNAME[@]}; i++)); do
-            if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
-                base_index=$i
-                break
-            fi
-        done
-        
-        local current_index=''
-        if [ "${FUNCNAME[0]}" == "get_fname" ]; then
-          current_index=1
-        else
-          current_index=0
-        fi
-       
-        if [ "$base_index" -ne -1 ]; then
-        
-            local index=$((base_index - current_index))
-            if [ "$index" -eq 1 ] ; then
-            # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
-                # echo "ci ${FUNCNAME[*]}"
-                echo "${FUNCNAME[index]}"
-            elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
-                local index=$((current_index + 1))
-                echo "${FUNCNAME[index]}"
-            elif [ "${FUNCNAME[current_index]}" == "main" ]; then
-            #  [ "$index" -eq "$base_index" ]; then
-                local index=$((index + 2))
-                # echo "bi-2 ${FUNCNAME[*]}"
-                echo "${FUNCNAME[index]}"
-            fi
-        else
-            # echo "i=2 ${FUNCNAME[*]}"
-            echo "${FUNCNAME[2]}"
-        fi
-    }
-
+    # define paths for search
+    XS_SOURCE_PATHS=()
     XS_SOURCE_DEBUG_LEVEL=2
+    XS_SOURCE_FLAG=n
     
     # define how source files will be get
     case "${1}" in
       -b | --both  | --both-allow) shift; XS_SOURCE_FLAG=b ;;
       -w | --web   | --web-only  ) shift; XS_SOURCE_FLAG=w ;;
       -l | --local | --local-only) shift; XS_SOURCE_FLAG=l ;;
-      *) shift; XS_SOURCE_FLAG=n ;;
+      # *) shift; XS_SOURCE_FLAG=n ;;
     esac
 
     case "${1}" in
@@ -96,29 +63,42 @@ if ! type xs_source &> /dev/null; then
       -d | --debug | --debug-level) shift; XS_SOURCE_DEBUG_LEVEL=$1; shift ;;
     esac
 
-    if [ "$1" != "get_fname" ]; then 
-      if [ -z "$XS_SOURCE_SILENT" ]; then
-        xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
-      fi
-    # else
-    #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
-    fi
+    # if [ "$1" != "get_fname" ]; then 
+    #   if [ -z "$XS_SOURCE_SILENT" ]; then
+    #     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
+    #   fi
+    # # else
+    # #   xs_debug "${BGRED} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
+    # fi
 
     # debug header
     # xs_debug "${REVERSE} $0 - $BASH_SOURCE${RESET} - ${YELLOW}$(get_fname)${RESET} (FLAG: ${XS_SOURCE_FLAG}) '${CYAN}$*${RESET}'\n"
     
-    # store functions loaded by xs_source among multiple calls 
+    # # store functions loaded by xs_source among multiple calls 
+    # for current_file in "$@"; do
+    #   [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+="$current_file:$XS_SOURCE_FLAG" || XS_SOURCE_FILES+=" $current_file:$XS_SOURCE_FLAG"
+    # done
+
+    # store functions loaded by xs_source among multiple calls
     for current_file in "$@"; do
-      [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+="$current_file:$XS_SOURCE_FLAG" || XS_SOURCE_FILES+=" $current_file:$XS_SOURCE_FLAG"
+      # Check if the current file is already in XS_SOURCE_FILES
+      if [[ "$XS_SOURCE_FILES" == *"$current_file:$XS_SOURCE_FLAG"* ]]; then
+        # If it is, increment the count
+        count=$(echo "$XS_SOURCE_FILES" | grep -o "$current_file:$XS_SOURCE_FLAG([0-9]*)" | grep -o '[0-9]*')
+        count=$((count + 1))
+        XS_SOURCE_FILES=$(echo "$XS_SOURCE_FILES" | sed "s/$current_file:$XS_SOURCE_FLAG([0-9]*)/$current_file:$XS_SOURCE_FLAG($count)/")
+      else
+        # If it's not, add it to XS_SOURCE_FILES with a count of 1
+        [ -z "$XS_SOURCE_FILES" ] && XS_SOURCE_FILES+="$current_file:$XS_SOURCE_FLAG(1)" || XS_SOURCE_FILES+=" $current_file:$XS_SOURCE_FLAG(1)"
+      fi
     done
 
-    XS_SOURCE_PATHS=()
-    # define paths for local search
+    # source from local
     if [ "$XS_SOURCE_FLAG" == "l" ] || [ "$XS_SOURCE_FLAG" == "b" ] || [ "$XS_SOURCE_FLAG" == "n" ]; then
       XS_SOURCE_PATHS+=("$xSHELL_PATH" "$xSHELL_PATH/functions")
     fi
 
-    # define paths for web search
+    # source from web
     if [ "$XS_SOURCE_FLAG" == "w" ] || [ "$XS_SOURCE_FLAG" == "b" ]; then
       XS_SOURCE_PATHS+=("${XS_SOURCE_BASE_URL}" "${XS_SOURCE_BASE_URL}/functions")
     fi

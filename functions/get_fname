@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/23 - 22:08:53
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 17:21:32
+# Last Modified: Sunday, 2026/09/13 - 11:44:38
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.9
+# Version: 0.0.4.34
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,42 +17,105 @@
 # HISTORY:
 #
 
- # show aliases (functions)
-    get_fname() {
-        local base_index=-1
+# show aliases (functions)
+get_fname() {
+    local base_index=-1
 
-        for ((i=0; i<${#FUNCNAME[@]}; i++)); do
-            if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
-                base_index=$i
-                break
-            fi
-        done
-        
-        local current_index=''
-        if [ "${FUNCNAME[0]}" == "get_fname" ]; then
-          current_index=1
-        else
-          current_index=0
+    # define how source files will be get
+    case "${1}" in
+        -d | --debug) 
+            shift; 
+            # XS_FNAME_DEBUG=true 
+            echo -e "\n${R}${br}get_fname() DEBUG - '${FUNCNAME[@]}'${R}${V}"
+        ;;
+        # *) shift; XS_SOURCE_FLAG=n ;;
+    esac
+
+    # echo "${FUNCNAME[2]}"
+
+    for ((i=0; i<${#FUNCNAME[@]}; i++)); do
+        if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
+            base_index=$i
+            break
         fi
-       
-        if [ "$base_index" -ne -1 ]; then
-        
-            local index=$((base_index - current_index))
-            if [ "$index" -eq 1 ] ; then
-            # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
-                # echo "ci ${FUNCNAME[*]}"
-                echo "${FUNCNAME[index]}"
-            elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
-                local index=$((current_index + 1))
-                echo "${FUNCNAME[index]}"
-            elif [ "${FUNCNAME[current_index]}" == "main" ]; then
-            #  [ "$index" -eq "$base_index" ]; then
-                local index=$((index + 2))
-                # echo "bi-2 ${FUNCNAME[*]}"
-                echo "${FUNCNAME[index]}"
-            fi
-        else
-            # echo "i=2 ${FUNCNAME[*]}"
-            echo "${FUNCNAME[2]}"
+    done
+    
+    local current_index=''
+    if [ "${FUNCNAME[0]}" == "get_fname" ]; then
+        current_index=1
+    else
+        current_index=0
+    fi
+    
+    if [ "$base_index" -ne -1 ]; then
+    
+        local index=$((base_index - current_index))
+        if [ "$index" -eq 1 ] ; then
+        # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
+            # echo "ci ${FUNCNAME[*]}"
+            echo "${FUNCNAME[index]}"
+        elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
+            local index=$((current_index + 1))
+            echo "${FUNCNAME[index]}"
+        elif [ "${FUNCNAME[current_index]}" == "main" ]; then
+        #  [ "$index" -eq "$base_index" ]; then
+            local index=$((index + 2))
+            # echo "bi-2 ${FUNCNAME[*]}"
+            echo "${FUNCNAME[index]}"
         fi
-    }
+    else
+        # echo "i=2 ${FUNCNAME[*]}"
+        echo "${FUNCNAME[2]}"
+    fi
+}
+
+# # show aliases (functions)
+# get_fname() {
+#     local base_index=-1
+#     local current_index index
+
+#     # define how source files will be get
+#     case "${1}" in
+#         -d | --debug) 
+#             shift; 
+#             # XS_FNAME_DEBUG=true 
+#             echo -e "\nget_fname() DEBUG - '${FUNCNAME[@]}'"
+#         ;;
+#         # *) shift; XS_SOURCE_FLAG=n ;;
+#     esac
+
+#     for ((i=0; i<${#FUNCNAME[@]}; i++)); do
+#         if [ "${FUNCNAME[i]}" == "main" ] || [ "${FUNCNAME[i]}" == "source" ]; then
+#             base_index=$i
+#             break
+#         fi
+#     done
+    
+#     local current_index=''
+#     if [ "${FUNCNAME[0]}" == "get_fname" ]; then
+#       current_index=1
+#     else
+#       current_index=0
+#     fi
+    
+#     if [ "$base_index" -ne -1 ]; then
+    
+#         local index=$((base_index - current_index))
+#         if [ "$index" -eq 1 ] ; then
+#         # && [ "${FUNCNAME[current_index] != "xs_source"}" ]; then
+#             # echo "ci ${FUNCNAME[*]}"
+#             echo "${FUNCNAME[index]}"
+#         elif [ "${FUNCNAME[current_index]}" == "xs_source" ]; then
+#             local index=$((current_index + 1))
+#             echo "${FUNCNAME[index]}"
+#         elif [ "${FUNCNAME[current_index]}" == "main" ]; then
+#         #  [ "$index" -eq "$base_index" ]; then
+#             local index=$((index + 2))
+#             # echo "bi-2 ${FUNCNAME[*]}"
+#             echo "${FUNCNAME[index]}"
+#         fi
+#     else
+#         # echo "i=2 ${FUNCNAME[*]}"
+#         echo "${FUNCNAME[2]}"
+#     fi
+# }

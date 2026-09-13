@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: functions/mcurl
+# Created: Thursday, 2026/09/10 - 17:54:29
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Thursday, 2026/09/10 - 19:12:24
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.7
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# Função para fazer uma requisição GET
+function mcurl() {
+    # Verificar se a URL e o arquivo de saída foram fornecidos
+    if [ $# -ne 2 ]; then
+        echo "Uso: $0 <URL> <arquivo_de_saida>"
+        exit 1
+    fi
+
+    local url="$1"
+    local output_file="$2"
+
+    # Extrair o host e o caminho da URL
+    local host=$(echo "$url" | awk -F/ '{print $3}')
+    local path=$(echo "$url" | awk -F/ '{print substr($0, index($0,$3) + length($3))}')
+
+    # Verificar se o caminho está vazio
+    if [ -z "$path" ]; then
+        path="/"
+    fi
+
+    # Criar um socket e fazer a requisição HTTP
+    exec 3<>/dev/tcp/"$host"/80
+    echo -e "GET $path HTTP/1.1\r\nhost: $host\r\nConnection: close\r\n\r\n" >&3
+
+    # Ler a resposta
+    local response=""
+    while read -r line <&3; do
+        response+="$line\n"
+    done
+
+    # Extrair o corpo da resposta
+    local body=$(echo "$response" | awk 'BEGIN {body=0} /^\r$/ {body=1; next} body {print}')
+
+    # Salvar o corpo no arquivo de saída
+    echo -e "$body" > "$output_file"
+
+    # Fechar o socket
+    exec 3>&-
+}
+
+# Chamar a função mcurl
+# mcurl "$1" "$2"

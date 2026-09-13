@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 17:21:13
+# Last Modified: Sunday, 2026/09/13 - 12:28:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.46.2240
+# Version: 0.2.47.2250
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -273,8 +273,8 @@ xs_usage(){
 #   --> desc="text" 
 xs_arg(){
     
-    xs_func get_fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
+    xs_func --local-only get_fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname --debug)() '$*' ${RESET}\n"
     
     #TODO: refactor code below
     while [ "$1" != "" ]; do
@@ -433,9 +433,9 @@ xarg(){ xs_arg "$@"; }
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xs_run(){
     
-    xs_func get_fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
-    xRUN_ARGS="$@"
+    xs_func --local-only get_fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname --debug)() '$*' ${RESET}\n"
+    xRUN_ARGS="$*"
 
     xs_run_help(){
         xs_func --local --silent awk_column
@@ -501,7 +501,7 @@ xs_run(){
             \n$(.xs --hl '-')${RESET}\n${YELLOW}# 1. variables:${RESET}\n\
             \n\$BASH_SOURCE: ${REVERSE} '$BASH_SOURCE' ${RESET}\
             \n\$DIRSTACK...: ${REVERSE} '$DIRSTACK' ${RESET}\
-            \n\$FUNCNAME...: ${REVERSE} '${FUNCNAME[@]}' ${RESET}\
+            \n\$FUNCNAME...: ${REVERSE} '${FUNCNAME[*]}' ${RESET}\
             
             \n\$xSHELL_PATH: ${REVERSE} '$xSHELL_PATH' ${RESET}\
             
@@ -621,7 +621,7 @@ xs_run(){
         # function to force script to receive at last one param/arg
         case "$1" in
             --xapp-data | --xs-app-home)
-                shift; xs_create_app_home
+                shift; xs_app_home
             ;;
             --xrequire-one | --xrequire_one | --require-one | --notNull | --not-null)  
                 shift; _XS_ARGS_REQUIRED=true
@@ -674,8 +674,10 @@ xs_run(){
     for arg in "${XS_PARAMS[@]}"; do
         # Check if the argument is a joint short flag (e.g., -abc)
         if [[ "$arg" =~ ^-[a-zA-Z]{2,}$ ]]; then
-            handle_joint_short_flags "${arg:1}"  # Call the function to handle the joint short flags
-            unset XS_PARAMS[$arg]  # Remove the joint short flag from the XS_PARAMS array
+            # Call the function to handle the joint short flags
+            handle_joint_short_flags "${arg:1}"  
+            # Remove the joint short flag from the XS_PARAMS array
+            unset "XS_PARAMS[$arg]"  
         fi
     done
 
@@ -689,7 +691,7 @@ xrun(){ xs_run "$@"; }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
 xs_case(){
-    xs_func get_fname
+    xs_func --local-only get_fname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     local value="$1"; shift
     local code_block="$@"

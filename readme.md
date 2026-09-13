@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Tuesday, 2026/08/18 - 00:42:56
+ Last Modified: Sunday, 2026/09/13 - 12:28:19
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.2.563
+ Version: 0.1.2.564
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -317,7 +317,7 @@ Basic library to initialize our framework/system.
     * Default location to script save configs and related files
 * Functions
 
-  * `xs_create_app_home {dir1, dir2}`
+  * `xs_app_home {dir1, dir2}`
     * Create `$APP_HOME` directory. Default localtion is `$HOME/.xshell/$APP`
   * `use lib1 lib2 lib3`
     * function to easily load libraries into your script

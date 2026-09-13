@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/11 - 11:03:57
+# Last Modified: Sunday, 2026/09/13 - 12:57:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.41.1298
+# Version: 0.1.42.1311
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -27,10 +27,10 @@ if ! type xs_source &> /dev/null; then
   _xs="$xSHELL_PATH/functions/xs_source"
   if [ -f "$_xs" ]; then
     source "$_xs"
-    xs_debug " init -> xs_source [local]\n"
+    xs_debug "${bg}${k} init -> xs_source [local] ${R}\n"
   else
     source /dev/stdin <<< "$(curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/functions/xs_source)"
-    xs_debug " init -> xs_source [web]\n"
+    xs_debug "${by}${k} init -> xs_source [web] ${R}\n"
   fi
 fi
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
@@ -76,13 +76,7 @@ xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE.: $BASH_SOURCE - xs_func() ${RESET}\n"
 xs_func --local-only check die fail is_lib_loaded upcase
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# def xs_create_app_home(subdirs): function to create default $APP_DATA and subfolders
-# ex: setHome {dir1, dir2}
-xs_create_app_home(){
-  for dir in "$@"; do
-    mkdir -p "$APP_DATA/$dir"
-  done
-}
+
 
 # def use(lib1, lib2, ...): function to import/use some library
 # ex: use args utils mycustomlib
