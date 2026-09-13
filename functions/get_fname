@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/23 - 22:08:53
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 11:44:38
+# Last Modified: Sunday, 2026/09/13 - 13:19:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.34
+# Version: 0.0.5.36
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,7 +26,7 @@ get_fname() {
         -d | --debug) 
             shift; 
             # XS_FNAME_DEBUG=true 
-            echo -e "\n${R}${br}get_fname() DEBUG - '${FUNCNAME[@]}'${R}${V}"
+            echo -e "\n${R}${br}get_fname() DEBUG - '${FUNCNAME[*]}'${R}${V}"
         ;;
         # *) shift; XS_SOURCE_FLAG=n ;;
     esac

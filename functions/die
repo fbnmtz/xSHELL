@@ -6,10 +6,10 @@
 # Created: Thursday, 2026/08/20 - 23:47:33
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Wednesday, 2026/08/26 - 00:01:27
+# Last Modified: Sunday, 2026/09/13 - 13:20:01
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.24
+# Version: 0.0.3.29
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,13 +20,13 @@
 function die(){
     # handle args
     case "${1}" in
-      -m | --msg ) shift; XS_DIE_MSG="$1"; shift;  ;;
+      -m | --msg ) shift; XS_DIE_MSG="$1" ; shift; ;;
       -e | --exit) shift; XS_DIE_CODE="$1"; shift; ;;
     esac
     
-    [ -z "$XS_DIE_MSG"  ] && XS_DIE_MSG="$@"
-    [ -z "$XS_DIE_CODE" ] && XS_DIE_CODE=99
+    [ -z "$XS_DIE_MSG"  ] && XS_DIE_MSG="$*"
+    [ -z "$XS_DIE_CODE" ] && XS_DIE_CODE=999
 
-    echo "die() - $XS_DIE_MSG" > /dev/stderr
+    echo -e "die() - $XS_DIE_MSG" > /dev/stderr
     exit $XS_DIE_CODE
 }

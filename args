@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 12:28:19
+# Last Modified: Sunday, 2026/09/13 - 13:25:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.47.2250
+# Version: 0.2.48.2253
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -439,7 +439,7 @@ xs_run(){
 
     xs_run_help(){
         xs_func --local --silent awk_column
-        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} "$args_hash" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
+        echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} \"$args_hash\" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
         \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
         \n\nAvailable options:\
@@ -694,7 +694,7 @@ xs_case(){
     xs_func --local-only get_fname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(get_fname)() '$*' ${RESET}\n"
     local value="$1"; shift
-    local code_block="$@"
+    local code_block="$*"
     if [[ "$xarg" =~ $value ]]; then
         eval "$code_block"
     fi

@@ -6,10 +6,10 @@
 # Created: Sunday, 2025/02/14 - 00:37:39
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 01:39:38
+# Last Modified: Sunday, 2026/09/13 - 13:21:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.11
+# Version: 0.0.4.14
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -24,13 +24,13 @@ if ! type "$func_name" &> /dev/null; then
     # def append_file(filename, content)
     function appendFile(){
         local file=$1; shift
-        local content="$@"
+        local content="$*"
         local cmd=""
         local content_cmd="echo -e '$content'"
         local tee_cmd="tee -a $file"
         ! check_path "$file" && { tee_cmd="sudo $tee_cmd"; }
         cmd="$content_cmd | $tee_cmd"
-        echo "\tadding '${content/\\n/}' to '$file'."
+        echo -e "\tadding '${content/\\n/}' to '$file'."
         eval "$cmd" >> $APP_LOG 2>&1 || { echo "$project_name install aborted!"; exit 2; } 
     }
 
