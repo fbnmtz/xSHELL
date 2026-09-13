@@ -6,10 +6,10 @@
 # Created: Tuesday, 2023/02/25 - 18:50:01
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/08/18 - 09:16:40
+# Last Modified: Sunday, 2026/09/13 - 13:48:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.2.6
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 # search and return a git config (local or global)
 # getGit user.name author.name
-getGit(){
+get_git(){
     local git_cmd="git config" _git_config
     for c in "$@" ; do
         _git_config=$($git_cmd "$c")
@@ -28,3 +28,5 @@ getGit(){
         [ -n "$_git_config" ] && { echo "$_git_config" ; break; }
     done
 }
+
+function getGit(){ get_git "$@"; }
