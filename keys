@@ -6,10 +6,10 @@
 # Created: Friday, 2026/08/07 - 01:21:14
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/08/07 - 22:31:24
+# Last Modified: Sunday, 2026/09/13 - 19:19:39
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 1.0.0.22
+# Version: 1.0.1.47
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,86 +20,86 @@
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Mapping of key codes
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-KEY_ENTER=13
-KEY_ESC=27
-KEY_SPACE=32
-KEY_BACKSPACE=127
-KEY_TAB=9
-KEY_SHIFT=16
-KEY_CTRL=17
-KEY_ALT=18
-KEY_CAPSLOCK=20
+KEY_ENTER=13;       K_ENTER=${KEY_ENTER}
+KEY_ESC=27;         K_ESC=${KEY_ESC}
+KEY_SPACE=32;       K_SPACE=${KEY_SPACE}
+KEY_BACKSPACE=127;  K_BACKSPACE=${KEY_BACKSPACE}
+KEY_TAB=9;          K_TAB=${KEY_TAB}
+KEY_SHIFT=16;       K_SHIFT=${KEY_SHIFT}
+KEY_CTRL=17;        K_CTRL=${KEY_CTRL}
+KEY_ALT=18;         K_ALT=${KEY_ALT}
+KEY_CAPSLOCK=20;    K_CAPSLOCK=${KEY_CAPSLOCK}
 
 # function keys
-KEY_F1=112
-KEY_F2=113
-KEY_F3=114
-KEY_F4=115
-KEY_F5=116
-KEY_F6=117
-KEY_F7=118
-KEY_F8=119
-KEY_F9=120
-KEY_F10=121
-KEY_F11=122
-KEY_F12=123
+KEY_F1=112;         K_F1=${KEY_F1}
+KEY_F2=113;         K_F2=${KEY_F2}
+KEY_F3=114;         K_F3=${KEY_F3}
+KEY_F4=115;         K_F4=${KEY_F4}
+KEY_F5=116;         K_F5=${KEY_F5}
+KEY_F6=117;         K_F6=${KEY_F6}
+KEY_F7=118;         K_F7=${KEY_F7}
+KEY_F8=119;         K_F8=${KEY_F8}
+KEY_F9=120;         K_F9=${KEY_F9}
+KEY_F10=121;        K_F10=${KEY_F10}
+KEY_F11=122;        K_F11=${KEY_F11}
+KEY_F12=123;        K_F12=${KEY_F12}
 
-KEY_INSERT=45
-KEY_DELETE=46
-KEY_HOME=36
-KEY_END=35
-KEY_PAGEUP=33
-KEY_PAGEDOWN=34
+KEY_INSERT=45;      K_INSERT=${KEY_INSERT}
+KEY_DELETE=46;      K_DELETE=${KEY_DELETE}
+KEY_HOME=36;        K_HOME=${KEY_HOME}
+KEY_END=35;         K_END=${KEY_END}
+KEY_PAGEUP=33;      K_PAGEUP=${KEY_PAGEUP}
+KEY_PAGEDOWN=34;    K_PAGEDOWN=${KEY_PAGEDOWN}
 
 # arrow keys
-KEY_UP=38
-KEY_DOWN=40
-KEY_LEFT=37
-KEY_RIGHT=39
+KEY_UP=38;          K_UP=${KEY_UP}
+KEY_DOWN=40;        K_DOWN=${KEY_DOWN}
+KEY_LEFT=37;        K_LEFT=${KEY_LEFT}
+KEY_RIGHT=39;       K_RIGHT=${KEY_RIGHT}
 
 # numpad keys
-KEY_0=48
-KEY_1=49
-KEY_2=50
-KEY_3=51
-KEY_4=52
-KEY_5=53
-KEY_6=54
-KEY_7=55
-KEY_8=56
-KEY_9=57
+KEY_0=48;           K_0=${KEY_0}
+KEY_1=49;           K_1=${KEY_1}
+KEY_2=50;           K_2=${KEY_2}
+KEY_3=51;           K_3=${KEY_3}
+KEY_4=52;           K_4=${KEY_4}
+KEY_5=53;           K_5=${KEY_5}
+KEY_6=54;           K_6=${KEY_6}
+KEY_7=55;           K_7=${KEY_7}
+KEY_8=56;           K_8=${KEY_8}
+KEY_9=57;           K_9=${KEY_9}
 
 # alphabet keys
-KEY_A=65
-KEY_B=66
-KEY_C=67
-KEY_D=68
-KEY_E=69
-KEY_F=70
-KEY_G=71
-KEY_H=72
-KEY_I=73
-KEY_J=74
-KEY_K=75
-KEY_L=76
-KEY_M=77
-KEY_N=78
-KEY_O=79
-KEY_P=80
-KEY_Q=81
-KEY_R=82
-KEY_S=83
-KEY_T=84
-KEY_U=85
-KEY_V=86
-KEY_W=87
-KEY_X=88
-KEY_Y=89
-KEY_Z=90
+KEY_A=65;           K_A=${KEY_A}
+KEY_B=66;           K_B=${KEY_B}
+KEY_C=67;           K_C=${KEY_C}
+KEY_D=68;           K_D=${KEY_D}
+KEY_E=69;           K_E=${KEY_E}
+KEY_F=70;           K_F=${KEY_F}
+KEY_G=71;           K_G=${KEY_G}
+KEY_H=72;           K_H=${KEY_H}
+KEY_I=73;           K_I=${KEY_I}
+KEY_J=74;           K_J=${KEY_J}
+KEY_K=75;           K_K=${KEY_K}
+KEY_L=76;           K_L=${KEY_L}
+KEY_M=77;           K_M=${KEY_M}
+KEY_N=78;           K_N=${KEY_N}
+KEY_O=79;           K_O=${KEY_O}
+KEY_P=80;           K_P=${KEY_P}
+KEY_Q=81;           K_Q=${KEY_Q}
+KEY_R=82;           K_R=${KEY_R}
+KEY_S=83;           K_S=${KEY_S}
+KEY_T=84;           K_T=${KEY_T}
+KEY_U=85;           K_U=${KEY_U}
+KEY_V=86;           K_V=${KEY_V}
+KEY_W=87;           K_W=${KEY_W}
+KEY_X=88;           K_X=${KEY_X}
+KEY_Y=89;           K_Y=${KEY_Y}
+KEY_Z=90;           K_Z=${KEY_Z}
 
 # def readkey(): function to read a key from the keyboard, including special key codes
 readkey() {
-    local key
+    local key key2 key3
     # -r: do not allow backslashes to escape any characters, 
     # -s: silent mode (do not echo input), -n1: read only one character
     # -n1: read only one character
