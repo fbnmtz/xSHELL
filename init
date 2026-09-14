@@ -6,46 +6,46 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 15:04:50
+# Last Modified: Sunday, 2026/09/13 - 21:24:14
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.45.1343
+# Version: 0.1.46.1356
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Description: 
+# Description:
 #  >
 # ############################################################################
 # HISTORY:
 #
 
 # shellcheck disable=SC1090,SC1091,SC2154,SC2034
-  # `-> SC1090 - Can't follow non-constant source: Use a directive to specify location.
-  # `-> SC1091 - Not following: (error message here)
-  # `-> SC2154 - var is referenced but not assigned: (install script set it on user/system env)
-  # `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
-  
+# `-> SC1090 - Can't follow non-constant source: Use a directive to specify location.
+# `-> SC1091 - Not following: (error message here)
+# `-> SC2154 - var is referenced but not assigned: (install script set it on user/system env)
+# `-> SC2034 - foo appears unused. Verify it or export it: (Some vars are defined to be used by other scripts )
+
 # variable to source from web
 XS_SOURCE_BASE_URL="https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master"
 
 # load xs_source function by default (local file or via web)
-if ! type xs_source &> /dev/null; then
-  _f_xss="$xSHELL_PATH/functions/xs_source"
-  if [ -f "$_f_xss" ]; then
-    source "$_f_xss"
-    xs_debug "${bg}${k} init -> xs_source [local] ${R}\n"
-  else
-    source /dev/stdin <<< "$(curl -sSL $XS_SOURCE_BASE_URL/functions/xs_source)"
-    xs_debug "${by}${k} init -> xs_source [web] ${R}\n"
-  fi
+if ! type xs_source &>/dev/null; then
+    _f_xss="$xSHELL_PATH/functions/xs_source"
+    if [ -f "$_f_xss" ]; then
+        source "$_f_xss"
+        xs_debug "${bg}${k} init -> xs_source [local] ${R}\n"
+    else
+        source /dev/stdin <<<"$(curl -sSL $XS_SOURCE_BASE_URL/functions/xs_source)"
+        xs_debug "${by}${k} init -> xs_source [web] ${R}\n"
+    fi
 fi
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 XS_HOME="$HOME/.xshell"
 
-APP=$(basename "$0")          # application name
-APP_NAME=$APP                 # application name
-APP_PATH=$0                   # application path and name
-APP_DIR=$(dirname "$0")       # application current directory
-APP_HOME="$XS_HOME/$APP"      # application home (store data)
+APP=$(basename "$0")     # application name
+APP_NAME=$APP            # application name
+APP_PATH=$0              # application path and name
+APP_DIR=$(dirname "$0")  # application current directory
+APP_HOME="$XS_HOME/$APP" # application home (store data)
 APP_DATA=$APP_HOME
 # DEPRECATED: $APP_DIR will become $APP_HOME and $APP_HOME turn to $APP_DATA
 APP_LOG="/tmp/xshell-$APP.log"
@@ -58,17 +58,17 @@ XS_MISSING_REQUIREMENTS=''
 xSHELL_LIBS=()
 
 # PATHs to search a LIB
-xSHELL_DIRS=( 
-  "$xSHELL_PATH/"
-  "$xSHELL_PATH/lib/" 
-  # "$xSHELL_PATH/lib/functions/"
-  # "$xSHELL_PATH/functions/"
-  "$xSHELL_PATH/vendor/"
-  "$APP_DIR/" 
-  "$APP_DIR/lib/"
-  # "$APP_DIR/lib/functions/"
-  # "$APP_DIR/functions/"
-  "$APP_DIR/vendor/"
+xSHELL_DIRS=(
+    "$xSHELL_PATH/"
+    "$xSHELL_PATH/lib/"
+    # "$xSHELL_PATH/lib/functions/"
+    # "$xSHELL_PATH/functions/"
+    "$xSHELL_PATH/vendor/"
+    "$APP_DIR/"
+    "$APP_DIR/lib/"
+    # "$APP_DIR/lib/functions/"
+    # "$APP_DIR/functions/"
+    "$APP_DIR/vendor/"
 )
 
 # declare -A _xLIB_DIRS_
@@ -82,110 +82,108 @@ xs_func --local-only check die fail is_lib_loaded upcase xs_app_home
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
-
 # def use(lib1, lib2, ...): function to import/use some library
 # ex: use args utils mycustomlib
 xs_use(){
-  local current_lib current_dir lib lib_path search_lib
-  
-  # Increment the use counter
-  ((XS_USE_COUNT+=1))
-  XS_USE_ALL="$*"
+    local current_lib current_dir lib lib_path search_lib
 
-  # trackback function caller
-  if [ "$XS_USE_COUNT" -eq 1 ]; then 
-    # Set the caller and library variables
-    XS_USE_CALLER="$0"
-    XS_LIB=$1  
-  else
-    if [ "$XS_USE_CALLER" == "$XS_LIB" ]; then 
-      XS_USE_CALLER="$0";
+    # Increment the use counter
+    ((XS_USE_COUNT += 1))
+    XS_USE_ALL="$*"
+
+    # trackback function caller
+    if [ "$XS_USE_COUNT" -eq 1 ]; then
+        # Set the caller and library variables
+        XS_USE_CALLER="$0"
+        XS_LIB=$1
     else
-      # Update the caller and library variables if necessary
-      XS_USE_CALLER=$XS_LIB  
-    fi
-  fi
-
-  xs_debug "${REVERSE} ${BASH_SOURCE} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
-  # xs_debug "${REVERSE}$0 - ${BASH_SOURCE[1]} $XS_USE_CALLER - xs_use() $* ${RESET}\n"
-  
-  # [ "$XS_USE_CALLLER" == "$0" ] && xs_debug "\n"
-  # Print a message indicating that the use function is being called
-  xs_debug --level 2 "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$XS_USE_CALLER'${RESET}\n"  
-  
-  # verify each lib file passed to use() function
-  for current_lib in $@; do
-    
-    # not already loaded?
-    if ! is_lib_loaded "$current_lib"; then
-
-      # shellcheck disable=SC2155         # warning - declare and assign separate
-      # local current_path=$(dirname "$0")  # Get the directory path of the current script
-      # Novo array para armazenar os paths com o arquivo adicionado
-      lib_path=()
-      
-
-      # Iterar sobre cada item do array original
-      for current_dir in "${xSHELL_DIRS[@]}"; do
-        # Adicionar o nome do arquivo ao final do path
-        lib_path+=("${current_dir}${current_lib}")
-      done
-
-      local included=''
-      
-      # search file in default destinations
-      local li=0
-      for search_lib in "${lib_path[@]}"; do
-        
-        xs_debug --level 2 "  \`-> searching \'${MAGENTA}${search_lib}${RESET}\' --> "
-
-        if source "${search_lib}" 2> /dev/null ; then
-          xs_debug --level 2 "${GREEN}[success]${RESET}\n"
-          # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${GREEN}[success]${RESET}"
-          xSHELL_LIBS+=($search_lib)
-          XS_USE_CALLER=${search_lib}
-          # success? set a flag; break loop
-          xs_debug --level 2 "${GREEN}  \`-> Loading '${search_lib}'${RESET} - ${CYAN}directory: $((li+1))/${#xSHELL_DIRS[@]}${RESET})\n"
-
-          included="true"
-        
-          break
+        if [ "$XS_USE_CALLER" == "$XS_LIB" ]; then
+            XS_USE_CALLER="$0"
         else
-          xs_debug --level 2 "${RED}[fail]${RESET}\n"
+            # Update the caller and library variables if necessary
+            XS_USE_CALLER=$XS_LIB
         fi
-        li=$((li+1))
-      done
-    else 
-      # $current_lib already sourced
-      included="true"
     fi
 
-    # not included with success? raise a error 
-    if [ -z "$included" ]; then
-      
-      local all_dirs="${xSHELL_DIRS[*]} "
-      
-      echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${current_lib}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${current_lib^^}_'${RED} NOT EXIST!${RESET}"
-      
-      xs_debug --level 2 "${RED} \`-> searched on:\n   *"\
-            "${all_dirs// /${YELLOW}$current_lib - ${RED}[fail]\\n   \* }"\
-            "${RESET}\n"
-      
-      exit 1
-    # else
-    fi
-    
-    # test -z "$included" && { 
-    #   echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${current_lib}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${current_lib^^}_'${RED} NOT EXIST!${RESET}"
-    #   local all_dirs="${xSHELL_DIRS[@]} "
-    #   xs_debug "${RED} \`-> searched on:\n   *"\
-    #         "${all_dirs// /${YELLOW}$current_lib - ${RED}[fail]\\n   \* }"\
-    #         "${RESET}\n"
-    #   exit 1
-    # }
-  
-  done
-  XS_USE_COUNT=0
+    xs_debug "${REVERSE} ${BASH_SOURCE} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
+    # xs_debug "${REVERSE}$0 - ${BASH_SOURCE[1]} $XS_USE_CALLER - xs_use() $* ${RESET}\n"
+
+    # [ "$XS_USE_CALLLER" == "$0" ] && xs_debug "\n"
+    # Print a message indicating that the use function is being called
+    xs_debug --level 2 "call '${YELLOW}use ${MAGENTA}$*${RESET}' from ${CYAN}'$XS_USE_CALLER'${RESET}\n"
+
+    # verify each lib file passed to use() function
+    for current_lib in $@; do
+
+        # not already loaded?
+        if ! is_lib_loaded "$current_lib"; then
+
+            # shellcheck disable=SC2155         # warning - declare and assign separate
+            # local current_path=$(dirname "$0")  # Get the directory path of the current script
+            # Novo array para armazenar os paths com o arquivo adicionado
+            lib_path=()
+
+            # Iterar sobre cada item do array original
+            for current_dir in "${xSHELL_DIRS[@]}"; do
+                # Adicionar o nome do arquivo ao final do path
+                lib_path+=("${current_dir}${current_lib}")
+            done
+
+            local included=''
+
+            # search file in default destinations
+            local li=0
+            for search_lib in "${lib_path[@]}"; do
+
+                xs_debug --level 2 "  \`-> searching \'${MAGENTA}${search_lib}${RESET}\' --> "
+
+                if source "${search_lib}" 2>/dev/null; then
+                    xs_debug --level 2 "${GREEN}[success]${RESET}\n"
+                    # [ "$_INIT_DEBUG_" == 'true' ] && echo -e "${GREEN}[success]${RESET}"
+                    xSHELL_LIBS+=($search_lib)
+                    XS_USE_CALLER=${search_lib}
+                    # success? set a flag; break loop
+                    xs_debug --level 2 "${GREEN}  \`-> Loading '${search_lib}'${RESET} - ${CYAN}directory: $((li + 1))/${#xSHELL_DIRS[@]}${RESET})\n"
+
+                    included="true"
+
+                    break
+                else
+                    xs_debug --level 2 "${RED}[fail]${RESET}\n"
+                fi
+                li=$((li + 1))
+            done
+        else
+            # $current_lib already sourced
+            included="true"
+        fi
+
+        # not included with success? raise a error
+        if [ -z "$included" ]; then
+
+            local all_dirs="${xSHELL_DIRS[*]} "
+
+            echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${current_lib}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${current_lib^^}_'${RED} NOT EXIST!${RESET}"
+
+            xs_debug --level 2 "${RED} \`-> searched on:\n   *" \
+                "${all_dirs// /${YELLOW}$current_lib - ${RED}[fail]\\n   \* }" \
+                "${RESET}\n"
+
+            exit 1
+        # else
+        fi
+
+        # test -z "$included" && {
+        #   echo -e "${RED}Error! function 'use()' can not find file/lib: ${YELLOW}'${current_lib}'${RED} - FILE NOT FOUND! const ${YELLOW}'\$_xLIB_${current_lib^^}_'${RED} NOT EXIST!${RESET}"
+        #   local all_dirs="${xSHELL_DIRS[@]} "
+        #   xs_debug "${RED} \`-> searched on:\n   *"\
+        #         "${all_dirs// /${YELLOW}$current_lib - ${RED}[fail]\\n   \* }"\
+        #         "${RESET}\n"
+        #   exit 1
+        # }
+
+    done
+    XS_USE_COUNT=0
 }
 
 # create some aliases for use/import libraries
@@ -215,46 +213,46 @@ function lib()        { xs_use "$@"; }
 # def xs_requirements(bin1, bin2, "bin3A|bin3B"): function to validate required binaries (bin1, bin2, "bin3A|bin3B")
 # ex: xs_requirements bin1 bin2 "bin3A|bin3B"
 xs_requirements(){
-  xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
-  local found missing tool t
-  found=''; missing=""
-  
-  # store all requirements for thus app/script
-  [ -z "$XS_REQUIREMENTS" ] && XS_REQUIREMENTS+=$* || XS_REQUIREMENTS+=" $*"
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of ${FUNCNAME[0]}() '$*' ${RESET}\n"
+    local found missing tool t
+    found=''; missing=""
 
-  # iterate over each tool provided as an argument
-  for tool in "$@"; do
-    # check if the current tool contains a pipe character (indicating alternatives binaries - bin1|bin2)
-    if [[ "$tool" =~ "|" ]]; then
-      # iterate over each alternative binary in the list (ex: bin1|bin2)
-      for t in ${tool//\|/ }; do 
-        # check each alternative binary in the list (ex: bin1)
-        if check "$t"; then
-          # if the binary is found, set the 'found' flag to true and break the loop
-          found=true
-          break;
+    # store all requirements for thus app/script
+    [ -z "$XS_REQUIREMENTS" ] && XS_REQUIREMENTS+=$* || XS_REQUIREMENTS+=" $*"
+
+    # iterate over each tool provided as an argument
+    for tool in "$@"; do
+        # check if the current tool contains a pipe character (indicating alternatives binaries - bin1|bin2)
+        if [[ "$tool" =~ "|" ]]; then
+            # iterate over each alternative binary in the list (ex: bin1|bin2)
+            for t in ${tool//\|/ }; do
+                # check each alternative binary in the list (ex: bin1)
+                if check "$t"; then
+                    # if the binary is found, set the 'found' flag to true and break the loop
+                    found=true
+                    break
+                else
+                    # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
+                    found=false
+                    [ -z "$XS_MISSING_REQUIREMENTS" ] && XS_MISSING_REQUIREMENTS+="$tool" || XS_MISSING_REQUIREMENTS+=" $tool"
+                fi
+            done
+                  [ "$found" != 'true' ] && { fail "$tool"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
         else
-          # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
-          found=false
-          [ -z "$XS_MISSING_REQUIREMENTS" ] && XS_MISSING_REQUIREMENTS+="$tool" || XS_MISSING_REQUIREMENTS+=" $tool"
+            # Simple binary (not bin1|bin2) - check if the tool is available on the system
+            if ! check "$tool"; then
+                # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
+                [ -z "$XS_MISSING_REQUIREMENTS" ] && XS_MISSING_REQUIREMENTS+="$tool" || XS_MISSING_REQUIREMENTS+=" $tool"
+                found=false
+            else
+                # if the binary is found, set the 'found' flag to true
+                found=true
+            fi
         fi
-      done
-      [ "$found" != 'true' ] && { fail "$tool"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
-    else
-      # Simple binary (not bin1|bin2) - check if the tool is available on the system
-      if ! check "$tool"; then
-        # if the binary is not found, set the 'found' flag to false and add it to the 'missing' list
-        [ -z "$XS_MISSING_REQUIREMENTS" ] && XS_MISSING_REQUIREMENTS+="$tool" || XS_MISSING_REQUIREMENTS+=" $tool"
-        found=false
-      else 
-        # if the binary is found, set the 'found' flag to true
-        found=true
-      fi
-    fi
-  done
+    done
 
-  #  
-  [ -n "$XS_MISSING_REQUIREMENTS" ] && { fail "$XS_MISSING_REQUIREMENTS"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
+    #
+      [ -n "$XS_MISSING_REQUIREMENTS" ] && { fail "$XS_MISSING_REQUIREMENTS"; xs_func --local xs_requirements_report; xs_requirements_report "$XS_MISSING_REQUIREMENTS"; exit 10; }
 }
 
 # aliases
