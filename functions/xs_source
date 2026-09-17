@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/09/17 - 08:39:54
+# Last Modified: Thursday, 2026/09/17 - 08:44:09
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.28.750
+# Version: 0.0.29.752
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -125,7 +125,7 @@ if ! type xs_source &>/dev/null; then
             else
                 # type $filename true? this function is defined.
                 if [ -z "$XS_SOURCE_SILENT" ]; then
-                    xs_debug --level ((($XS_SOURCE_DEBUG_LEVEL+1))) "${YELLOW} !!! $(fname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
+                    xs_debug --level $XS_SOURCE_DEBUG_LEVEL "${YELLOW} !!! $(fname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
                 fi
             fi
 
