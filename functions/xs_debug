@@ -6,10 +6,10 @@
 # Created: Tuesday, 2026/08/11 - 03:28:21
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 20:20:38
+# Last Modified: Thursday, 2026/09/17 - 20:03:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.13.148
+# Version: 0.0.14.158
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,17 +19,14 @@
 
 if ! type xs_debug &> /dev/null; then
 
-  if [ -n "$D" ]; then
-    XS_DEBUG_LEVEL=$D
-  elif [ -n "$DEBUG" ]; then
-    XS_DEBUG_LEVEL=$DEBUG
-  elif [ -n "$XSDEBUG" ]; then
-    XS_DEBUG_LEVEL=$XSDEBUG
-  elif [ -n "$XS_DEBUG" ]; then
-    XS_DEBUG_LEVEL=$XS_DEBUG
-  else
-    [ -z "$XS_DEBUG_LEVEL" ] && export XS_DEBUG_LEVEL=1
-  fi
+  for var in D DEBUG XSDEBUG XS_DEBUG; do
+    if [ -n "${!var}" ]; then
+      # ${!var} — bash indirect reference. if var contains "D", then ${!var} is equal tp $D.
+      XS_DEBUG_LEVEL="${!var}"
+      break
+    fi
+  done
+  [ -z "$XS_DEBUG_LEVEL" ] && export XS_DEBUG_LEVEL=1
   
   # verify if DEBUG is enabled
   is_debug_enabled(){

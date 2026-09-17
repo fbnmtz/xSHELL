@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/09/17 - 08:44:09
+# Last Modified: Thursday, 2026/09/17 - 08:57:46
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.29.752
+# Version: 0.0.29.753
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -138,5 +138,5 @@ if ! type xs_source &>/dev/null; then
     function xs_def()  { xs_source "$@"; }
 
 else
-    xs_debug -l 4 "Error! Function '$(fname)' already defined.\n" && exit 3
+    xs_debug -l $XS_SOURCE_DEBUG_LEVEL "Error! Function '$(fname)' already defined.\n" && exit 3
 fi
