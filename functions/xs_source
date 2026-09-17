@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/08/09 - 17:55:06
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 16:40:44
+# Last Modified: Thursday, 2026/09/17 - 08:39:54
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.27.738
+# Version: 0.0.28.750
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -111,7 +111,7 @@ if ! type xs_source &>/dev/null; then
                     else
                         # xs_debug " \`-> ${YELLOW}$(fname)${RESET} ${CYAN}%-45s${RESET} ${RED}%15s${RESET}\n" $f "[Error] (local)"
                         if [ -f "$f" ]; then
-                            xs_debug --level $XS_SOURCE_DEBUG_LEVEL "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
+                            [ -z "$XS_SOURCE_SILENT" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "${br}$f exists but cant source! Maybe wrong end of line> (CRLF should be LF)${RESET}\n"
                             [ ! -x "$f" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "not executable! (need chmod +x $f)\n"
                             [ ! -r "$f" ] && xs_debug --level $XS_SOURCE_DEBUG_LEVEL "can not read! (need chmod +r $f)\n"
                             exit 3
@@ -124,7 +124,9 @@ if ! type xs_source &>/dev/null; then
 
             else
                 # type $filename true? this function is defined.
-                xs_debug "${YELLOW} !!! $(fname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
+                if [ -z "$XS_SOURCE_SILENT" ]; then
+                    xs_debug --level ((($XS_SOURCE_DEBUG_LEVEL+1))) "${YELLOW} !!! $(fname) - function already defined: ${CYAN}%-17s${RESET} ${YELLOW}%15s${RESET}\n" $filename "[warning] (unknown)"
+                fi
             fi
 
         done
@@ -136,5 +138,5 @@ if ! type xs_source &>/dev/null; then
     function xs_def()  { xs_source "$@"; }
 
 else
-    xs_debug "Error! Function '$(fname)' already defined.\n" && exit 3
+    xs_debug -l 4 "Error! Function '$(fname)' already defined.\n" && exit 3
 fi
