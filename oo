@@ -6,19 +6,22 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/18 - 20:24:03
+# Last Modified: Friday, 2026/09/18 - 20:45:00
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.0.16
+# Version: 0.1.0.30
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
-#  > Supports class definition, attributes, methods, instantiation and property access
+#  > Supports class definition, attributes (property, prop, attribute, attr,), methods (def, method, define), instantiation and property access
 #  > Example:
 #  >   class Car {
-#  >     attr brand
-#  >     attr model
+#  >     property brand
+#  >     prop model
+#  >     attr speed 0
 #  >     def run() { echo "car $this.model running"; }
+#  >     method accelerate() { this.speed = 100; }
+#  >     define stop() { this.speed = 0; }
 #  >   }
 #  >   c1 = new Car
 #  >   c1.brand = honda
@@ -32,7 +35,7 @@
 
 _xLIB_OO_=true;
 
-# Enable alias expansion so def and } work inside scripts
+# Enable alias expansion so def, method, define and } work inside scripts
 shopt -s expand_aliases
 
 # Initialize volatile in-memory store (RAM /dev/shm preferred, fallback to /tmp)
@@ -68,8 +71,10 @@ class() {
 # Function: attr
 # Declares an attribute for the current class with an optional default value.
 # Usage:
+#   property attribute_name [default_value]
+#   prop attribute_name [default_value]
 #   attr attribute_name [default_value]
-attr() {
+property() {
     local attr_name="$1"
     local default_val="$2"
     if [ -n "$_OO_CURRENT_CLASS" ]; then
@@ -80,7 +85,22 @@ attr() {
     fi
 }
 
-# Alias def -> function to support 'def method() { ... }'
+# Aliases and functions: prop, property -> attr
+prop()     { property "$@"; }
+attribute(){ property "$@"; }
+attr()     { property "$@"; }
+
+alias prop="property"
+alias attribute="property"
+alias attr="property"
+
+# Aliases: def, method, define -> function to support method definitions
+# Usage:
+#   def name() { ... }
+#   method name() { ... }
+#   define name() { ... }
+alias method="function"
+alias define="function"
 alias def="function"
 
 # Function: _oo_end_class

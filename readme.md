@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Thursday, 2026/09/17 - 20:26:27
+ Last Modified: Friday, 2026/09/18 - 20:38:55
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.3.571
+ Version: 0.1.3.575
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -498,8 +498,8 @@ Object Orientation (OO) for Bash.
 Features:
 
 * Class definition (`class Name { ... }`)
-* Attribute declaration with optional default values (`attr name [default]`)
-* Method definition (`def method() { ... }`) with automatic `$this.attr` expansion
+* Attribute declaration with optional default values (`attr name [default]`, or aliases `prop`, `property`)
+* Method definition (`def method() { ... }`, or aliases `method`, `define`) with automatic `$this.attr` expansion
 * Object instantiation (`c1 = new Name`)
 * Property assignment (`c1.attr = val` or `c1.attr=val`)
 * Method dispatching with arguments (`c1.method [args...]`)
@@ -512,16 +512,30 @@ use oo
 
 # Define class
 class Car {
- attr brand
- attr model
- def run() { echo "car $this.model running"; }
+  property brand "desconhecida"
+  prop model "padrao"
+  attr speed 0
+
+  method run() {
+    echo "car $this.model running (speed: $this.speed km/h)"
+  }
+
+  define accelerate() {
+    this.speed = "$1"
+  }
+
+  def stop() {
+    this.speed = 0
+  }
 }
 
 # Instantiate and use
 c1 = new Car
 c1.brand = honda
 c1.model=civic
+c1.accelerate 100
 c1.run
+c1.stop
 ```
 
 </details>

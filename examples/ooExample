@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:05:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Friday, 2026/09/18 - 20:24:12
+# Last Modified: Friday, 2026/09/18 - 20:41:15
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.0.23
+# Version: 0.1.0.25
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Example demonstrating Object-Oriented Programming (OO in xSHELL
@@ -43,15 +43,15 @@ use oo
 # 1. define a Class
 # ----------------------------------------------------------------------------
 class Car {
-    attr brand "desconhecida"
-    attr model "padrao"
-    attr speed "0"
+    property brand "desconhecida"
+    property model "padrao"
+    property speed "0"
 
-    def run() {
+    method run() {
         echo "car $this.model running (speed: $this.speed km/h)"
     }
 
-    def acelerar() {
+    method acelerar() {
         local v="$1"
         [ -z "$v" ] && v="20"
         this.speed = "$v"
