@@ -1,0 +1,246 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: oo
+# Created: Wednesday, 2026/09/16 - 23:00:00
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Friday, 2026/09/18 - 20:24:03
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.0.16
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > Object Orientation (OO) for Bash
+#  > Supports class definition, attributes, methods, instantiation and property access
+#  > Example:
+#  >   class Car {
+#  >     attr brand
+#  >     attr model
+#  >     def run() { echo "car $this.model running"; }
+#  >   }
+#  >   c1 = new Car
+#  >   c1.brand = honda
+#  >   c1.model=civic
+#  >   c1.run
+# 
+#  Made with Google Antigravity
+# ############################################################################
+# HISTORY:
+#
+
+_xLIB_OO_=true;
+
+# Enable alias expansion so def and } work inside scripts
+shopt -s expand_aliases
+
+# Initialize volatile in-memory store (RAM /dev/shm preferred, fallback to /tmp)
+if [ -d "/dev/shm" ] && [ -w "/dev/shm" ]; then
+    _OO_STORE="/dev/shm/xshell-oo-$EUID-$$"
+else
+    _OO_STORE="/tmp/xshell-oo-$EUID-$$"
+fi
+mkdir -p "$_OO_STORE/classes" "$_OO_STORE/instances"
+
+# Ensure cleanup of temporary object directory on exit
+__oo_cleanup() {
+    [ -d "$_OO_STORE" ] && rm -rf "$_OO_STORE"
+}
+trap '__oo_cleanup' EXIT INT TERM
+
+_OO_CURRENT_CLASS=""
+_OO_PREV_FUNCS=""
+
+# Function: class
+# Starts a class definition block.
+# Usage:
+#   class ClassName {
+class() {
+    _OO_CURRENT_CLASS="$1"
+    mkdir -p "$_OO_STORE/classes/$_OO_CURRENT_CLASS"
+    _OO_PREV_FUNCS=$(compgen -A function)
+    if type xs_debug &>/dev/null; then
+        xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' definition started\n"
+    fi
+}
+
+# Function: attr
+# Declares an attribute for the current class with an optional default value.
+# Usage:
+#   attr attribute_name [default_value]
+attr() {
+    local attr_name="$1"
+    local default_val="$2"
+    if [ -n "$_OO_CURRENT_CLASS" ]; then
+        echo "$attr_name" >> "$_OO_STORE/classes/$_OO_CURRENT_CLASS/attrs"
+        if [ -n "$default_val" ]; then
+            echo "$default_val" > "$_OO_STORE/classes/$_OO_CURRENT_CLASS/default_${attr_name}"
+        fi
+    fi
+}
+
+# Alias def -> function to support 'def method() { ... }'
+alias def="function"
+
+# Function: _oo_end_class
+# Closes the class block, detects declared methods, transforms $this.attr accessors,
+# and encapsulates methods inside the class namespace (__Class_method).
+_oo_end_class() {
+    local cls="$_OO_CURRENT_CLASS"
+    if [ -n "$cls" ]; then
+        local curr_funcs
+        curr_funcs=$(compgen -A function)
+        local fn
+        for fn in $curr_funcs; do
+            if ! grep -qxE "$fn" <<< "$_OO_PREV_FUNCS"; then
+                local fn_def
+                fn_def=$(declare -f "$fn")
+                # Rewrite method declaration and $this.attr or ${this.attr} accessors
+                local rewritten
+                rewritten=$(echo "$fn_def" | \
+                    sed "1s/^${fn} ()/__${cls}_${fn} ()/" | \
+                    sed -E 's/\$\{?this\.([a-zA-Z0-9_]+)\}?/\$(__oo_get "\$this" "\1")/g')
+                eval "$rewritten"
+                echo "$fn" >> "$_OO_STORE/classes/${cls}/methods"
+                unset -f "$fn"
+                if type xs_debug &>/dev/null; then
+                    xs_debug -l 2 "oo: method '$cls.$fn' registered\n"
+                fi
+            fi
+        done
+        _OO_CURRENT_CLASS=""
+    fi
+}
+
+# Alias } to close class definition
+alias }="_oo_end_class"
+
+# Internal property getter
+__oo_get() {
+    local obj="$1"
+    local attr="$2"
+    cat "$_OO_STORE/instances/$obj/$attr" 2>/dev/null
+}
+
+# Internal property setter
+__oo_set() {
+    local obj="$1"
+    local attr="$2"
+    local val="$3"
+    echo "$val" > "$_OO_STORE/instances/$obj/$attr"
+}
+
+# Preserve previous command_not_found_handle if already defined
+if declare -f command_not_found_handle &>/dev/null && ! declare -f __orig_command_not_found_handle &>/dev/null; then
+    eval "$(declare -f command_not_found_handle | sed '1s/command_not_found_handle/__orig_command_not_found_handle/')"
+fi
+
+# Intercept object syntax:
+# 1. Instantiation: obj = new Class [args...]
+# 2. Assignment with spaces: obj.attr = value
+# 3. Assignment without spaces: obj.attr=value
+# 4. Method dispatch & property get: obj.member [args...] / obj.attr / obj.dump
+command_not_found_handle() {
+    local cmd="$1"
+    shift
+    local args=("$@")
+
+    # If inside a method and calling this.attr or this.method
+    if [ -n "$this" ]; then
+        if [[ "$cmd" =~ ^this\.(.*)$ ]]; then
+            cmd="${this}.${BASH_REMATCH[1]}"
+        fi
+    fi
+
+    # 1. Instantiation: obj = new Class [args...]
+    if [ "${args[0]}" = "=" ] && [ "${args[1]}" = "new" ]; then
+        local obj="$cmd"
+        local cls="${args[2]}"
+        mkdir -p "$_OO_STORE/instances/$obj"
+        echo "$cls" > "$_OO_STORE/instances/$obj/__class__"
+
+        # Apply default attributes if specified in class definition
+        if [ -d "$_OO_STORE/classes/$cls" ]; then
+            for def_file in "$_OO_STORE/classes/$cls"/default_*; do
+                if [ -f "$def_file" ]; then
+                    local aname
+                    aname=$(basename "$def_file" | sed 's/^default_//')
+                    cp "$def_file" "$_OO_STORE/instances/$obj/$aname"
+                fi
+            done
+        fi
+
+        # Invoke constructor if defined (init or constructor)
+        local ctor_args=("${args[@]:3}")
+        if type "__${cls}_init" &>/dev/null; then
+            this="$obj" "__${cls}_init" "${ctor_args[@]}"
+        elif type "__${cls}_constructor" &>/dev/null; then
+            this="$obj" "__${cls}_constructor" "${ctor_args[@]}"
+        fi
+        return 0
+    fi
+
+    # 2. Attribute assignment with spaces: obj.attr = value
+    if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$ ]] && [ "${args[0]}" = "=" ]; then
+        local obj="${BASH_REMATCH[1]}"
+        local attr="${BASH_REMATCH[2]}"
+        local val="${args[*]:1}"
+        __oo_set "$obj" "$attr" "$val"
+        return 0
+    fi
+
+    # 3. Attribute assignment without spaces: obj.attr=value
+    if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)=(.*)$ ]]; then
+        local obj="${BASH_REMATCH[1]}"
+        local attr="${BASH_REMATCH[2]}"
+        local val="${BASH_REMATCH[3]}"
+        __oo_set "$obj" "$attr" "$val"
+        return 0
+    fi
+
+    # 4. Method call or property inspection: obj.member [args...]
+    if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$ ]]; then
+        local obj="${BASH_REMATCH[1]}"
+        local member="${BASH_REMATCH[2]}"
+
+        if [ -f "$_OO_STORE/instances/$obj/__class__" ]; then
+            local cls
+            cls=$(cat "$_OO_STORE/instances/$obj/__class__")
+
+            # Method dispatch
+            if type "__${cls}_${member}" &>/dev/null; then
+                this="$obj" "__${cls}_${member}" "${args[@]}"
+                return $?
+            fi
+
+            # Introspection: obj.dump
+            if [ "$member" = "dump" ]; then
+                echo "[$cls:$obj]"
+                for f in "$_OO_STORE/instances/$obj"/*; do
+                    [ -f "$f" ] || continue
+                    local aname
+                    aname=$(basename "$f")
+                    [ "$aname" = "__class__" ] && continue
+                    echo "  .$aname = $(cat "$f")"
+                done
+                return 0
+            fi
+
+            # Getter: obj.attr
+            if [ -f "$_OO_STORE/instances/$obj/$member" ]; then
+                cat "$_OO_STORE/instances/$obj/$member"
+                return 0
+            fi
+        fi
+    fi
+
+    # Delegate to previous handler if available
+    if type __orig_command_not_found_handle &>/dev/null; then
+        __orig_command_not_found_handle "$cmd" "${args[@]}"
+        return $?
+    fi
+
+    echo "bash: $cmd: command not found" >&2
+    return 127
+}

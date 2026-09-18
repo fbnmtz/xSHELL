@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2026/09/13 - 12:28:19
+ Last Modified: Thursday, 2026/09/17 - 20:26:27
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.2.564
+ Version: 0.1.3.571
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -62,11 +62,12 @@
     - [Adding custom code](#adding-custom-code)
     - [libsExample output](#libsexample-output)
 - [Libraries](#libraries)
-    - [init](#init)
-    - [args](#args)
-    - [system](#system)
-    - [colors](#colors)
-    - [utils](#utils)
+  - [init](#init)
+  - [args](#args)
+  - [system](#system)
+  - [colors](#colors)
+  - [utils](#utils)
+  - [oo](#oo)
 - [TODO List](#todo-list)
 
 ---
@@ -76,7 +77,7 @@
 Steps to install `xSHELL` library system
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash 
+curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash
 ```
 
 After run install command, you will have the variable `$_xSHELL_` PATH with the default install location, or a customized path of your choice. This also will add configs on some system files:
@@ -84,18 +85,20 @@ After run install command, you will have the variable `$_xSHELL_` PATH with the 
 ### Arguments
 
 You can pass arguments to install script adding `-s -- ` to bash following arguments do install script
-* `--verbose`: enable rich information output
-* `--dir`: define directory used on installation  
 
+* `--verbose`: enable rich information output
+* `--dir`: define directory used on installation
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/fbnmtz/xSHELL/refs/heads/master/scripts/install | bash -s -- --verbose --dir /custom/path
 ```
+
 ### Files
 
 If installed as root, will change files on etc and home folder of each user
+
 * System:
-  * /etc/profile 
+  * /etc/profile
   * /etc/bashrc
   * /etc/bash.bashrc
   * /etc/profile.d/xSHELL.sh
@@ -109,7 +112,9 @@ If installed as root, will change files on etc and home folder of each user
   * .zlogin
 
 #### ENV
+
 this content will be added to listed files:
+
 ```bash
 export xSHELL_PATH="/opt/xSHELL"
 export xSHELL_INIT="${xSHELL_PATH}/init"
@@ -143,8 +148,6 @@ usage:
    -v,  --version          print version and exit
 
 v0.1.17-rc316 - writen by @fbnmtz 2020
-
-
 ```
 
 [Go Back](#summary)
@@ -215,8 +218,6 @@ xrun --xreject-unknow --xrequire-one "$@"
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~
 # now put your code below
-
-
 ```
 
 #### Adding custom code
@@ -241,7 +242,6 @@ if [ -n "$option" ]; then
     xsys.vol "--$option"
     xsys.notify Volume "$option" # - $(xsys.vol "--status")"
 fi
-
 ```
 
 #### libsExample output
@@ -268,7 +268,6 @@ v0.0.6-rc81 - writen by @fbnmtz 2023
 # using --math option
 libsExapmle --math "2*2"
 4
-
 ```
 
 </details>
@@ -359,7 +358,6 @@ Functions
 
   xarg --id "-h,--help"    --code "xusage --help"                      --desc "show this help"
   xarg --id "-v,--version" --code "echo "$XS_CURRENT_VERSION"; exit" --desc "print version and exit"
-
   ```
 * `xrun`
 
@@ -402,7 +400,7 @@ Library to by an interface between your scritp and Operation System, providin so
 #### colors
 
 ```
-This library set variables with ANSI codes allowing you to use colors on your script. 
+This library set variables with ANSI codes allowing you to use colors on your script.
 ```
 
 <details close="true">
@@ -489,6 +487,46 @@ Functions
 </details>
 </br>
 
+#### oo
+
+```
+Object Orientation (OO) for Bash.
+```
+
+<details close="true">
+
+Features:
+
+* Class definition (`class Name { ... }`)
+* Attribute declaration with optional default values (`attr name [default]`)
+* Method definition (`def method() { ... }`) with automatic `$this.attr` expansion
+* Object instantiation (`c1 = new Name`)
+* Property assignment (`c1.attr = val` or `c1.attr=val`)
+* Method dispatching with arguments (`c1.method [args...]`)
+* Object introspection (`c1.dump`)
+
+```bash
+# Import and load
+source "$xSHELL_INIT"
+use oo
+
+# Define class
+class Car {
+ attr brand
+ attr model
+ def run() { echo "car $this.model running"; }
+}
+
+# Instantiate and use
+c1 = new Car
+c1.brand = honda
+c1.model=civic
+c1.run
+```
+
+</details>
+</br>
+
 [Go Back](#summary)
 
 ---
@@ -498,7 +536,7 @@ Functions
 * [X] xshell: add support for define args for new scripts
 * [X] Implent color system (draft)
 * [X] lib/args: Implements joint flags (ex: -lsaf)
-* [ ] Create/integrate some library or system for Objetc Orientation (OO)
+* [X] Create/integrate some library or system for Objetc Orientation (OO)
 * [ ] Adjust some libs and scripts to work on MacOs
 
 [Go Back](#summary)

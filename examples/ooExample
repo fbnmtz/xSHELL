@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/ooExample
+# Created: Wednesday, 2026/09/16 - 23:05:00
+# Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Friday, 2026/09/18 - 20:24:12
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.0.23
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > Example demonstrating Object-Oriented Programming (OO in xSHELL
+# ############################################################################
+# HISTORY:
+#
+
+# _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# _XSHELL_ROOT="$(cd "$_SCRIPT_DIR/.." && pwd)"
+
+# # Ensure xSHELL_PATH is set for repository development/examples
+# if [ -z "$xSHELL_PATH" ]; then
+#     export xSHELL_PATH="$_XSHELL_ROOT"
+# fi
+
+# # Import xSHELL init
+# if [ -n "$xSHELL_INIT" ] && [ -f "$xSHELL_INIT" ]; then
+#     source "$xSHELL_INIT"
+# elif [ -f "$_XSHELL_ROOT/init" ]; then
+#     source "$_XSHELL_ROOT/init"
+# else
+#     echo "Error: Could not find xSHELL init file."
+#     exit 1
+# fi
+# import lib system to your script
+source "$xSHELL_INIT"
+# Load the oo library
+use oo
+
+# ----------------------------------------------------------------------------
+# 1. define a Class
+# ----------------------------------------------------------------------------
+class Car {
+    attr brand "desconhecida"
+    attr model "padrao"
+    attr speed "0"
+
+    def run() {
+        echo "car $this.model running (speed: $this.speed km/h)"
+    }
+
+    def acelerar() {
+        local v="$1"
+        [ -z "$v" ] && v="20"
+        this.speed = "$v"
+        echo "[$this.brand $this.model] increase to $v km/h"
+    }
+}
+
+# ----------------------------------------------------------------------------
+# 2. instance and using objects
+# ----------------------------------------------------------------------------
+echo "=== TEST - Object 1 - Class Car ==="
+c1 = new Car
+c1.brand = honda
+c1.model=civic
+c1.run
+
+echo -e "\n=== Test Methods with args ==="
+c1.acelerar 110
+c1.run
+
+echo -e "\n=== TEST - Object 2 - Class Car ==="
+c2 = new Car
+c2.brand = toyota
+c2.model=corolla
+c2.run
+c2.acelerar 140
+
+echo -e "\n=== Dump ==="
+c1.dump
+c2.dump
