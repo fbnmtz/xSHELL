@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Friday, 2026/09/18 - 20:38:55
+ Last Modified: Saturday, 2026/09/19 - 21:45:30
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.3.575
+ Version: 0.1.4.588
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -62,12 +62,11 @@
     - [Adding custom code](#adding-custom-code)
     - [libsExample output](#libsexample-output)
 - [Libraries](#libraries)
-  - [init](#init)
-  - [args](#args)
-  - [system](#system)
-  - [colors](#colors)
-  - [utils](#utils)
-  - [oo](#oo)
+    - [init](#init)
+    - [args](#args)
+    - [system](#system)
+    - [colors](#colors)
+    - [utils](#utils)
 - [TODO List](#todo-list)
 
 ---
@@ -425,6 +424,17 @@ This library set variables with ANSI codes allowing you to use colors on your sc
   $MAGENTA
   $CYAN
   $WHITE
+  $GREY
+  # foreground bright colors
+  $BLACK_BRIGTH
+  $RED_BRIGTH
+  $GREEN_BRIGTH
+  $YELLOW_BRIGTH
+  $BLUE_BRIGTH
+  $MAGENTA_BRIGTH
+  $CYAN_BRIGTH
+  $WHITE_BRIGTH
+  $GREY_BRIGTH
   # background colors
   $BGBLACK
   $BGRED
@@ -434,6 +444,105 @@ This library set variables with ANSI codes allowing you to use colors on your sc
   $BGMAGENTA
   $BGCYAN
   $BGWHITE
+  $BGGREY
+  # background bright colors
+  $BGBLACK_BRIGTH
+  $BGRED_BRIGTH
+  $BGGREEN_BRIGTH
+  $BGYELLOW_BRIGTH
+  $BGBLUE_BRIGTH
+  $BGMAGENTA_BRIGTH
+  $BGCYAN_BRIGTH
+  $BGWHITE_BRIGTH
+  $BGGREY_BRIGTH
+  # aliases for attributes
+  $ATTR_BOLD
+  $ATTR_DIM
+  $ATTR_ITALIC
+  $ATTR_UNDERLINED
+  $ATTR_BLINK
+  $ATTR_REVERSE
+  $ATTR_HIDDEN
+  # aliases for foreground colors
+  $FG_BLACK
+  $FG_RED
+  $FG_GREEN
+  $FG_YELLOW
+  $FG_BLUE
+  $FG_MAGENTA
+  $FG_CYAN
+  $FG_WHITE
+  $FG_GREY
+  # aliases for foreground bright colors
+  $FG_BLACK_BRIGTH
+  $FG_RED_BRIGTH
+  $FG_GREEN_BRIGTH
+  $FG_YELLOW_BRIGTH
+  $FG_BLUE_BRIGTH
+  $FG_MAGENTA_BRIGTH
+  $FG_CYAN_BRIGTH
+  $FG_WHITE_BRIGTH
+  $FG_GREY_BRIGTH
+  # aliases for background colors
+  $BG_BLACK
+  $BG_RED
+  $BG_GREEN
+  $BG_YELLOW
+  $BG_BLUE
+  $BG_MAGENTA
+  $BG_CYAN
+  $BG_WHITE
+  $BG_GREY
+  # aliases for background bright colors
+  $BG_BLACK_BRIGTH
+  $BG_RED_BRIGTH
+  $BG_GREEN_BRIGTH
+  $BG_YELLOW_BRIGTH
+  $BG_BLUE_BRIGTH
+  $BG_MAGENTA_BRIGTH
+  $BG_CYAN_BRIGTH
+  $BG_WHITE_BRIGTH
+  $BG_GREY_BRIGTH
+  # short aliases for foreground colors
+  $FGBLACK
+  $FGRED
+  $FGGREEN
+  $FGYELLOW
+  $FGBLUE
+  $FGMAGENTA
+  $FGCYAN
+  $FGWHITE
+  $FGGREY
+  # short semantic aliases
+  $R # reset
+  # attributes
+  $B # bold
+  $M # dimm
+  $I # italic
+  $U # underline
+  $K # blink
+  $V # reverse
+  $H # hidden
+  # Foreground (one-letter)
+  $k # $FG_BLACK
+  $r # $FG_RED
+  $g # $FG_GREEN
+  $y # $FG_YELLOW
+  $b # $FG_BLUE
+  $m # $FG_MAGENTA
+  $c # $FG_CYAN
+  $w # $FG_WHITE
+  $e # $FG_GREY
+  # Background (two-letter: 'b'+color)
+  $bk # $BG_BLACK
+  $br # $BG_RED
+  $bg # $BG_GREEN
+  $by # $BG_YELLOW
+  $bb # $BG_BLUE
+  $bm # $BG_MAGENTA
+  $bc # $BG_CYAN
+  $bw # $BG_WHITE
+  $be # $BG_GREY
   ```
 
 </details>

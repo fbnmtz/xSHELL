@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/colorsExample
+# Created: Saturday, 2026/09/19 - 21:17:52
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2026/09/19 - 21:21:14
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.1.1.8
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+# import lib system to your script
+source "$xSHELL_INIT"
+# Load the colors library
+use colors
+
+# ----------------------------------------------------------------------------
+# 1. Demonstration of color usage
+# ----------------------------------------------------------------------------
+echo -e "${BOLD}=== Bold Text (BOLD) === ${RESET}"
+echo -e "${DIM}=== Dim Text (DIM) === ${RESET}"
+echo -e "${ITALIC}=== Italic Text (ITALIC) === ${RESET}"
+echo -e "${UNDERLINED}=== Underlined Text (UNDERLINED) === ${RESET}"
+echo -e "${BLINK}=== Blinking Text (BLINK) === ${RESET}"
+echo -e "${REVERSE}=== Reversed Text (REVERSE) === ${RESET}"
+echo -e "${HIDDEN}=== Hidden Text (HIDDEN) === ${RESET}"
+echo -e "${RESET}=== Reset Text (RESET) === ${RESET}"
+
+echo -e "\n${BOLD}=== Foreground Colors === ${RESET}"
+echo -e "${BLACK}Black Text (BLACK)${RESET} ${RESET}"
+echo -e "${RED}Red Text (RED)${RESET} ${RESET}"
+echo -e "${GREEN}Green Text (GREEN)${RESET} ${RESET}"
+echo -e "${YELLOW}Yellow Text (YELLOW)${RESET} ${RESET}"
+echo -e "${BLUE}Blue Text (BLUE)${RESET} ${RESET}"
+echo -e "${MAGENTA}Magenta Text (MAGENTA)${RESET} ${RESET}"
+echo -e "${CYAN}Cyan Text (CYAN)${RESET} ${RESET}"
+echo -e "${WHITE}White Text (WHITE)${RESET} ${RESET}"
+echo -e "${GREY}Grey Text (GREY)${RESET} ${RESET}"
+
+echo -e "\n${BOLD}=== Background Colors === ${RESET}"
+echo -e "${BGBLACK}Black Background (BGBLACK)${RESET} ${RESET}"
+echo -e "${BGRED}Red Background (BGRED)${RESET} ${RESET}"
+echo -e "${BGGREEN}Green Background (BGGREEN)${RESET} ${RESET}"
+echo -e "${BGYELLOW}Yellow Background (BGYELLOW)${RESET} ${RESET}"
+echo -e "${BGBLUE}Blue Background (BGBLUE)${RESET} ${RESET}"
+echo -e "${BGMAGENTA}Magenta Background (BGMAGENTA)${RESET} ${RESET}"
+echo -e "${BGCYAN}Cyan Background (BGCYAN)${RESET} ${RESET}"
+echo -e "${BGWHITE}White Background (BGWHITE)${RESET} ${RESET}"
+echo -e "${BGGREY}Grey Background (BGGREY)${RESET} ${RESET}"
+
+echo -e "\n${BOLD}=== Combined Colors and Attributes === ${RESET}"
+echo -e "${BOLD}${RED}Bold Red Text (BOLD, RED)${RESET} ${RESET}"
+echo -e "${UNDERLINED}${BLUE}Underlined Blue Text (UNDERLINED, BLUE)${RESET} ${RESET}"
+echo -e "${ITALIC}${GREEN}Italic Green Text (ITALIC, GREEN)${RESET} ${RESET}"
+echo -e "${BLINK}${YELLOW}Blinking Yellow Text (BLINK, YELLOW)${RESET} ${RESET}"
+echo -e "${REVERSE}${MAGENTA}Reversed Magenta Text (REVERSE, MAGENTA)${RESET} ${RESET}"
+echo -e "${HIDDEN}${CYAN}Hidden Cyan Text (HIDDEN, CYAN)${RESET} ${RESET}"
+
+echo -e "\n${BOLD}=== Short Aliases === ${RESET}"
+echo -e "${k}Black Text (k)${R} ${RESET}"
+echo -e "${r}Red Text (r)${R} ${RESET}"
+echo -e "${g}Green Text (g)${R} ${RESET}"
+echo -e "${y}Yellow Text (y)${R} ${RESET}"
+echo -e "${b}Blue Text (b)${R} ${RESET}"
+echo -e "${m}Magenta Text (m)${R} ${RESET}"
+echo -e "${c}Cyan Text (c)${R} ${RESET}"
+echo -e "${w}White Text (w)${R} ${RESET}"
+echo -e "${e}Grey Text (e)${R} ${RESET}"
+
+echo -e "\n${BOLD}=== Background Short Aliases === ${RESET}"
+echo -e "${bk}Black Background (bk)${R} ${RESET}"
+echo -e "${br}Red Background (br)${R} ${RESET}"
+echo -e "${bg}Green Background (bg)${R} ${RESET}"
+echo -e "${by}Yellow Background (by)${R} ${RESET}"
+echo -e "${bb}Blue Background (bb)${R} ${RESET}"
+echo -e "${bm}Magenta Background (bm)${R} ${RESET}"
+echo -e "${bc}Cyan Background (bc)${R} ${RESET}"
+echo -e "${bw}White Background (bw)${R} ${RESET}"
+echo -e "${be}Grey Background (be)${R} ${RESET}"
+
+echo -e "\n${BOLD}=== Combined Short Aliases === ${RESET}"
+echo -e "${B}${r}Bold Red Text (B, r)${R} ${RESET}"
+echo -e "${U}${b}Underlined Blue Text (U, b)${R} ${RESET}"
+echo -e "${I}${g}Italic Green Text (I, g)${R} ${RESET}"
+echo -e "${K}${y}Blinking Yellow Text (K, y)${R} ${RESET}"
+echo -e "${V}${m}Reversed Magenta Text (V, m)${R} ${RESET}"
+echo -e "${H}${c}Hidden Cyan Text (H, c)${R} ${RESET}"
