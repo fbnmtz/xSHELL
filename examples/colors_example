@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: examples/colorsExample
+# File...: examples/colors_example
 # Created: Saturday, 2026/09/19 - 21:17:52
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/09/19 - 21:21:14
+# Last Modified: Saturday, 2026/09/19 - 23:11:38
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.1.8
+# Version: 0.1.2.10
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,7 +20,7 @@
 # import lib system to your script
 source "$xSHELL_INIT"
 # Load the colors library
-use colors
+xs_use colors
 
 # ----------------------------------------------------------------------------
 # 1. Demonstration of color usage

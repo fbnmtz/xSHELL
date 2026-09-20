@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: examples/ooExample
+# File...: examples/oo_example
 # Created: Wednesday, 2026/09/16 - 23:05:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/09/19 - 21:10:05
+# Last Modified: Saturday, 2026/09/19 - 23:11:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.59
+# Version: 0.1.5.61
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Example demonstrating Object-Oriented Programming (OO in xSHELL
@@ -20,7 +20,7 @@
 # import lib system to your script
 source "$xSHELL_INIT"
 # Load the oo library
-use oo
+xs_use oo
 
 # ----------------------------------------------------------------------------
 # 1. Class hierarchy
