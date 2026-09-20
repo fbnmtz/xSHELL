@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/09/19 - 01:33:04
+# Last Modified: Saturday, 2026/09/19 - 21:09:45
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.0.49
+# Version: 0.1.4.63
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -225,6 +225,10 @@ property() {
             fi
         fi
 
+        if type xs_debug &>/dev/null; then
+            xs_debug -l 2 "oo: property '$attr_name' registered\n"
+        fi
+
         # Fallback to current block visibility or public
         [ -z "$vis" ] && vis="${_OO_BLOCK_VIS:-public}"
 
@@ -420,6 +424,7 @@ command_not_found_handle() {
 
             # Introspection: obj.dump
             if [ "$member" = "dump" ]; then
+                echo "=== DUMP OBJECT BEGIN ==="
                 echo "[object: $obj <class:$cls>]"
                 echo -e "  Property's:"
                 local property_cls="$cls"
@@ -428,12 +433,14 @@ command_not_found_handle() {
                     if [ -f "$_OO_STORE/classes/$property_cls/attrs" ]; then
                         while IFS= read -r aname; do
                             if [ -n "$aname" ] && ! grep -qxF "$aname" <<< "$listed_properties"; then
+                                local property_owner=""
+                                [ "$property_cls" != "$cls" ] && property_owner=" ($property_cls)"
                                 if [ -f "$_OO_STORE/instances/$obj/$aname" ]; then
-                                    echo "    .$aname = $(cat "$_OO_STORE/instances/$obj/$aname")"
+                                    echo "    $property_owner .$aname == $(cat "$_OO_STORE/instances/$obj/$aname")"
                                 elif [ -f "$_OO_STORE/classes/$property_cls/default_${aname}" ]; then
-                                    echo "    .$aname = $(cat "$_OO_STORE/classes/$property_cls/default_${aname}")"
+                                    echo "    $property_owner .$aname == $(cat "$_OO_STORE/classes/$property_cls/default_${aname}")"
                                 else
-                                    echo "    .$aname ="
+                                    echo "    $property_owner .$aname =="
                                 fi
                                 listed_properties+="$aname"$'\n'
                             fi
@@ -453,7 +460,7 @@ command_not_found_handle() {
                     aname=$(basename "$f")
                     [ "$aname" = "__class__" ] && continue
                     grep -qxF "$aname" <<< "$listed_properties" && continue
-                    echo "    .$aname = $(cat "$f")"
+                    echo "    .$aname == $(cat "$f")"
                 done
                 echo "  Methods:"
                 local method_cls="$cls"
@@ -462,7 +469,9 @@ command_not_found_handle() {
                     if [ -f "$_OO_STORE/classes/$method_cls/methods" ]; then
                         while IFS= read -r method; do
                             if [ -n "$method" ] && ! grep -qxF "$method" <<< "$listed_methods"; then
-                                echo "    .$method()"
+                                local method_owner=""
+                                [ "$method_cls" != "$cls" ] && method_owner=" ($method_cls)"
+                                echo "     $method_owner .$method()"
                                 listed_methods+="$method"$'\n'
                             fi
                         done < "$_OO_STORE/classes/$method_cls/methods"
@@ -474,6 +483,7 @@ command_not_found_handle() {
                         method_cls=""
                     fi
                 done
+                echo -e "=== DUMP END ===\n"
                 return 0
             fi
 

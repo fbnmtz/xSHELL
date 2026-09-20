@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:05:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/09/19 - 01:53:05
+# Last Modified: Saturday, 2026/09/19 - 21:10:05
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.0.43
+# Version: 0.1.4.59
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Example demonstrating Object-Oriented Programming (OO in xSHELL
@@ -17,85 +17,147 @@
 # HISTORY:
 #
 
-# _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# _XSHELL_ROOT="$(cd "$_SCRIPT_DIR/.." && pwd)"
-
-# # Ensure xSHELL_PATH is set for repository development/examples
-# if [ -z "$xSHELL_PATH" ]; then
-#     export xSHELL_PATH="$_XSHELL_ROOT"
-# fi
-
-# # Import xSHELL init
-# if [ -n "$xSHELL_INIT" ] && [ -f "$xSHELL_INIT" ]; then
-#     source "$xSHELL_INIT"
-# elif [ -f "$_XSHELL_ROOT/init" ]; then
-#     source "$_XSHELL_ROOT/init"
-# else
-#     echo "Error: Could not find xSHELL init file."
-#     exit 1
-# fi
 # import lib system to your script
 source "$xSHELL_INIT"
 # Load the oo library
 use oo
 
 # ----------------------------------------------------------------------------
-# 1. define a Class
+# 1. Class hierarchy
 # ----------------------------------------------------------------------------
 
+# Base class. It uses the short aliases attr and def.
 class Vehicle {
-    public property type "road"
-    public method move() {
-        echo "$this.model moving"
+    attr category "vehicle"
+    prop brand "generic"
+    property model "unnamed"
+    attribute year "2026"
+    private property serial "not-registered"
+
+    def initialize_vehicle() {
+        this.category = "vehicle"
+        echo "[Vehicle] preparing $this.brand $this.model"
+    }
+
+    method identify() {
+        echo "$this.year $this.brand $this.model ($this.category)"
+    }
+
+    private method inspect_serial() {
+        echo "serial=$this.serial"
     }
 }
 
+# Car adds public members and overrides move. The constructor explicitly calls
+# an inherited initializer because constructors are not automatically chained.
 class Car extends Vehicle {
-    public property brand "desconhecida"
-    public property model "padrao"
-    public property speed "0"
+    public property doors "4"
+    public property fuel "gasoline"
+    protected property traction "front"
 
-    public method run() {
-        echo "car $this.model running (speed: $this.speed km/h)"
+    public define init() {
+        this.initialize_vehicle
+        this.category = "car"
+        this.serial = "CAR-$this.brand-$this.year"
     }
 
-    public method acelerar() {
-        local v="$1"
-        [ -z "$v" ] && v="20"
-        this.speed = "$v"
-        echo "[$this.brand $this.model] increase to $v km/h"
+    public method move() {
+        echo "$this.brand $this.model driving at $this.speed km/h"
+    }
+
+    public def accelerate() {
+        local amount="$1"
+        [ -z "$amount" ] && amount="10"
+        this.speed = "$amount"
+        echo "$this.brand $this.model accelerated to $this.speed km/h"
     }
 }
 
+# ElectricCar demonstrates another inheritance level and a protected member.
+class ElectricCar extends Car {
+    public property battery "100"
+    protected property charging "no"
+
+    public method recharge() {
+        this.charging = "yes"
+        this.battery = "100"
+        echo "$this.brand $this.model recharged: $this.battery%"
+    }
+
+    public method move() {
+        echo "$this.brand $this.model glides silently at $this.speed km/h"
+    }
+}
+
+# Motorcycle uses the remaining method alias and block visibility syntax.
+class Motorcycle extends Vehicle {
+    public property wheels "2"
+    public property engine "650cc"
+
+    private:
+        property alarm "armed"
+        method disable_alarm() {
+            this.alarm = "off"
+            echo "alarm disabled"
+        }
+
+    public:
+        property helmet "required"
+        define init() {
+            this.initialize_vehicle
+            this.category = "motorcycle"
+        }
+        method wheelie() {
+            echo "$this.brand $this.model performs a wheelie"
+        }
+}
+
 # ----------------------------------------------------------------------------
-# 2. instance and using objects
+# 2. Objects, assignment, getters and method dispatch
 # ----------------------------------------------------------------------------
-echo "=== TEST - Object 1 - Class Car ==="
-c1 = new Car
-c1.brand = honda
-c1.model=civic
-c1.move
-c1.run
 
-echo -e "\n=== Test Methods with args ==="
-c1.acelerar 110
-c1.run
+echo "=== Creating vehicles ==="
+car = new Car
+car.brand = "Atlas"
+car.model = "Comet"
+car.year=2025
+car.speed = 80
 
-echo -e "\n=== TEST - Object 2 - Class Car ==="
-c2 = new Car
-c2.brand = toyota
-c2.model=corolla
-c2.run
-c2.acelerar 140
+electric = new ElectricCar
+electric.brand = "Volt"
+electric.model = "E2"
+electric.speed = 90
+electric.battery = 42
 
-echo "=== TEST - Object 1 - Class Car ==="
-c3 = new Car
-c3.brand = ford
-c3.model=focus
-c3.run
-c3.acelerar 80
+motorcycle = new Motorcycle
+motorcycle.brand = "Roadster"
+motorcycle.model = "Falcon"
+motorcycle.engine = "900cc"
 
-echo -e "\n=== Dump ==="
-c1.class && c1.dump 
-c2.class && c2.dump 
-c3.class && c3.dump 
+echo -e "\n=== Getters and inherited methods ==="
+echo "car.class = $(car.class)"
+echo "electric.class = $(electric.class)"
+echo "motorcycle.class = $(motorcycle.class)"
+car.identify
+car.move
+electric.identify
+electric.move
+motorcycle.identify
+motorcycle.wheelie
+
+echo -e "\n=== Methods with arguments and state changes ==="
+car.accelerate 120
+electric.accelerate 140
+electric.recharge
+echo "electric battery after recharge: $(electric.battery)%"
+
+echo -e "\n=== Visibility declarations ==="
+echo "Private/protected declarations are recorded in the class metadata."
+echo "The methods below are intentionally declared with those modifiers."
+car.inspect_serial
+motorcycle.disable_alarm
+
+echo -e "\n=== Full object dumps (inherited members show their owner) ==="
+car.dump
+electric.dump
+motorcycle.dump
