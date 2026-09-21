@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/21 - 18:04:16
+# Last Modified: Monday, 2026/09/21 - 19:36:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.73
+# Version: 0.0.3.102
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -101,38 +101,57 @@ class OArray {
 
     # Method to iterate over the elements of the array
     method each() {
-        local command="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        while IFS= read -r element; do
-            local e=$element; local value=$element; local v=$element
-            [ -n "$element" ] && eval "$command \"$element\""
-        done <<< "$elements"
-    }
+        local arg="$1"
+        local block=""
+        local line
+        local var_names=""
 
-    # Method to iterate over the elements of the array executing a block of code
-    method each_do() {
-        local block="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        while IFS= read -r element; do
-            local e=$element; local value=$element; local v=$element
-            [ -n "$element" ] && eval "$block"
-        done <<< "$elements"
-    }
+        # --- Detects call form: inline or heredoc ---
+        if [[ "$arg" == *" "* ]]; then
+            # inline form: arr.each "echo @element"
+            block="$arg"
+            # Extract the variable name from @varname, otherwise use "element"
+            if [[ "$arg" =~ \@([a-zA-Z_][a-zA-Z0-9_]*) ]]; then
+                var_names="${BASH_REMATCH[1]}"
+            else
+                var_names="element"
+            fi
+        else
+            # heredoc form: arr.each fruit <<DO ... DO
+            #                arr.each i,v   <<DO ... DO
+            var_names="$arg"
+            while IFS= read -r line; do
+                [[ "$line" =~ ^DO$ ]] && break
+                block+="$line"$'\n'
+            done
+        fi
 
-    # Method to iterate over the elements of the array with index and value
-    method each_with_index() {
-        local block="$1"
-        local elements=$(this.elements)
+        # --- Replace @var1 and @var2 with $var1 and $var2 in the block ---
+        IFS=',' read -r var1 var2 <<< "$var_names"
+        if [ -n "$var2" ]; then
+            block=$(echo "$block" | sed "s/@$var1/\$$var1/g")
+            block=$(echo "$block" | sed "s/@$var2/\$$var2/g")
+        else
+            block=$(echo "$block" | sed "s/@$var1/\$$var1/g")
+        fi
+
+        # --- Get the elements and iterate over them        
+        local elements
+        elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
         local index=0
         while IFS= read -r element; do
-            local e=$element; local value=$element; local v=$element
-            [ -n "$element" ] && eval "$block"
+            [ -n "$element" ] && {
+                IFS=',' read -r var1 var2 <<< "$var_names"
+                if [ -n "$var2" ]; then
+                    eval "$var1=$index; $var2=\"$element\"; $block"
+                else
+                    eval "$var1=\"$element\"; $block"
+                fi
+            }
             index=$((index + 1))
         done <<< "$elements"
-    }
+    }    
 
     # Method to remove an element by index
     method delete_at() {
@@ -173,4 +192,5 @@ class OArray {
         local elements=$(this.elements)
         echo "$elements"
     }
+
 }

@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/21 - 18:07:21
+# Last Modified: Monday, 2026/09/21 - 19:40:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.37
+# Version: 0.0.3.96
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -31,27 +31,31 @@ arr.add "pineapple"
 echo "Array: $(arr.to_s)"
 echo "Size.: $(arr.size)"
 echo "Count: $(arr.count)"
+echo
 echo "Is array empty? $(arr.empty)"
 echo "Element at index 1: $(arr.at 1)"
 echo "Is 'banana' included? $(arr.include "banana")"
 echo "Index of 'cherry': $(arr.index_of "cherry")"
 
-echo "Iterating over the elements:"
-arr.each "echo"
+# Iterate over the array using string command 
+#   `-> change @var_name as you want. Ex @item, @fruit, @value, etc)
+#   `-> bellow, each item is available as @var_name.
+echo -e "\n.each (simple syntax)"
+arr.each "echo item: @var_name"
 
-echo "Iterating and printing elements with prefix:"
-arr.each "echo 'Element: '"
+echo -e "\n.each (block syntax)"
+# Iterate over the array using each block
+arr.each fruit <<DO
+    echo "Fruit: @fruit"
+DO
 
-echo "Iterating and executing a custom command:"
-arr.each "echo 'Processing: ' && echo 'Completed: '"
+echo -e "\n.each (block syntax with index/value)"
+# Iterate over the array using each block with index/value
+arr.each i,v <<DO
+    echo "Index: @i - Value: @v"
+DO
 
-# New each_do example
-echo "Iterating with each_do:"
-arr.each_do "echo \"Element: \$element\""
-
-# New each_with_index example
-echo "Iterating with each_with_index:"
-arr.each_with_index "echo \"Index: \$index, Value: \$value\""
+echo
 
 arr.delete_at 1
 echo "Array after deleting element at index 1: $(arr.to_s)"
