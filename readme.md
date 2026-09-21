@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2026/09/19 - 21:45:30
+ Last Modified: Sunday, 2026/09/20 - 21:45:57
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.4.588
+ Version: 0.1.4.591
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -62,11 +62,14 @@
     - [Adding custom code](#adding-custom-code)
     - [libsExample output](#libsexample-output)
 - [Libraries](#libraries)
-    - [init](#init)
-    - [args](#args)
-    - [system](#system)
-    - [colors](#colors)
-    - [utils](#utils)
+  - [init](#init)
+  - [args](#args)
+  - [system](#system)
+  - [colors](#colors)
+  - [utils](#utils)
+  - [oo](#oo)
+  - [OArray](#oarray)
+- [Go Back](#go-back)
 - [TODO List](#todo-list)
 
 ---
@@ -371,7 +374,7 @@ Functions
     * --xversionrc
 
   # help / information 
-    * --xdebug 
+    * --xdebug
     * --xhelp
   ```
 * `xhelp`
@@ -590,7 +593,7 @@ Functions
 
 <!-- * dots
   ```
-  
+
   ``` -->
 
 </details>
@@ -650,9 +653,72 @@ c1.stop
 </details>
 </br>
 
-[Go Back](#summary)
+#### OArray
 
----
+```
+A class for managing arrays in Bash.
+```
+
+<details close="true">
+
+Features:
+
+* Array initialization
+* Adding elements to the array
+* Getting the size of the array
+* Accessing elements by index
+* Checking if an element is in the array
+* Getting the index of an element
+* Iterating over the elements of the array
+* Removing elements by index
+* Removing the last element of the array
+* Clearing the array
+* Checking if the array is empty
+* Converting the array to a string
+
+```bash
+# Import and load
+source "$xSHELL_INIT"
+use OArray
+
+# Example usage
+arr = new OArray
+arr.push "apple"
+arr.push "banana"
+arr.push "cherry"
+
+echo "Array: $(arr.to_s)"
+echo "Size: $(arr.size)"
+echo "Count: $(arr.count)"
+echo "Element at index 1: $(arr.at 1)"
+echo "Is 'banana' included? $(arr.include "banana")"
+echo "Index of 'cherry': $(arr.index_of "cherry")"
+
+echo "Iterating over the elements:"
+arr.each "echo"
+
+echo "Iterating and printing elements with prefix:"
+arr.each "echo 'Element: '"
+
+echo "Iterating and executing a custom command:"
+arr.each "echo 'Processing: ' && echo 'Completed: '"
+
+arr.delete_at 1
+echo "Array after deleting element at index 1: $(arr.to_s)"
+
+arr.pop
+echo "Array after popping last element: $(arr.to_s)"
+
+arr.clear
+echo "Array after clearing: $(arr.to_s)"
+echo "Is array empty? $(arr.empty)"
+```
+
+</details>
+</br>
+
+[Go Back](#summary)
+-------
 
 ## TODO List
 
