@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 21:24:14
+# Last Modified: Sunday, 2026/09/20 - 21:28:33
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.46.1356
+# Version: 0.1.47.1363
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -78,7 +78,7 @@ XS_USE_COUNT=0
 xs_debug "${BG_GREEN}${BLACK} APP_NAME....: $APP_NAME ${RESET}\n"
 xs_debug "${BG_GREEN}${BLACK} BASH_SOURCE.: $BASH_SOURCE - xs_func() ${RESET}\n"
 
-xs_func --local-only check die fail is_lib_loaded upcase xs_app_home
+xs_func --local-only check fail is_defined is_lib_loaded 
 
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 
@@ -191,8 +191,8 @@ function xuse()       { xs_use "$@"; }
 function use()        { xs_use "$@"; }
 
 function xs_include() { xs_use "$@"; }
-function xinclude()   { xs_use "$@"; }
-function include()    { xs_use "$@"; }
+# function xinclude()   { xs_use "$@"; }
+# function include()    { xs_use "$@"; }
 
 function xs_import()  { xs_use "$@"; }
 function ximport()    { xs_use "$@"; }
