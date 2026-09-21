@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Sunday, 2026/09/20 - 21:45:57
+ Last Modified: Monday, 2026/09/21 - 19:59:02
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.4.591
+ Version: 0.1.5.596
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -677,31 +677,45 @@ Features:
 * Converting the array to a string
 
 ```bash
-# Import and load
 source "$xSHELL_INIT"
-use OArray
+xs_use OArray
 
 # Example usage
 arr = new OArray
 arr.push "apple"
 arr.push "banana"
 arr.push "cherry"
+arr.push "melon"
+arr.add "pineapple"
 
 echo "Array: $(arr.to_s)"
-echo "Size: $(arr.size)"
+echo "Size.: $(arr.size)"
 echo "Count: $(arr.count)"
+echo
+echo "Is array empty? $(arr.empty)"
 echo "Element at index 1: $(arr.at 1)"
 echo "Is 'banana' included? $(arr.include "banana")"
 echo "Index of 'cherry': $(arr.index_of "cherry")"
 
-echo "Iterating over the elements:"
-arr.each "echo"
+# Iterate over the array using string command 
+#   `-> change @var_name as you want. Ex @item, @fruit, @value, etc)
+#   `-> bellow, each item is available as @var_name.
+echo -e "\n.each (simple syntax)"
+arr.each "echo item: @var_name"
 
-echo "Iterating and printing elements with prefix:"
-arr.each "echo 'Element: '"
+echo -e "\n.each (block syntax)"
+# Iterate over the array using each block
+arr.each fruit <<DO
+    echo "Fruit: @fruit"
+DO
 
-echo "Iterating and executing a custom command:"
-arr.each "echo 'Processing: ' && echo 'Completed: '"
+echo -e "\n.each (block syntax with index/value)"
+# Iterate over the array using each block with index/value
+arr.each i,v <<DO
+    echo "Index: @i - Value: @v"
+DO
+
+echo
 
 arr.delete_at 1
 echo "Array after deleting element at index 1: $(arr.to_s)"
@@ -726,6 +740,7 @@ echo "Is array empty? $(arr.empty)"
 * [X] Implent color system (draft)
 * [X] lib/args: Implements joint flags (ex: -lsaf)
 * [X] Create/integrate some library or system for Objetc Orientation (OO)
+* [X] Create/intregrate some ArrayObject library
 * [ ] Adjust some libs and scripts to work on MacOs
 
 [Go Back](#summary)
