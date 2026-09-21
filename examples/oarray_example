@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: examples/tarray_example
+# File...: examples/oarray_example
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/20 - 21:25:44
+# Last Modified: Monday, 2026/09/21 - 18:07:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.24
+# Version: 0.0.2.37
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -25,10 +25,13 @@ arr = new OArray
 arr.push "apple"
 arr.push "banana"
 arr.push "cherry"
+arr.push "melon"
+arr.add "pineapple"
 
 echo "Array: $(arr.to_s)"
-echo "Size: $(arr.size)"
+echo "Size.: $(arr.size)"
 echo "Count: $(arr.count)"
+echo "Is array empty? $(arr.empty)"
 echo "Element at index 1: $(arr.at 1)"
 echo "Is 'banana' included? $(arr.include "banana")"
 echo "Index of 'cherry': $(arr.index_of "cherry")"
@@ -41,6 +44,14 @@ arr.each "echo 'Element: '"
 
 echo "Iterating and executing a custom command:"
 arr.each "echo 'Processing: ' && echo 'Completed: '"
+
+# New each_do example
+echo "Iterating with each_do:"
+arr.each_do "echo \"Element: \$element\""
+
+# New each_with_index example
+echo "Iterating with each_with_index:"
+arr.each_with_index "echo \"Index: \$index, Value: \$value\""
 
 arr.delete_at 1
 echo "Array after deleting element at index 1: $(arr.to_s)"

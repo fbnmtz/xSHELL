@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: TArray
+# File...: OArray
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/20 - 21:25:10
+# Last Modified: Monday, 2026/09/21 - 18:04:16
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.57
+# Version: 0.0.2.73
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -23,17 +23,17 @@ xs_use oo
 
 # Class OArray
 class OArray {
-    # Attributes
-    public property elements
+    # property name default_value
+    property elements
 
-    # Constructor
-    public define init() {
+    # constructor() or init()
+    define constructor() {
         # Initialize the elements property as an empty array
         this.elements="()"
     }
 
     # Method to add an element to the array
-    public method push() {
+    method push() {
         local element="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
@@ -42,8 +42,13 @@ class OArray {
         this.elements="($elements)"
     }
 
+    # Method (alias for push)
+    method add() {
+        this.push "$1"
+    }
+
     # Method to get the size of the array
-    public method size() {
+    method size() {
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
         local count=0
@@ -54,12 +59,12 @@ class OArray {
     }
 
     # Method to get the count of elements in the array (alias for size)
-    public method count() {
+    method count() {
         this.size
     }
 
     # Method to get an element by index
-    public method at() {
+    method at() {
         local index="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
@@ -67,7 +72,7 @@ class OArray {
     }
 
     # Method to check if an element is in the array
-    public method include() {
+    method include() {
         local element="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
@@ -79,7 +84,7 @@ class OArray {
     }
 
     # Method to get the index of an element
-    public method index_of() {
+    method index_of() {
         local element="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
@@ -95,17 +100,42 @@ class OArray {
     }
 
     # Method to iterate over the elements of the array
-    public method each() {
+    method each() {
         local command="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
         while IFS= read -r element; do
+            local e=$element; local value=$element; local v=$element
             [ -n "$element" ] && eval "$command \"$element\""
         done <<< "$elements"
     }
 
+    # Method to iterate over the elements of the array executing a block of code
+    method each_do() {
+        local block="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        while IFS= read -r element; do
+            local e=$element; local value=$element; local v=$element
+            [ -n "$element" ] && eval "$block"
+        done <<< "$elements"
+    }
+
+    # Method to iterate over the elements of the array with index and value
+    method each_with_index() {
+        local block="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local index=0
+        while IFS= read -r element; do
+            local e=$element; local value=$element; local v=$element
+            [ -n "$element" ] && eval "$block"
+            index=$((index + 1))
+        done <<< "$elements"
+    }
+
     # Method to remove an element by index
-    public method delete_at() {
+    method delete_at() {
         local index="$1"
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
@@ -115,7 +145,7 @@ class OArray {
     }
 
     # Method to remove the last element of the array
-    public method pop() {
+    method pop() {
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
         elements=$(echo "$elements" | head -n -1)
@@ -124,12 +154,12 @@ class OArray {
     }
 
     # Method to clear the array
-    public method clear() {
+    method clear() {
         this.elements="()"
     }
 
     # Method to check if the array is empty
-    public method empty() {
+    method empty() {
         local elements=$(this.elements)
         if [ "$elements" = "()" ]; then
             echo "true"
@@ -139,7 +169,7 @@ class OArray {
     }
 
     # Method to convert the array to a string
-    public method to_s() {
+    method to_s() {
         local elements=$(this.elements)
         echo "$elements"
     }
