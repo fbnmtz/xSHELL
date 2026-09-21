@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: scripts/libsExapmle
+# File...: examples/libs_example
 # Created: Thursday, 2023/01/05 - 15:09:19
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2024/12/09 - 15:55:54
+# Last Modified: Monday, 2026/09/21 - 17:47:42
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.82
+# Version: 0.0.7.90
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,14 +21,11 @@
 # shellcheck disable=SC1090,SC2154    
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~    
     
-# import lib system to your script
-source "$xSHELL_INIT"
-
-# load basic lib 'args'
-use args
+# load xshell lib system and use args library
+source "$xSHELL_INIT"; xs_use args
 
 # you can list/validade all binaries/tools needed by your script easily using 'requirements' function
-xrequirements echo
+xs_require echo
 
 # now, you can easily define args and usage info with 'xarg' function
 # params supported:
@@ -43,18 +40,18 @@ xrequirements echo
 #            this param will group args defined after it
 
 # example: how to set args/actions
-xarg --section "Custom Args"
-xarg --id -p,--print   --code "echo 'print test'" --desc "print some code"
-xarg --id -n,--notify  --var title+r,text+r       --desc "test notify system"
-xarg --id -m,--math    --var expression+r         --desc "solve math expression" 
-xarg --id -V,--volume  --var option+r             --desc "volume option (up or down)" 
+xs_arg --section "Custom Args"
+xs_arg --id -p,--print   --code "echo 'print test'" --desc "print some code"
+xs_arg --id -n,--notify  --var title+r,text+r       --desc "test notify system"
+xs_arg --id -m,--math    --var expression+r         --desc "solve math expression" 
+xs_arg --id -V,--volume  --var option+r             --desc "volume option (up or down)" 
 
 # after define args, pass all script params (var $@) to 'xrun' function 
 # xrun optional params:
 #   * --xreject-unknow : throw error when receive an parameter not defined with 'xarg'
 #   * --xrequire-one...: throw error if no param given
 #   * --xversionrc.....: show full version with release candidate
-xrun --xreject-unknow --xrequire-one --xversionrc "$@"
+xs_run --xreject-unknow --xrequire-one --xversionrc "$@"
 
 # code for -m/--math arg
 if [ -n "$expression" ] ; then
