@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/09/19 - 21:09:45
+# Last Modified: Sunday, 2026/09/20 - 21:27:32
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.4.63
+# Version: 0.1.5.81
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -187,6 +187,13 @@ protected:() { _oo_capture_funcs ""; _OO_BLOCK_VIS="protected"; _OO_PENDING_VIS=
 #   public property attribute_name [default_value]
 #   private property attribute_name [default_value]
 #   protected property attribute_name [default_value]
+# Function: property
+# Declares an attribute for the current class with optional default value and visibility.
+# Usage:
+#   property attribute_name [default_value]
+#   public property attribute_name [default_value]
+#   private property attribute_name [default_value]
+#   protected property attribute_name [default_value]
 property() {
     local attr_name="$1"
     local default_val="$2"
@@ -194,6 +201,10 @@ property() {
         local cls="$_OO_CURRENT_CLASS"
         echo "$attr_name" >> "$_OO_STORE/classes/$cls/attrs"
         if [ -n "$default_val" ]; then
+            # Handle array values by joining them into a single string
+            if [[ "$default_val" =~ ^\(.*\)$ ]]; then
+                default_val=$(echo "$default_val" | tr -d '()' | tr ' ' '\n')
+            fi
             echo "$default_val" > "$_OO_STORE/classes/$cls/default_${attr_name}"
         fi
 
@@ -226,7 +237,7 @@ property() {
         fi
 
         if type xs_debug &>/dev/null; then
-            xs_debug -l 2 "oo: property '$attr_name' registered\n"
+            xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' property '$attr_name' registered\n"
         fi
 
         # Fallback to current block visibility or public
@@ -249,12 +260,16 @@ alias attr="property"
 # Aliases: def, method, define -> function to support method definitions
 # Note: Trailing spaces allow alias chaining (e.g., private method ...)
 # Usage:
-#   def name() { ... }
-#   method name() { ... }
+#   method name( ) { ... }
 #   define name() { ... }
+#   def name() { ... }
+#   function name() { ... }
+#   func name() { ... }
 alias method="function "
 alias define="function "
 alias def="function "
+# alias function="function "
+alias func="function "
 
 # Function: _oo_end_class
 # Closes the class block, detects declared methods, transforms $this.attr accessors,
@@ -281,7 +296,7 @@ _oo_end_class() {
                 echo "$fn" >> "$_OO_STORE/classes/${cls}/methods"
                 unset -f "$fn"
                 if type xs_debug &>/dev/null; then
-                    xs_debug -l 2 "oo: method '$cls.$fn' registered\n"
+                    xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' method '$cls.$fn' registered\n"
                 fi
             fi
         done
