@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/tarray_example
+# Created: Sunday, 2026/09/20 - 01:09:32
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2026/09/20 - 21:25:44
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.24
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+source "$xSHELL_INIT"
+xs_use OArray
+
+# Example usage
+arr = new OArray
+arr.push "apple"
+arr.push "banana"
+arr.push "cherry"
+
+echo "Array: $(arr.to_s)"
+echo "Size: $(arr.size)"
+echo "Count: $(arr.count)"
+echo "Element at index 1: $(arr.at 1)"
+echo "Is 'banana' included? $(arr.include "banana")"
+echo "Index of 'cherry': $(arr.index_of "cherry")"
+
+echo "Iterating over the elements:"
+arr.each "echo"
+
+echo "Iterating and printing elements with prefix:"
+arr.each "echo 'Element: '"
+
+echo "Iterating and executing a custom command:"
+arr.each "echo 'Processing: ' && echo 'Completed: '"
+
+arr.delete_at 1
+echo "Array after deleting element at index 1: $(arr.to_s)"
+
+arr.pop
+echo "Array after popping last element: $(arr.to_s)"
+
+arr.clear
+echo "Array after clearing: $(arr.to_s)"
+echo "Is array empty? $(arr.empty)"

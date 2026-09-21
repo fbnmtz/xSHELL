@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: TArray
+# Created: Sunday, 2026/09/20 - 01:08:43
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Sunday, 2026/09/20 - 21:25:10
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.57
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+_xLIB_TARRAY_=true;
+
+xs_use oo
+
+# Class OArray
+class OArray {
+    # Attributes
+    public property elements
+
+    # Constructor
+    public define init() {
+        # Initialize the elements property as an empty array
+        this.elements="()"
+    }
+
+    # Method to add an element to the array
+    public method push() {
+        local element="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements="$elements"$'\n'"$element"
+        elements=$(echo "$elements" | sort -u | tr '\n' ' ')
+        this.elements="($elements)"
+    }
+
+    # Method to get the size of the array
+    public method size() {
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local count=0
+        while IFS= read -r line; do
+            [ -n "$line" ] && count=$((count + 1))
+        done <<< "$elements"
+        echo "$count"
+    }
+
+    # Method to get the count of elements in the array (alias for size)
+    public method count() {
+        this.size
+    }
+
+    # Method to get an element by index
+    public method at() {
+        local index="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        echo "$elements" | sed -n "$((index + 1))p"
+    }
+
+    # Method to check if an element is in the array
+    public method include() {
+        local element="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        if echo "$elements" | grep -qxF "$element"; then
+            echo "true"
+        else
+            echo "false"
+        fi
+    }
+
+    # Method to get the index of an element
+    public method index_of() {
+        local element="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local index=0
+        while IFS= read -r line; do
+            if [ "$line" = "$element" ]; then
+                echo "$index"
+                return 0
+            fi
+            index=$((index + 1))
+        done <<< "$elements"
+        echo "-1"
+    }
+
+    # Method to iterate over the elements of the array
+    public method each() {
+        local command="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        while IFS= read -r element; do
+            [ -n "$element" ] && eval "$command \"$element\""
+        done <<< "$elements"
+    }
+
+    # Method to remove an element by index
+    public method delete_at() {
+        local index="$1"
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements=$(echo "$elements" | sed "$((index + 1))d")
+        elements=$(echo "$elements" | tr '\n' ' ')
+        this.elements="($elements)"
+    }
+
+    # Method to remove the last element of the array
+    public method pop() {
+        local elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements=$(echo "$elements" | head -n -1)
+        elements=$(echo "$elements" | tr '\n' ' ')
+        this.elements="($elements)"
+    }
+
+    # Method to clear the array
+    public method clear() {
+        this.elements="()"
+    }
+
+    # Method to check if the array is empty
+    public method empty() {
+        local elements=$(this.elements)
+        if [ "$elements" = "()" ]; then
+            echo "true"
+        else
+            echo "false"
+        fi
+    }
+
+    # Method to convert the array to a string
+    public method to_s() {
+        local elements=$(this.elements)
+        echo "$elements"
+    }
+}
