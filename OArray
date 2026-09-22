@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/21 - 19:36:32
+# Last Modified: Tuesday, 2026/09/22 - 03:36:21
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.102
+# Version: 0.0.4.206
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -98,7 +98,7 @@ class OArray {
         done <<< "$elements"
         echo "-1"
     }
-
+    
     # Method to iterate over the elements of the array
     method each() {
         local arg="$1"
@@ -107,8 +107,18 @@ class OArray {
         local var_names=""
 
         # --- Detects call form: inline or heredoc ---
-        if [[ "$arg" == *" "* ]]; then
+        if [[ ! -t 0 ]]; then
+            xs_debug -l 3 "heredoc detected"
+            # heredoc form: arr.each fruit <<DO ... DO
+            #                arr.each i,v   <<DO ... DO
+            var_names="$arg"
+            while IFS= read -r line; do
+                [[ "$line" =~ ^DO$ ]] && break
+                block+="$line"$'\n'
+            done
+        elif [[ "$arg" == *" "* ]]; then
             # inline form: arr.each "echo @element"
+            xs_debug -l 3 "inline detected"
             block="$arg"
             # Extract the variable name from @varname, otherwise use "element"
             if [[ "$arg" =~ \@([a-zA-Z_][a-zA-Z0-9_]*) ]]; then
@@ -117,13 +127,12 @@ class OArray {
                 var_names="element"
             fi
         else
-            # heredoc form: arr.each fruit <<DO ... DO
-            #                arr.each i,v   <<DO ... DO
+            # new form: arr.each i,v 'DO ... DONE'
+            xs_debug -l 3 "string block detected"
             var_names="$arg"
-            while IFS= read -r line; do
-                [[ "$line" =~ ^DO$ ]] && break
-                block+="$line"$'\n'
-            done
+            block="$*"
+            # Remove the 'DO' and 'DONE' markers (first and last lines) from the block
+            block=$(echo "$block" | sed '1d;$d')
         fi
 
         # --- Replace @var1 and @var2 with $var1 and $var2 in the block ---
@@ -151,7 +160,7 @@ class OArray {
             }
             index=$((index + 1))
         done <<< "$elements"
-    }    
+    }
 
     # Method to remove an element by index
     method delete_at() {
