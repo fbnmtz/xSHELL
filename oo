@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/20 - 21:27:32
+# Last Modified: Tuesday, 2026/09/22 - 03:37:59
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.5.81
+# Version: 0.1.6.85
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -252,10 +252,14 @@ property() {
 prop()     { property "$@"; }
 attribute(){ property "$@"; }
 attr()     { property "$@"; }
+var()      { property "$@"; }
+variable() { property "$@"; }
 
 alias prop="property"
 alias attribute="property"
 alias attr="property"
+alias var="property"
+alias variable="property"
 
 # Aliases: def, method, define -> function to support method definitions
 # Note: Trailing spaces allow alias chaining (e.g., private method ...)
@@ -270,6 +274,7 @@ alias define="function "
 alias def="function "
 # alias function="function "
 alias func="function "
+alias action="function "
 
 # Function: _oo_end_class
 # Closes the class block, detects declared methods, transforms $this.attr accessors,
