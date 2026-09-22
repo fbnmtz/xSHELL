@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 03:36:21
+# Last Modified: Tuesday, 2026/09/22 - 10:40:52
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.206
+# Version: 0.0.5.211
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -200,6 +200,16 @@ class OArray {
     method to_s() {
         local elements=$(this.elements)
         echo "$elements"
+    }
+
+    # Method to get the first element of the array
+    method first() {
+        this.at 1
+    }
+
+    # Method to get the last element of the array
+    method last() {
+        this.at $(this.size)
     }
 
 }

@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Monday, 2026/09/21 - 19:59:02
+ Last Modified: Tuesday, 2026/09/22 - 10:41:13
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.5.596
+ Version: 0.1.6.597
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -700,20 +700,25 @@ echo "Index of 'cherry': $(arr.index_of "cherry")"
 # Iterate over the array using string command 
 #   `-> change @var_name as you want. Ex @item, @fruit, @value, etc)
 #   `-> bellow, each item is available as @var_name.
-echo -e "\n.each (simple syntax)"
-arr.each "echo item: @var_name"
+echo -e "\n.each (one string - simple syntax)"
+arr.each "echo simple item: @e"
 
-echo -e "\n.each (block syntax)"
+echo -e "\n.each (heredoc block)"
 # Iterate over the array using each block
 arr.each fruit <<DO
     echo "Fruit: @fruit"
 DO
 
-echo -e "\n.each (block syntax with index/value)"
+echo -e "\n.each (heredoc block with index/value)"
 # Iterate over the array using each block with index/value
 arr.each i,v <<DO
     echo "Index: @i - Value: @v"
 DO
+
+echo -e "\n.each (two strings - vars and block)"
+arr.each i,v 'DO 
+    echo "Index: @i - Value: @v"
+DONE'
 
 echo
 

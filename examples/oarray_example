@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 03:36:52
+# Last Modified: Tuesday, 2026/09/22 - 10:40:56
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.4.130
+# Version: 0.0.5.135
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -33,6 +33,9 @@ echo "Size.: $(arr.size)"
 echo "Count: $(arr.count)"
 echo
 echo "Is array empty? $(arr.empty)"
+echo "First element.: $(arr.first)"
+echo "Last element..: $(arr.last)"
+
 echo "Element at index 1: $(arr.at 1)"
 echo "Is 'banana' included? $(arr.include "banana")"
 echo "Index of 'cherry': $(arr.index_of "cherry")"
