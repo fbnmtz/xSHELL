@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 10:40:52
+# Last Modified: Tuesday, 2026/09/22 - 12:40:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.5.211
+# Version: 0.0.6.230
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -38,7 +38,7 @@ class OArray {
         local elements=$(this.elements)
         elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
         elements="$elements"$'\n'"$element"
-        elements=$(echo "$elements" | sort -u | tr '\n' ' ')
+        elements=$(echo "$elements" | tr '\n' ' ')
         this.elements="($elements)"
     }
 
@@ -210,6 +210,66 @@ class OArray {
     # Method to get the last element of the array
     method last() {
         this.at $(this.size)
+    }
+
+    # Method to sort the array in ascending order
+    method sort() {
+        local sort_by=$1
+        local sort_cmd
+        [ -z "$sort_by" ] && sort_by="asc"
+        case "$sort_by" in
+            asc ) sort_cmd="sort"    ;;
+            desc) sort_cmd="sort -r" ;;
+            *) echo "Invalid sort order: $sort_by. Use 'asc' or 'desc'." ;;
+        esac
+        local elements
+        elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local sorted_elements
+        sorted_elements=$(echo "$elements" | $sort_cmd)
+        echo "(${sorted_elements//$'\n'/ })"
+    }
+
+    # Method to reverse the array
+    method reverse() {
+        local elements
+        elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local reversed_elements=()
+        local element
+        while IFS= read -r element; do
+            reversed_elements=("$element" "${reversed_elements[@]}")
+        done <<< "$elements"
+        echo "(${reversed_elements[@]})"
+    }
+
+    # Method to sum the elements of the array (assuming numeric elements)
+    method sum() {
+        local elements
+        elements=$(this.elements)
+        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local sum=0
+        while IFS= read -r element; do
+            sum=$((sum + element))
+        done <<< "$elements"
+        echo "$sum"
+    }
+
+    # Method to get unique elements of the array
+    method uniq() {
+        local -A seen
+        local unique=()
+        local elements
+        elements=$(this.elements)
+        # Remove parênteses
+        elements="${elements//[()]/}"
+        for el in $elements; do
+            if [[ -z "${seen[$el]+x}" ]]; then
+                seen[$el]=1
+                unique+=("$el")
+            fi
+        done
+        echo "(${unique[*]})"
     }
 
 }

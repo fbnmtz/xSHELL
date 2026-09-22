@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 10:40:56
+# Last Modified: Tuesday, 2026/09/22 - 12:33:11
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.5.135
+# Version: 0.0.6.148
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,11 +22,14 @@ xs_use OArray
 
 # Example usage
 arr = new OArray
-arr.push "apple"
+arr.add "pineapple"
 arr.push "banana"
 arr.push "cherry"
+arr.push "apple"
 arr.push "melon"
-arr.add "pineapple"
+arr.push "mango"
+arr.push "melon"  # Duplicate, should not be added again
+arr.push "nuts"
 
 echo "Array: $(arr.to_s)"
 echo "Size.: $(arr.size)"
@@ -64,6 +67,13 @@ arr.each i,v 'DO
 DONE'
 
 echo
+
+echo "Array as string: $(arr.to_s)"
+echo "Sorted (asc).: $(arr.sort asc)"
+echo "Sorted (desc): $(arr.sort desc)"
+echo "Reversed.....: $(arr.reverse)"
+echo "Sum..........: $(arr.sum)"
+echo "Unique.......: $(arr.uniq)"
 
 arr.delete_at 1
 echo "Array after deleting element at index 1: $(arr.to_s)"
