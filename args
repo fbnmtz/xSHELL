@@ -6,10 +6,10 @@
 # Created: Friday, 2022/02/11 - 20:09:07
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/09/13 - 16:04:50
+# Last Modified: Tuesday, 2026/09/15 - 18:11:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.2.50.2257
+# Version: 0.2.51.2274
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -19,7 +19,7 @@
 
 _xLIB_ARGS_=true;
 
-use hashs system utils
+xs_use hashs system utils
 
 # update text used in function 'xs_usage'
     # @param $1 -> string to customize each text of help sections. Use this pattern:
@@ -31,6 +31,7 @@ use hashs system utils
         # -f or --footer
 # "<text>" is the string associated to this section and is required to be inside ""
 xs_help(){
+    local param param_id param_text key val
     # loop all params
     for param in "$@"; do
         # split key and value
@@ -171,14 +172,14 @@ xs_usage(){
         done
 
         __HELP_OPTIONS_DESCRIPTION__=$(echo "${__HELP_OPTIONS_DESCRIPTION__//./ }" | \
-            awkColumn "-s=:" | \
+            awk_column "-s=:" | \
             sed "s/;/:/g" | \
             sed 's/,/,  /g' )
     }
     
     # generate default help text if user not difined one
     [ -z "$__HELP_USAGE__" ] && xs_help --long-usage
-    [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}"
+    [ -n "$XS_RUN_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}"
     
     case "$1" in
         -f|--field-error)
@@ -221,7 +222,7 @@ xs_usage(){
     esac
 
     # print debug info
-    # [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug  "${xRUN_ARGS[@]}" ;
+    # [ -n "$XS_RUN_DEBUG" ] && xs_run_debug  "${xRUN_ARGS[@]}" ;
     
     # prints initial help text
     echo -e "${__HELP_HEADER__}\n${__usage_msg}${__HELP_USAGE__}"
@@ -273,8 +274,8 @@ xs_usage(){
 #   --> desc="text" 
 xs_arg(){
     
-    xs_func --local-only fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname --debug)() '$*' ${RESET}\n"
+    xs_func --local-only --debug 3 fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname)() '$*' ${RESET}\n"
     
     #TODO: refactor code below
     while [ "$1" != "" ]; do
@@ -433,12 +434,12 @@ xarg(){ xs_arg "$@"; }
 # generates a loop with case struct to evaluate all ARGs defined using `xarg`
 xs_run(){
     
-    xs_func --local-only fname
-    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname --debug)() '$*' ${RESET}\n"
+    xs_func --local-only --debug 3 fname
+    xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname)() '$*' ${RESET}\n"
     xRUN_ARGS="$*"
 
     xs_run_help(){
-        xs_func --local --silent awk_column
+        xs_func --local --debug 3 awk_column
         echo -e "${GREEN}${UNDERLINE}'lib/args'${RESET} \"$args_hash\" functions (${YELLOW}xarg${RESET}, ${YELLOW}xrun${RESET})
         \n${YELLOW}1) xarg${RESET} -> set args to be validate in 'xrun' function
         \nusage: ${YELLOW}xarg ${CYAN}[OPTION] ${MAGENTA}<VALUE>${RESET}\
@@ -454,7 +455,7 @@ xs_run(){
         \n${CYAN}  -g, --group   ${MAGENTA}<VALUE>${RESET} or\
         \n${CYAN}  -s, --section ${MAGENTA}<VALUE>${RESET} or\
         \
-        " | awkColumn "-s=;"
+        " | awk_column "-s=;"
         # " | column -t -s ';'
         
         echo -e "\
@@ -478,12 +479,12 @@ xs_run(){
         \n  ${CYAN}--xrequirements${RESET};show requirements report\
         \n  ${CYAN}--xdebug${RESET};prints generated case with args for inspection\
         \n  ${CYAN}--xs_help${RESET};prints this message
-        " |  awkColumn "-s=;" 
-        # " |  awkColumn "-t=;"
+        " |  awk_column "-s=;" 
+        # " |  awk_column "-t=;"
         # " | awk '{ printf "%-8s", $1 } NR % 2 == 0 { printf "\n" }'  
         # " | awk '{ getline line; printf "%s\t%s\n", $0, line }'
         # " | awk -vOFS='\t' 'NF > 0 { $1 = $1 } 1'
-        # " > awkColumn -t=;
+        # " > awk_column -t=;
         # " | column -t -s ';' 
 
         # echo -e "\n[!] ATENTION:\
@@ -601,7 +602,7 @@ xs_run(){
     # gen default help argument
     if [ -z "$no_help" ]; then
         xarg --id "-h,${_arg_prefix_}help"    \
-            --code "xarg+=h ; xs_usage --help" \
+            --code "xarg+=\"h\" ; xs_usage --help" \
             --desc "show this help"
             #  --code "formatHelpOptions" \
     fi
@@ -609,7 +610,7 @@ xs_run(){
     if [ -z "$no_version" ]; then
         # gen default version argument
         xarg --id "-v,${_arg_prefix_}version" \
-            --code "xarg+=v ; xs_usage --version" \
+            --code "xarg+=\"v\" ; xs_usage --version" \
             --desc "print version and exit"
     fi
     
@@ -621,7 +622,7 @@ xs_run(){
         # function to force script to receive at last one param/arg
         case "$1" in
             --xapp-data | --xs-app-home)
-                shift; xs_app_home
+                shift; xs_func --local xs_app_home; xs_app_home
             ;;
             --xrequire-one | --xrequire_one | --require-one | --notNull | --not-null)  
                 shift; _XS_ARGS_REQUIRED=true
@@ -634,7 +635,7 @@ xs_run(){
                 shift; XS_CURRENT_VERSION=$XS_VERSION_RC
             ;;
             --xdebug | --xsdebug) 
-                shift; _XS_ARGS_DEBUG=true; 
+                shift; XS_RUN_DEBUG=true; 
             ;;
             --xcolors)
                 shift; use colors;
@@ -683,7 +684,7 @@ xs_run(){
 
     xs_generate_case "${XS_PARAMS[@]}"
 
-    [ -n "$_XS_ARGS_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}";
+    [ -n "$XS_RUN_DEBUG" ] && xs_run_debug "${xRUN_ARGS[@]}";
 }
 
 xrun(){ xs_run "$@"; }
@@ -691,7 +692,7 @@ xrun(){ xs_run "$@"; }
 # Validate if $xarg variable contains a value and run the code block
 # Usage: xcase <value> <code_block>
 xs_case(){
-    xs_func --local-only fname
+    xs_func --local-only --debug 3 fname
     xs_debug "${REVERSE} ${BASH_SOURCE[1]} - call of $(fname)() '$*' ${RESET}\n"
     local value="$1"; shift
     local code_block="$*"
@@ -747,7 +748,7 @@ xarg=''
 
 xs_source --local xs_version xs_created xs_updated xs_author_name xs_author_mail xs_hl
 
-# fill vars VERSION, XS_CREATED_AT, XS_AUTHOR_NAME
+# fill vars XS_VERSION, XS_CREATED_AT, XS_UPDATED_AT, XS_AUTHOR_NAME, XS_AUTHOR_MAIL
 .xs --init
 
 # define current_cmd at start
