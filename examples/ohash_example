@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 #
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/ohash_example
+# Created: Friday, 2026/10/02 - 22:18:37
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2026/10/03 - 00:56:01
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.2
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
 # Example usage of the OHash class.
+#
+# shellcheck disable=SC2211
+    # `-> this ignores the SC2211 warning about using:
+    #   `glob used as a command name` 
+    # which is intentional here.
+#
 
 source "$xSHELL_INIT"
 xs_use OHash
