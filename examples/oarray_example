@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 12:33:11
+# Last Modified: Saturday, 2026/10/03 - 17:00:22
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.148
+# Version: 0.0.7.156
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -22,11 +22,11 @@ xs_use OArray
 
 # Example usage
 literal_array = [1, 2, 3]
-echo "Array literal: $(literal_array.to_s)"
-literal_array = "(1, 2, 3)"
-echo "Comma-separated array literal: $(literal_array.to_s)"
-literal_array = "(1 2 3)"
-echo "Space-separated array literal: $(literal_array.to_s)"
+echo "literal_array = [1, 2, 3]: $(literal_array.to_s)"
+literal_array = "(3, 4, 5)"
+echo "Comma-separated array - literal_array = \"(3, 4, 5)\": $(literal_array.to_s)"
+literal_array = "(6 7 8)"
+echo "Space-separated array - literal_array = \"(6 7 8)\": $(literal_array.to_s)"
 
 arr = new OArray
 arr.add "pineapple"
