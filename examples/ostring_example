@@ -6,10 +6,10 @@
 # Created: Saturday, 2026/10/03 - 01:29:01
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 03:04:07
+# Last Modified: Saturday, 2026/10/03 - 05:07:26
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.2.15
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,6 +20,29 @@
 
 source "$xSHELL_INIT"
 xs_use OString
+
+echo "OString - forms to create objects"
+echo 'direct = "Created from a quoted string"'
+direct = "Created from a quoted string"
+echo 'explicit = OString("Created explicitly")'
+explicit = OString\("Created explicitly"\)
+echo 'explicit2 = OString "Created explicitly"'
+explicit2 = OString "Created explicitly"
+echo "multiline = OString heredoc <<'TEXT'"
+multiline = OString heredoc <<'TEXT'
+First line
+Second line
+TEXT
+
+echo 'direct.class => ' "$(direct.class)"
+echo 'explicit.class => ' "$(explicit.class)"
+echo 'explicit2.class => ' "$(explicit2.class)"
+echo 'multiline.class => ' "$(multiline.class)"
+
+echo 'direct.to_s => ' "$(direct.to_s)"
+echo 'explicit.to_s => ' "$(explicit.to_s)"
+echo 'explicit2.to_s => ' "$(explicit2.to_s)"
+echo 'multiline.to_s => ' "$(multiline.to_s)"
 
 echo 'text = new OString "  Hello, xSHELL!  "'
 text = new OString "  Hello, xSHELL!  "
@@ -32,6 +55,7 @@ echo 'text.include "xSHELL" => ' "$(text.include "xSHELL")"
 echo 'text.start_with "  Hello" => ' "$(text.start_with "  Hello")"
 echo 'text.end_with "  " => ' "$(text.end_with "  ")"
 echo 'text.index "xSHELL" => ' "$(text.index "xSHELL")"
+echo 'text.char 3 => ' "$(text.char 3)"
 echo 'text.upcase => ' "$(text.upcase)"
 echo 'text.downcase => ' "$(text.downcase)"
 echo 'text.capitalize => ' "$(text.capitalize)"

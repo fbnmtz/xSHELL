@@ -748,7 +748,7 @@ A string class for Bash, inspired by Ruby String.
 
 Features:
 
-* Create a string object with an initial value
+* Create a string object with `name = "text"`, `name = OString\("text"\)`, a marked heredoc, or `name = new OString "text"`
 * Query its length, emptiness, contents, prefix, suffix, or the index of a substring
 * Change case, convert between camel case and snake case, reverse, or trim whitespace
 * Return the string's characters as a string or as an `OArray` with one character per element
@@ -776,7 +776,17 @@ Methods:
 source "$xSHELL_INIT"
 xs_use OString
 
+direct = "Created from a quoted string"
+explicit = OString\("Created explicitly"\)
+multiline = OString heredoc <<'TEXT'
+First line
+Second line
+TEXT
+
 text = new OString "  Bash lang  "
+echo "direct.to_s => $(direct.to_s)"
+echo "explicit.to_s => $(explicit.to_s)"
+echo "multiline.to_s => $(multiline.to_s)"
 echo "text.to_s => $(text.to_s)"
 echo "text.upcase => $(text.upcase)"
 echo "text.trim => $(text.trim)"

@@ -80,6 +80,18 @@ class OString {
         fi
     }
 
+    function char() {
+        local value index offset
+        value="$(this.value)"
+        index="${1-}"
+        if [[ ! "$index" =~ ^[0-9]+$ ]] || [ "$index" -lt 1 ] || [ "$index" -gt "${#value}" ]; then
+            this.__quote ""
+            return 0
+        fi
+        offset=$((index - 1))
+        this.__quote "${value:offset:1}"
+    }
+
     function upcase() {
         local value
         value="$(this.value)"

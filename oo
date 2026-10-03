@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 03:37:59
+# Last Modified: Saturday, 2026/10/03 - 05:03:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.6.85
+# Version: 0.1.7.86
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -396,6 +396,30 @@ __oo_resolve_method_class() {
     return 1
 }
 
+__oo_instantiate() {
+    local obj="$1"
+    local cls="$2"
+    shift 2
+    mkdir -p "$_OO_STORE/instances/$obj"
+    printf '%s\n' "$cls" > "$_OO_STORE/instances/$obj/__class__"
+
+    if [ -d "$_OO_STORE/classes/$cls" ]; then
+        local def_file aname
+        for def_file in "$_OO_STORE/classes/$cls"/default_*; do
+            [ -f "$def_file" ] || continue
+            aname=$(basename "$def_file" | sed 's/^default_//')
+            cp "$def_file" "$_OO_STORE/instances/$obj/$aname"
+        done
+    fi
+
+    local ctor_cls
+    if ctor_cls=$(__oo_resolve_method_class "$cls" init); then
+        this="$obj" "__${ctor_cls}_init" "$@"
+    elif ctor_cls=$(__oo_resolve_method_class "$cls" constructor); then
+        this="$obj" "__${ctor_cls}_constructor" "$@"
+    fi
+}
+
 # Preserve previous command_not_found_handle if already defined
 if declare -f command_not_found_handle &>/dev/null && ! declare -f __orig_command_not_found_handle &>/dev/null; then
     eval "$(declare -f command_not_found_handle | sed '1s/command_not_found_handle/__orig_command_not_found_handle/')"
@@ -422,29 +446,41 @@ command_not_found_handle() {
     if [ "${args[0]}" = "=" ] && [ "${args[1]}" = "new" ]; then
         local obj="$cmd"
         local cls="${args[2]}"
-        mkdir -p "$_OO_STORE/instances/$obj"
-        echo "$cls" > "$_OO_STORE/instances/$obj/__class__"
-
-        # Apply default attributes if specified in class definition
-        if [ -d "$_OO_STORE/classes/$cls" ]; then
-            for def_file in "$_OO_STORE/classes/$cls"/default_*; do
-                if [ -f "$def_file" ]; then
-                    local aname
-                    aname=$(basename "$def_file" | sed 's/^default_//')
-                    cp "$def_file" "$_OO_STORE/instances/$obj/$aname"
-                fi
-            done
-        fi
-
-        # Invoke constructor if defined (init or constructor)
-        local ctor_args=("${args[@]:3}")
-        local ctor_cls
-        if ctor_cls=$(__oo_resolve_method_class "$cls" init); then
-            this="$obj" "__${ctor_cls}_init" "${ctor_args[@]}"
-        elif ctor_cls=$(__oo_resolve_method_class "$cls" constructor); then
-            this="$obj" "__${ctor_cls}_constructor" "${ctor_args[@]}"
-        fi
+        __oo_instantiate "$obj" "$cls" "${args[@]:3}"
         return 0
+    fi
+
+    # OString literals: name = "text", name = OString("text"), or a marked heredoc.
+    if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OString" ]; then
+        local literal_value="" literal_rhs="${args[*]:1}"
+
+        if [[ "$literal_rhs" =~ ^OString\((.*)\)$ ]]; then
+            literal_value="${BASH_REMATCH[1]}"
+            if [ "${literal_value:0:1}" = '"' ] && [ "${literal_value: -1}" = '"' ]; then
+                literal_value="${literal_value:1:${#literal_value}-2}"
+            elif [ "${literal_value:0:1}" = "'" ] && [ "${literal_value: -1}" = "'" ]; then
+                literal_value="${literal_value:1:${#literal_value}-2}"
+            fi
+            __oo_instantiate "$cmd" OString "$literal_value"
+            return $?
+        fi
+
+        if [ "${args[1]}" = "OString" ] && [ "${args[2]}" = "heredoc" ] && \
+            [ "${#args[@]}" -eq 3 ]; then
+            literal_value=$(cat)
+            __oo_instantiate "$cmd" OString "$literal_value"
+            return $?
+        fi
+
+        if [ "${args[1]}" = "OString" ] && [ "${#args[@]}" -eq 3 ]; then
+            __oo_instantiate "$cmd" OString "${args[2]}"
+            return $?
+        fi
+
+        if [ "${#args[@]}" -eq 2 ] && [ "${args[1]}" != "{" ]; then
+            __oo_instantiate "$cmd" OString "$literal_rhs"
+            return $?
+        fi
     fi
 
     # 2. Attribute assignment with spaces: obj.attr = value
