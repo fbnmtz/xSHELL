@@ -22,6 +22,17 @@ echo "h.keys => $(h.keys)"
 echo "h.values => $(h.values)"
 echo "h.count => $(h.count)"
 echo "profile[:city] => $(profile[:city])"
+without_default = new OHash
+echo "without_default[:missing] (implicit nil) => $(without_default[:missing])"
+
+echo
+echo "-- Hash literal --"
+config = { host: "localhost", port: 3000 }
+echo "config = { host: 'localhost', port: 3000 }"
+echo "equivalent to config = new OHash; config[:host] = 'localhost'; config[:port] = 3000"
+echo "config.to_s => $(config.to_s)"
+echo "config[:host] => $(config[:host])"
+echo "config[:port] => $(config[:port])"
 
 echo
 echo "-- Public method coverage --"

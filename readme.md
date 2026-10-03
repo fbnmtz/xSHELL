@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Tuesday, 2026/09/22 - 10:41:13
+ Last Modified: Saturday, 2026/10/03 - 00:39:34
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.6.597
+ Version: 0.1.6.599
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -748,6 +748,8 @@ A Hash-like class for storing and working with key/value pairs in Bash.
 Features:
 
 * Create an ordered hash with an optional default value
+* Return `nil` for a missing key when no default value is supplied; pass a constructor argument to choose another default
+* Create hashes from a literal assignment such as `config = { host: "localhost", port: 3000 }`; bare keys become symbols (`:host`)
 * Use symbol-style keys such as `:name` and string keys such as `name`; these are distinct keys
 * Read and write values with `h[:key]` and `h[:key] = value`
 * Store nested OHash instances as sub-hashes
@@ -781,11 +783,18 @@ h[:name] = "Ada Lovelace"
 h[name] = "String-key value"
 h[:profile] = profile
 
+config = { host: "localhost", port: 3000 }
+echo "config = { host: 'localhost', port: 3000 }"
+echo "equivalent to config = new OHash; config[:host] = 'localhost'; config[:port] = 3000"
+
 echo "h[:name] => $(h[:name])"
 echo "h[name] => $(h[name])"
 echo "h.keys => $(h.keys)"
 echo "h.values => $(h.values)"
 echo "h.to_s => $(h.to_s)"
+echo "config.to_s => $(config.to_s)"
+without_default = new OHash
+echo "without_default[:missing] => $(without_default[:missing])"
 
 h.each 'printf "%s => %s\\n" "@key" "@value"'
 

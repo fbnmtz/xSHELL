@@ -168,7 +168,7 @@ class OHash {
 
     define constructor() {
         local data_file
-        this.default_value="${1:-}"
+        this.default_value="${1-nil}"
         data_file=$(__OHash___file "$this")
         : > "$data_file"
     }
@@ -348,6 +348,61 @@ if [ "${_OHASH_COMMAND_HANDLER_INSTALLED:-false}" != true ] && declare -f comman
         local cmd="$1"
         shift
         local args=("$@")
+
+        if [[ "$cmd" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] && [ "${args[0]}" = "=" ] && [ "${args[1]}" = "{" ]; then
+            local end_index=$((${#args[@]} - 1))
+            local closing_attached=false
+            local token key value i
+            local -a literal_keys=() literal_values=()
+
+            if [[ "${args[end_index]}" == *} ]] && [ "${args[end_index]}" != "}" ]; then
+                args[end_index]="${args[end_index]%\}}"
+                closing_attached=true
+            elif [ "${args[end_index]}" = "}" ]; then
+                closing_attached=true
+                end_index=$((end_index - 1))
+            fi
+
+            i=2
+            while [ "$i" -le "$end_index" ]; do
+                token="${args[i]}"
+                if [[ "$token" != *: ]]; then
+                    echo "OHash: expected a key ending with ':' in hash literal" >&2
+                    return 2
+                fi
+
+                key="${token%:}"
+                [ -n "$key" ] || {
+                    echo "OHash: empty keys are not allowed" >&2
+                    return 2
+                }
+                [[ "$key" == :* ]] || key=":$key"
+
+                i=$((i + 1))
+                if [ "$i" -gt "$end_index" ]; then
+                    echo "OHash: missing value for key '$key'" >&2
+                    return 2
+                fi
+                value="${args[i]}"
+                value="${value%,}"
+                literal_keys+=("$key")
+                literal_values+=("$value")
+                i=$((i + 1))
+            done
+
+            if [ "$closing_attached" != true ]; then
+                echo "OHash: hash literal must end with '}'" >&2
+                return 2
+            fi
+
+            __OHash_delegate_command_not_found_handle "$cmd" = new OHash || return $?
+            local literal_setter_class
+            literal_setter_class=$(__oo_resolve_method_class OHash set) || return 1
+            for i in "${!literal_keys[@]}"; do
+                this="$cmd" "__${literal_setter_class}_set" "${literal_keys[i]}" "${literal_values[i]}" || return $?
+            done
+            return 0
+        fi
 
         if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.__([a-zA-Z0-9_]+)$ ]]; then
             local private_obj="${BASH_REMATCH[1]}"
