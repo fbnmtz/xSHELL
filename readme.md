@@ -69,6 +69,7 @@
   - [utils](#utils)
   - [oo](#oo)
   - [OArray](#oarray)
+  - [OString](#ostring)
   - [OHash](#ohash)
 - [Go Back](#go-back)
 - [TODO List](#todo-list)
@@ -732,6 +733,59 @@ echo "Array after popping last element: $(arr.to_s)"
 arr.clear
 echo "Array after clearing: $(arr.to_s)"
 echo "Is array empty? $(arr.empty)"
+```
+
+</details>
+</br>
+
+#### OString
+
+```
+A string class for Bash, inspired by Ruby String.
+```
+
+<details close="true">
+
+Features:
+
+* Create a string object with an initial value
+* Query its length, emptiness, contents, prefix, suffix, or the index of a substring
+* Change case, convert between camel case and snake case, reverse, or trim whitespace
+* Return the string's characters as a string or as an `OArray` with one character per element
+* Append, prepend, replace, substitute, delete, or clear string contents
+* Text-returning methods include literal double quotes around their result; `length`, `size`, `index`, and boolean checks return unquoted values
+* A bare `OString` object evaluates like its `to_s` method
+
+Methods:
+
+* `to_s`: return the string surrounded by double quotes
+* `length` and `size`: return the number of characters
+* `empty`: return `true` or `false`
+* `include`, `start_with`, and `end_with`: test for a substring, prefix, or suffix
+* `index`: return the zero-based index of a substring, or `-1` if it is not found
+* `upcase`, `downcase`, `capitalize`, `camelcase`, and `snakecase`: convert letter casing or word style
+* `reverse`: return the characters in reverse order
+* `lstrip`/`ltrim`, `rstrip`/`rtrim`, and `strip`/`trim`: remove whitespace from the left, right, or both sides
+* `chars`: return characters separated by spaces
+* `to_array` and `to_a`: create an `OArray` containing one character per element, including whitespace
+* `append`/`concat`, `prepend`, and `replace`: modify the string contents
+* `sub`, `gsub`, and `delete`: replace the first match, replace all matches, or remove matches
+* `clear`: set the string to an empty value
+
+```bash
+source "$xSHELL_INIT"
+xs_use OString
+
+text = new OString "  Bash lang  "
+echo "text.to_s => $(text.to_s)"
+echo "text.upcase => $(text.upcase)"
+echo "text.trim => $(text.trim)"
+
+letters = new OString "Bash lang"
+letters_array=$(letters.to_a)
+echo "letters_array.to_s => $("$letters_array".to_s)"
+echo "letters_array.size => $("$letters_array".size)"
+echo "letters_array.at 5 => [$("$letters_array".at 5)]"
 ```
 
 </details>

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/ostring_example
+# Created: Saturday, 2026/10/03 - 01:29:01
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2026/10/03 - 03:04:07
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.4
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+# Description: Examples for the OString class.
+# ############################################################################
+
+source "$xSHELL_INIT"
+xs_use OString
+
+echo 'text = new OString "  Hello, xSHELL!  "'
+text = new OString "  Hello, xSHELL!  "
+
+echo 'text.to_s => ' "$(text.to_s)"
+echo 'text => ' "$(text)"
+echo 'text.length => ' "$(text.length)"
+echo 'text.empty => ' "$(text.empty)"
+echo 'text.include "xSHELL" => ' "$(text.include "xSHELL")"
+echo 'text.start_with "  Hello" => ' "$(text.start_with "  Hello")"
+echo 'text.end_with "  " => ' "$(text.end_with "  ")"
+echo 'text.index "xSHELL" => ' "$(text.index "xSHELL")"
+echo 'text.upcase => ' "$(text.upcase)"
+echo 'text.downcase => ' "$(text.downcase)"
+echo 'text.capitalize => ' "$(text.capitalize)"
+echo 'text.reverse => ' "$(text.reverse)"
+echo 'text.lstrip => ' "$(text.lstrip)"
+echo 'text.ltrim => ' "$(text.ltrim)"
+echo 'text.rstrip => ' "$(text.rstrip)"
+echo 'text.rtrim => ' "$(text.rtrim)"
+echo 'text.strip => ' "$(text.strip)"
+echo 'text.trim => ' "$(text.trim)"
+echo 'text.chars => ' "$(text.chars)"
+
+echo 'letters = new OString "Bash lang"'
+letters = new OString "Bash lang"
+echo 'letters_array=$(letters.to_a)'
+letters_array=$(letters.to_a)
+echo 'letters.to_a => ' "$letters_array"
+echo 'letters_array.to_s => ' "$("$letters_array".to_s)"
+echo 'letters_array.size => ' "$("$letters_array".size)"
+
+echo 'identifier = new OString "HTTPServer some-value"'
+identifier = new OString "HTTPServer some-value"
+echo 'identifier.camelcase => ' "$(identifier.camelcase)"
+echo 'identifier.snakecase => ' "$(identifier.snakecase)"
+
+text.append " Welcome."
+echo 'text.append " Welcome."; text.to_s => ' "$(text.to_s)"
+
+text.sub "Welcome" "Hello"
+echo 'text.sub "Welcome" "Hello"; text.to_s => ' "$(text.to_s)"
+
+text.gsub "l" "L"
+echo 'text.gsub "l" "L"; text.to_s => ' "$(text.to_s)"
+
+text.prepend "OString: "
+echo 'text.prepend "OString: "; text.to_s => ' "$(text.to_s)"
+
+text.delete "."
+echo 'text.delete "."; text.to_s => ' "$(text.to_s)"
+
+text.clear
+echo 'text.clear; text.empty => ' "$(text.empty)"

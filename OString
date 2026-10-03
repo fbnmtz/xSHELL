@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: OString
+# Description: String object for xSHELL, inspired by Ruby String.
+# ############################################################################
+
+_xLIB_OSTRING_=true
+
+xs_use oo
+
+class OString {
+    property value ""
+
+    function __quote() {
+        printf '"%s"\n' "$1"
+    }
+
+    function initialize() {
+        this.value="${1-}"
+    }
+
+    function init() {
+        this.initialize "$@"
+    }
+
+    function to_s() {
+        this.__quote "$(this.value)"
+    }
+
+    function length() {
+        local value
+        value="$(this.value)"
+        echo "${#value}"
+    }
+
+    function size() {
+        this.length
+    }
+
+    function empty() {
+        local value
+        value="$(this.value)"
+        [ -z "$value" ] && echo true || echo false
+    }
+
+    function include() {
+        local value needle
+        value="$(this.value)"
+        needle="$1"
+        [[ "$value" == *"$needle"* ]] && echo true || echo false
+    }
+
+    function start_with() {
+        local value prefix
+        value="$(this.value)"
+        prefix="$1"
+        [[ "$value" == "$prefix"* ]] && echo true || echo false
+    }
+
+    function end_with() {
+        local value suffix
+        value="$(this.value)"
+        suffix="$1"
+        [[ "$value" == *"$suffix" ]] && echo true || echo false
+    }
+
+    function index() {
+        local value needle remainder
+        value="$(this.value)"
+        needle="$1"
+        if [ -z "$needle" ]; then
+            echo 0
+        elif [[ "$value" == *"$needle"* ]]; then
+            remainder="${value#*"$needle"}"
+            echo "$((${#value} - ${#remainder} - ${#needle}))"
+        else
+            echo -1
+        fi
+    }
+
+    function upcase() {
+        local value
+        value="$(this.value)"
+        this.__quote "${value^^}"
+    }
+
+    function downcase() {
+        local value
+        value="$(this.value)"
+        this.__quote "${value,,}"
+    }
+
+    function capitalize() {
+        local value first rest
+        value="$(this.value)"
+        first="${value:0:1}"
+        rest="${value:1}"
+        this.__quote "${first^^}${rest,,}"
+    }
+
+    function camelcase() {
+        local value word first rest result=""
+        local -a words
+        value="$(this.value)"
+        value=$(printf '%s\n' "$value" | sed -E 's/[^[:alnum:]]+/ /g')
+        read -r -a words <<< "$value"
+        for word in "${words[@]}"; do
+            first="${word:0:1}"
+            rest="${word:1}"
+            result+="${first^^}${rest,,}"
+        done
+        this.__quote "$result"
+    }
+
+    function snakecase() {
+        local value
+        value="$(this.value)"
+        value=$(printf '%s\n' "$value" | sed -E \
+            -e 's/([[:lower:][:digit:]])([[:upper:]])/\1_\2/g' \
+            -e 's/([[:upper:]])([[:upper:]][[:lower:]])/\1_\2/g' \
+            -e 's/[^[:alnum:]]+/_/g' \
+            -e 's/^_+|_+$//g')
+        this.__quote "${value,,}"
+    }
+
+    function reverse() {
+        local value reversed="" index
+        value="$(this.value)"
+        for ((index = ${#value} - 1; index >= 0; index--)); do
+            reversed+="${value:index:1}"
+        done
+        this.__quote "$reversed"
+    }
+
+    function lstrip() {
+        local value
+        value="$(this.value)"
+        while [[ "$value" =~ ^[[:space:]] ]]; do
+            value="${value:1}"
+        done
+        this.__quote "$value"
+    }
+
+    function ltrim() {
+        this.lstrip
+    }
+
+    function rstrip() {
+        local value
+        value="$(this.value)"
+        while [[ "$value" =~ [[:space:]]$ ]]; do
+            value="${value:0:${#value}-1}"
+        done
+        this.__quote "$value"
+    }
+
+    function rtrim() {
+        this.rstrip
+    }
+
+    function strip() {
+        local value
+        value="$(this.value)"
+        while [[ "$value" =~ ^[[:space:]] ]]; do
+            value="${value:1}"
+        done
+        while [[ "$value" =~ [[:space:]]$ ]]; do
+            value="${value:0:${#value}-1}"
+        done
+        this.__quote "$value"
+    }
+
+    function trim() {
+        this.strip
+    }
+
+    function chars() {
+        local value char index output=""
+        value="$(this.value)"
+        for ((index = 0; index < ${#value}; index++)); do
+            char="${value:index:1}"
+            [ "$index" -gt 0 ] && output+=" "
+            output+="$char"
+        done
+        this.__quote "$output"
+    }
+
+    function to_array() {
+        local value array_object character index constructor_class push_class
+        value="$(this.value)"
+        array_object="__ostring_array_${BASHPID}_${RANDOM}"
+        mkdir -p "$_OO_STORE/instances/$array_object"
+        printf 'OArray\n' > "$_OO_STORE/instances/$array_object/__class__"
+        constructor_class=$(__oo_resolve_method_class OArray constructor) || return 1
+        this="$array_object" "__${constructor_class}_constructor"
+        push_class=$(__oo_resolve_method_class OArray push) || return 1
+        for ((index = 0; index < ${#value}; index++)); do
+            character="${value:index:1}"
+            this="$array_object" "__${push_class}_push" "$character"
+        done
+        printf '%s\n' "$array_object"
+    }
+
+    function to_a() {
+        this.to_array
+    }
+
+    function append() {
+        local value
+        value="$(this.value)"
+        value+="$*"
+        this.value="$value"
+    }
+
+    function concat() {
+        this.append "$@"
+    }
+
+    function prepend() {
+        local value
+        value="$(this.value)"
+        this.value="$*${value}"
+    }
+
+    function replace() {
+        this.value="$*"
+    }
+
+    function clear() {
+        this.value=""
+    }
+
+    function sub() {
+        local value pattern replacement
+        value="$(this.value)"
+        pattern="$1"
+        replacement="$2"
+        [ -z "$pattern" ] && return 0
+        this.value="${value/"$pattern"/"$replacement"}"
+    }
+
+    function gsub() {
+        local value pattern replacement
+        value="$(this.value)"
+        pattern="$1"
+        replacement="$2"
+        [ -z "$pattern" ] && return 0
+        this.value="${value//"$pattern"/"$replacement"}"
+    }
+
+    function delete() {
+        this.gsub "$1" ""
+    }
+}
+
+# _oo_end_class
+xs_use OArray

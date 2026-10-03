@@ -26,6 +26,14 @@ class OArray {
     # property name default_value
     property elements
 
+    function __contents() {
+        local elements
+        elements="$(this.elements)"
+        elements="${elements#(}"
+        elements="${elements%)}"
+        printf '%s' "$elements"
+    }
+
     # constructor() or init()
     define constructor() {
         # Initialize the elements property as an empty array
@@ -35,10 +43,10 @@ class OArray {
     # Method to add an element to the array
     method push() {
         local element="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        elements="$elements"$'\n'"$element"
-        elements=$(echo "$elements" | tr '\n' ' ')
+        local elements
+        elements=$(this.__contents)
+        [ -n "$elements" ] && elements+=$'\n'
+        elements+="$element"
         this.elements="($elements)"
     }
 
@@ -49,8 +57,8 @@ class OArray {
 
     # Method to get the size of the array
     method size() {
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local elements
+        elements=$(this.__contents)
         local count=0
         while IFS= read -r line; do
             [ -n "$line" ] && count=$((count + 1))
@@ -66,16 +74,17 @@ class OArray {
     # Method to get an element by index
     method at() {
         local index="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        echo "$elements" | sed -n "$((index + 1))p"
+        [ "$index" -ge 1 ] || return 0
+        local elements
+        elements=$(this.__contents)
+        echo "$elements" | sed -n "${index}p"
     }
 
     # Method to check if an element is in the array
     method include() {
         local element="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local elements
+        elements=$(this.__contents)
         if echo "$elements" | grep -qxF "$element"; then
             echo "true"
         else
@@ -86,9 +95,9 @@ class OArray {
     # Method to get the index of an element
     method index_of() {
         local element="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        local index=0
+        local elements
+        elements=$(this.__contents)
+        local index=1
         while IFS= read -r line; do
             if [ "$line" = "$element" ]; then
                 echo "$index"
@@ -146,9 +155,8 @@ class OArray {
 
         # --- Get the elements and iterate over them        
         local elements
-        elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        local index=0
+        elements=$(this.__contents)
+        local index=1
         while IFS= read -r element; do
             [ -n "$element" ] && {
                 IFS=',' read -r var1 var2 <<< "$var_names"
@@ -165,19 +173,18 @@ class OArray {
     # Method to remove an element by index
     method delete_at() {
         local index="$1"
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
-        elements=$(echo "$elements" | sed "$((index + 1))d")
-        elements=$(echo "$elements" | tr '\n' ' ')
+        local elements
+        elements=$(this.__contents)
+        [ "$index" -ge 1 ] || return 0
+        elements=$(echo "$elements" | sed "${index}d")
         this.elements="($elements)"
     }
 
     # Method to remove the last element of the array
     method pop() {
-        local elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        local elements
+        elements=$(this.__contents)
         elements=$(echo "$elements" | head -n -1)
-        elements=$(echo "$elements" | tr '\n' ' ')
         this.elements="($elements)"
     }
 
@@ -198,8 +205,13 @@ class OArray {
 
     # Method to convert the array to a string
     method to_s() {
-        local elements=$(this.elements)
-        echo "$elements"
+        local elements
+        elements=$(this.__contents)
+        if [ -z "$elements" ]; then
+            echo "()"
+        else
+            echo "( ${elements//$'\n'/ } )"
+        fi
     }
 
     # Method to get the first element of the array
@@ -223,8 +235,7 @@ class OArray {
             *) echo "Invalid sort order: $sort_by. Use 'asc' or 'desc'." ;;
         esac
         local elements
-        elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements=$(this.__contents)
         local sorted_elements
         sorted_elements=$(echo "$elements" | $sort_cmd)
         echo "(${sorted_elements//$'\n'/ })"
@@ -233,8 +244,7 @@ class OArray {
     # Method to reverse the array
     method reverse() {
         local elements
-        elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements=$(this.__contents)
         local reversed_elements=()
         local element
         while IFS= read -r element; do
@@ -246,8 +256,7 @@ class OArray {
     # Method to sum the elements of the array (assuming numeric elements)
     method sum() {
         local elements
-        elements=$(this.elements)
-        elements=$(echo "$elements" | tr -d '()' | tr ' ' '\n')
+        elements=$(this.__contents)
         local sum=0
         while IFS= read -r element; do
             sum=$((sum + element))
@@ -259,16 +268,15 @@ class OArray {
     method uniq() {
         local -A seen
         local unique=()
-        local elements
-        elements=$(this.elements)
-        # Remove parênteses
-        elements="${elements//[()]/}"
-        for el in $elements; do
+        local elements el
+        elements=$(this.__contents)
+        while IFS= read -r el; do
+            [ -n "$el" ] || continue
             if [[ -z "${seen[$el]+x}" ]]; then
                 seen[$el]=1
                 unique+=("$el")
             fi
-        done
+        done <<< "$elements"
         echo "(${unique[*]})"
     }
 

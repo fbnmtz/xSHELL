@@ -46,16 +46,19 @@ else
     _OO_STORE="/tmp/xshell-oo-$EUID-$$"
 fi
 mkdir -p "$_OO_STORE/classes" "$_OO_STORE/instances"
+_OO_OWNER_PID="$BASHPID"
 
 # Ensure cleanup of temporary object directory on exit
 __oo_cleanup() {
-    [ -d "$_OO_STORE" ] && rm -rf "$_OO_STORE"
+    [ "$BASHPID" = "$_OO_OWNER_PID" ] && [ -d "$_OO_STORE" ] && rm -rf "$_OO_STORE"
 }
 trap '__oo_cleanup' EXIT INT TERM
 
 _OO_CURRENT_CLASS=""
 _OO_PREV_FUNCS=""
 _OO_KNOWN_FUNCS=""
+_OO_CAPTURED_FUNCS=""
+_OO_CLASS_SNAPSHOT=""
 _OO_PENDING_VIS=""
 _OO_BLOCK_VIS="public"
 _OO_VIS_MODE="auto"
@@ -109,9 +112,45 @@ class() {
     _OO_BLOCK_VIS="public"
     _OO_PREV_FUNCS=$(compgen -A function)
     _OO_KNOWN_FUNCS="$_OO_PREV_FUNCS"
+    _OO_CAPTURED_FUNCS=""
+    local snapshot_dir
+    snapshot_dir="$_OO_STORE/classes/$_OO_CURRENT_CLASS/function_snapshots"
+    mkdir -p "$snapshot_dir"
+    _OO_CLASS_SNAPSHOT="$snapshot_dir/original"
+    declare -f > "$_OO_CLASS_SNAPSHOT"
     if type xs_debug &>/dev/null; then
         xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' definition started (vis_mode: $_OO_VIS_MODE)\n"
     fi
+}
+
+# Lists functions whose definitions differ from the class-start snapshot.
+_oo_changed_funcs() {
+    local original="$1"
+    local current="$2"
+    awk '
+        function flush_block() {
+            if (name == "") return
+            if (block_file == ARGV[1]) original_defs[name] = block
+            else current_defs[name] = block
+            name = ""
+            block = ""
+        }
+        /^[^[:space:]()]+ \(\) ?$/ {
+            flush_block()
+            name = $0
+            sub(/ \(\).*$/, "", name)
+            block = $0
+            block_file = FILENAME
+            next
+        }
+        name != "" { block = block "\n" $0 }
+        END {
+            flush_block()
+            for (name in current_defs)
+                if (!(name in original_defs) || current_defs[name] != original_defs[name])
+                    print name
+        }
+    ' "$original" "$current"
 }
 
 # Function: _oo_capture_funcs
@@ -121,11 +160,12 @@ _oo_capture_funcs() {
     local cls="$_OO_CURRENT_CLASS"
     [ -z "$cls" ] && return 0
 
-    local current_funcs
-    current_funcs=$(compgen -A function)
-    local fn
-    for fn in $current_funcs; do
-        if ! grep -qxE "$fn" <<< "$_OO_KNOWN_FUNCS"; then
+    local current_file changed_funcs fn
+    current_file="${_OO_CLASS_SNAPSHOT%/original}/current"
+    declare -f > "$current_file"
+    changed_funcs=$(_oo_changed_funcs "$_OO_CLASS_SNAPSHOT" "$current_file")
+    for fn in $changed_funcs; do
+        if ! grep -qxF "$fn" <<< "$_OO_CAPTURED_FUNCS"; then
             local vis=""
             local mode="${_OO_VIS_MODE:-auto}"
 
@@ -157,9 +197,10 @@ _oo_capture_funcs() {
 
             mkdir -p "$_OO_STORE/classes/$cls/visibility"
             echo "$vis" > "$_OO_STORE/classes/$cls/visibility/$fn"
+            _OO_CAPTURED_FUNCS+="$fn"$'\n'
         fi
     done
-    _OO_KNOWN_FUNCS="$current_funcs"
+    _OO_KNOWN_FUNCS=$(compgen -A function)
     _OO_PENDING_VIS="$next_vis"
 }
 
@@ -285,28 +326,32 @@ _oo_end_class() {
         # Capture any remaining methods before wrapping up
         _oo_capture_funcs ""
 
-        local curr_funcs
-        curr_funcs=$(compgen -A function)
-        local fn
-        for fn in $curr_funcs; do
-            if ! grep -qxE "$fn" <<< "$_OO_PREV_FUNCS"; then
-                local fn_def
-                fn_def=$(declare -f "$fn")
-                # Rewrite method declaration and $this.attr or ${this.attr} accessors
-                local rewritten
-                rewritten=$(echo "$fn_def" | \
-                    sed "1s/^${fn} ()/__${cls}_${fn} ()/" | \
-                    sed -E 's/\$\{?this\.([a-zA-Z0-9_]+)\}?/\$(__oo_get "\$this" "\1")/g')
-                eval "$rewritten"
-                echo "$fn" >> "$_OO_STORE/classes/${cls}/methods"
-                unset -f "$fn"
-                if type xs_debug &>/dev/null; then
-                    xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' method '$cls.$fn' registered\n"
-                fi
+        local fn fn_def rewritten
+        for fn in $_OO_CAPTURED_FUNCS; do
+            [ -n "$fn" ] || continue
+            fn_def=$(declare -f "$fn") || continue
+            # Rewrite method declaration and $this.attr or ${this.attr} accessors
+            rewritten=$(echo "$fn_def" | \
+                sed "1s/^${fn} ()/__${cls}_${fn} ()/" | \
+                sed -E 's/\$\{?this\.([a-zA-Z0-9_]+)\}?/\$(__oo_get "\$this" "\1")/g')
+            eval "$rewritten"
+            echo "$fn" >> "$_OO_STORE/classes/${cls}/methods"
+            unset -f "$fn"
+            if type xs_debug &>/dev/null; then
+                xs_debug -l 2 "oo: class '$_OO_CURRENT_CLASS' method '$cls.$fn' registered\n"
             fi
         done
+        if [ -f "$_OO_CLASS_SNAPSHOT" ]; then
+            local aliases_enabled=false
+            shopt -q expand_aliases && aliases_enabled=true
+            shopt -u expand_aliases
+            source "$_OO_CLASS_SNAPSHOT"
+            [ "$aliases_enabled" = true ] && shopt -s expand_aliases
+        fi
         _OO_CURRENT_CLASS=""
         _OO_PENDING_VIS=""
+        _OO_CAPTURED_FUNCS=""
+        _OO_CLASS_SNAPSHOT=""
         _OO_BLOCK_VIS="public"
         _OO_VIS_MODE="auto"
     fi
@@ -418,6 +463,18 @@ command_not_found_handle() {
         local val="${BASH_REMATCH[3]}"
         __oo_set "$obj" "$attr" "$val"
         return 0
+    fi
+
+    # A bare OString object evaluates to the same display value as obj.to_s.
+    if [[ "$cmd" =~ ^[a-zA-Z0-9_]+$ ]] && [ "${#args[@]}" -eq 0 ] && \
+        [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
+        local object_cls tostring_cls
+        object_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
+        if [ "$object_cls" = "OString" ] && \
+            tostring_cls=$(__oo_resolve_method_class "$object_cls" to_s); then
+            this="$cmd" "__${tostring_cls}_to_s"
+            return $?
+        fi
     fi
 
     # 4. Method call or property inspection: obj.member [args...]
