@@ -3,6 +3,18 @@
 # ############################################################################
 # Project: xSHELL (none)
 # File...: OString
+# Created: Saturday, 2026/10/03 - 01:29:01
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Saturday, 2026/10/03 - 05:26:34
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.3.82
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
 # Description: String object for xSHELL, inspired by Ruby String.
 # ############################################################################
 
@@ -13,60 +25,60 @@ xs_use oo
 class OString {
     property value ""
 
-    function __quote() {
+    method __quote() {
         printf '"%s"\n' "$1"
     }
 
-    function initialize() {
+    method initialize() {
         this.value="${1-}"
     }
 
-    function init() {
+    method init() {
         this.initialize "$@"
     }
 
-    function to_s() {
+    method to_s() {
         this.__quote "$(this.value)"
     }
 
-    function length() {
+    method length() {
         local value
         value="$(this.value)"
         echo "${#value}"
     }
 
-    function size() {
+    method size() {
         this.length
     }
 
-    function empty() {
+    method empty() {
         local value
         value="$(this.value)"
         [ -z "$value" ] && echo true || echo false
     }
 
-    function include() {
+    method include() {
         local value needle
         value="$(this.value)"
         needle="$1"
         [[ "$value" == *"$needle"* ]] && echo true || echo false
     }
 
-    function start_with() {
+    method start_with() {
         local value prefix
         value="$(this.value)"
         prefix="$1"
         [[ "$value" == "$prefix"* ]] && echo true || echo false
     }
 
-    function end_with() {
+    method end_with() {
         local value suffix
         value="$(this.value)"
         suffix="$1"
         [[ "$value" == *"$suffix" ]] && echo true || echo false
     }
 
-    function index() {
+    method index() {
         local value needle remainder
         value="$(this.value)"
         needle="$1"
@@ -80,7 +92,7 @@ class OString {
         fi
     }
 
-    function char() {
+    method char() {
         local value index offset
         value="$(this.value)"
         index="${1-}"
@@ -92,19 +104,48 @@ class OString {
         this.__quote "${value:offset:1}"
     }
 
-    function upcase() {
+    method __index_get() {
+        local value index offset
+        value="$(this.value)"
+        index="${1-}"
+        if [[ ! "$index" =~ ^[0-9]+$ ]] || [ "$index" -lt 1 ] || [ "$index" -gt "${#value}" ]; then
+            return 0
+        fi
+        offset=$((index - 1))
+        printf '%s' "${value:offset:1}"
+    }
+
+    method __index_set() {
+        local value index offset replacement
+        value="$(this.value)"
+        index="${1-}"
+        replacement="${2-}"
+        if [[ ! "$index" =~ ^[0-9]+$ ]] || [ "$index" -lt 1 ] || [ "$index" -gt "${#value}" ]; then
+            echo "OString: index out of range: $index" >&2
+            return 2
+        fi
+        if [ "${#replacement}" -ne 1 ]; then
+            echo "OString: indexed assignment requires exactly one character" >&2
+            return 2
+        fi
+        offset=$((index - 1))
+        value="${value:0:offset}${replacement}${value:offset+1}"
+        this.value="$value"
+    }
+
+    method upcase() {
         local value
         value="$(this.value)"
         this.__quote "${value^^}"
     }
 
-    function downcase() {
+    method downcase() {
         local value
         value="$(this.value)"
         this.__quote "${value,,}"
     }
 
-    function capitalize() {
+    method capitalize() {
         local value first rest
         value="$(this.value)"
         first="${value:0:1}"
@@ -112,7 +153,7 @@ class OString {
         this.__quote "${first^^}${rest,,}"
     }
 
-    function camelcase() {
+    method camelcase() {
         local value word first rest result=""
         local -a words
         value="$(this.value)"
@@ -126,7 +167,7 @@ class OString {
         this.__quote "$result"
     }
 
-    function snakecase() {
+    method snakecase() {
         local value
         value="$(this.value)"
         value=$(printf '%s\n' "$value" | sed -E \
@@ -137,7 +178,7 @@ class OString {
         this.__quote "${value,,}"
     }
 
-    function reverse() {
+    method reverse() {
         local value reversed="" index
         value="$(this.value)"
         for ((index = ${#value} - 1; index >= 0; index--)); do
@@ -146,7 +187,7 @@ class OString {
         this.__quote "$reversed"
     }
 
-    function lstrip() {
+    method lstrip() {
         local value
         value="$(this.value)"
         while [[ "$value" =~ ^[[:space:]] ]]; do
@@ -155,11 +196,11 @@ class OString {
         this.__quote "$value"
     }
 
-    function ltrim() {
+    method ltrim() {
         this.lstrip
     }
 
-    function rstrip() {
+    method rstrip() {
         local value
         value="$(this.value)"
         while [[ "$value" =~ [[:space:]]$ ]]; do
@@ -168,11 +209,11 @@ class OString {
         this.__quote "$value"
     }
 
-    function rtrim() {
+    method rtrim() {
         this.rstrip
     }
 
-    function strip() {
+    method strip() {
         local value
         value="$(this.value)"
         while [[ "$value" =~ ^[[:space:]] ]]; do
@@ -184,11 +225,11 @@ class OString {
         this.__quote "$value"
     }
 
-    function trim() {
+    method trim() {
         this.strip
     }
 
-    function chars() {
+    method chars() {
         local value char index output=""
         value="$(this.value)"
         for ((index = 0; index < ${#value}; index++)); do
@@ -199,7 +240,57 @@ class OString {
         this.__quote "$output"
     }
 
-    function to_array() {
+    method each() {
+        local __ostring_each_arg="${1-}" __ostring_each_block="" __ostring_each_line
+        local __ostring_each_names __ostring_each_var1 __ostring_each_var2
+        local __ostring_each_value __ostring_each_index __ostring_each_char
+
+        if [[ ! -t 0 ]] && IFS= read -r -t 0 __ostring_each_line; then
+            __ostring_each_names="$__ostring_each_arg"
+            while :; do
+                [[ "$__ostring_each_line" =~ ^DO$ ]] && break
+                __ostring_each_block+="$__ostring_each_line"$'\n'
+                IFS= read -r __ostring_each_line || break
+            done
+        elif [[ "$__ostring_each_arg" == *" "* ]]; then
+            __ostring_each_block="$__ostring_each_arg"
+            if [[ "$__ostring_each_arg" =~ \@([a-zA-Z_][a-zA-Z0-9_]*) ]]; then
+                __ostring_each_names="${BASH_REMATCH[1]}"
+            else
+                __ostring_each_names=char
+            fi
+        else
+            __ostring_each_names="$__ostring_each_arg"
+            __ostring_each_block="$*"
+            __ostring_each_block=$(printf '%s\n' "$__ostring_each_block" | sed '1d;$d')
+        fi
+
+        IFS=',' read -r __ostring_each_var1 __ostring_each_var2 <<< "$__ostring_each_names"
+        if [[ ! "$__ostring_each_var1" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || \
+            { [ -n "$__ostring_each_var2" ] && [[ ! "$__ostring_each_var2" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; }; then
+            echo "OString: each requires valid variable names" >&2
+            return 2
+        fi
+
+        __ostring_each_block=${__ostring_each_block//@$__ostring_each_var1/\$$__ostring_each_var1}
+        if [ -n "$__ostring_each_var2" ]; then
+            __ostring_each_block=${__ostring_each_block//@$__ostring_each_var2/\$$__ostring_each_var2}
+        fi
+
+        __ostring_each_value="$(this.value)"
+        for ((__ostring_each_index = 0; __ostring_each_index < ${#__ostring_each_value}; __ostring_each_index++)); do
+            __ostring_each_char="${__ostring_each_value:__ostring_each_index:1}"
+            if [ -n "$__ostring_each_var2" ]; then
+                printf -v "$__ostring_each_var1" '%s' "$((__ostring_each_index + 1))"
+                printf -v "$__ostring_each_var2" '%s' "$__ostring_each_char"
+            else
+                printf -v "$__ostring_each_var1" '%s' "$__ostring_each_char"
+            fi
+            eval "$__ostring_each_block"
+        done
+    }
+
+    method to_array() {
         local value array_object character index constructor_class push_class
         value="$(this.value)"
         array_object="__ostring_array_${BASHPID}_${RANDOM}"
@@ -215,36 +306,36 @@ class OString {
         printf '%s\n' "$array_object"
     }
 
-    function to_a() {
+    method to_a() {
         this.to_array
     }
 
-    function append() {
+    method append() {
         local value
         value="$(this.value)"
         value+="$*"
         this.value="$value"
     }
 
-    function concat() {
+    method concat() {
         this.append "$@"
     }
 
-    function prepend() {
+    method prepend() {
         local value
         value="$(this.value)"
         this.value="$*${value}"
     }
 
-    function replace() {
+    method replace() {
         this.value="$*"
     }
 
-    function clear() {
+    method clear() {
         this.value=""
     }
 
-    function sub() {
+    method sub() {
         local value pattern replacement
         value="$(this.value)"
         pattern="$1"
@@ -253,7 +344,7 @@ class OString {
         this.value="${value/"$pattern"/"$replacement"}"
     }
 
-    function gsub() {
+    method gsub() {
         local value pattern replacement
         value="$(this.value)"
         pattern="$1"
@@ -262,7 +353,7 @@ class OString {
         this.value="${value//"$pattern"/"$replacement"}"
     }
 
-    function delete() {
+    method delete() {
         this.gsub "$1" ""
     }
 }

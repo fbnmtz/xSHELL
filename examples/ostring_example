@@ -6,10 +6,10 @@
 # Created: Saturday, 2026/10/03 - 01:29:01
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 05:07:26
+# Last Modified: Saturday, 2026/10/03 - 16:29:28
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.2.15
+# Version: 0.0.3.44
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,32 +21,47 @@
 source "$xSHELL_INIT"
 xs_use OString
 
-echo "OString - forms to create objects"
+echo ----------------------------------------------------------
+echo "OString - objct creation forms / aliases"
+echo ----------------------------------------------------------
 echo 'direct = "Created from a quoted string"'
 direct = "Created from a quoted string"
-echo 'explicit = OString("Created explicitly")'
-explicit = OString\("Created explicitly"\)
-echo 'explicit2 = OString "Created explicitly"'
-explicit2 = OString "Created explicitly"
+echo 'explicit = OString("Created explicitly class call - OString('string text')")'
+explicit = OString\("Created explicitly class call - OString('string text')"\)
+echo 'explicit2 = Created explicitly class call v2 - OString "string text v2"'
+explicit2 = OString "string text v2"
 echo "multiline = OString heredoc <<'TEXT'"
 multiline = OString heredoc <<'TEXT'
 First line
 Second line
 TEXT
+echo 'string = new OString "Created from a string literal"'
+string = new OString "Created from a string literal"
+
+echo
+echo "----------------------------------------------------------"
+echo "Verifying object types and values"
+echo "----------------------------------------------------------"
 
 echo 'direct.class => ' "$(direct.class)"
 echo 'explicit.class => ' "$(explicit.class)"
 echo 'explicit2.class => ' "$(explicit2.class)"
 echo 'multiline.class => ' "$(multiline.class)"
+echo 'string.class => ' "$(string.class)"
 
 echo 'direct.to_s => ' "$(direct.to_s)"
 echo 'explicit.to_s => ' "$(explicit.to_s)"
 echo 'explicit2.to_s => ' "$(explicit2.to_s)"
 echo 'multiline.to_s => ' "$(multiline.to_s)"
+echo 'string.to_s => ' "$(string.to_s)"
 
+echo 
+
+echo "----------------------------------------------------------"
+echo "Testing OString methods and properties"
+echo "----------------------------------------------------------"
 echo 'text = new OString "  Hello, xSHELL!  "'
 text = new OString "  Hello, xSHELL!  "
-
 echo 'text.to_s => ' "$(text.to_s)"
 echo 'text => ' "$(text)"
 echo 'text.length => ' "$(text.length)"
@@ -56,6 +71,11 @@ echo 'text.start_with "  Hello" => ' "$(text.start_with "  Hello")"
 echo 'text.end_with "  " => ' "$(text.end_with "  ")"
 echo 'text.index "xSHELL" => ' "$(text.index "xSHELL")"
 echo 'text.char 3 => ' "$(text.char 3)"
+echo 'text[3] => ' "$(text[3])"
+echo "text[3] = 'X'"
+text[3] = 'X'
+echo 'text[3] after assignment => ' "$(text[10])"
+echo 'text.to_s after indexed assignment => ' "$(text.to_s)"
 echo 'text.upcase => ' "$(text.upcase)"
 echo 'text.downcase => ' "$(text.downcase)"
 echo 'text.capitalize => ' "$(text.capitalize)"
@@ -68,18 +88,40 @@ echo 'text.strip => ' "$(text.strip)"
 echo 'text.trim => ' "$(text.trim)"
 echo 'text.chars => ' "$(text.chars)"
 
+echo
+echo "----------------------------------------------------------"
+echo "stringo to array conversion"
+echo "----------------------------------------------------------"
+
 echo 'letters = new OString "Bash lang"'
 letters = new OString "Bash lang"
+echo "letters.each \"printf '%s' @char\""
+letters.each "printf '%s' @char"
+echo
+echo 'letters.each i,c <<DO; printf index and char; DO'
+letters.each i,c <<DO
+printf 'letter %s: <%s>\n' "@i" "@c"
+DO
 echo 'letters_array=$(letters.to_a)'
 letters_array=$(letters.to_a)
 echo 'letters.to_a => ' "$letters_array"
 echo 'letters_array.to_s => ' "$("$letters_array".to_s)"
 echo 'letters_array.size => ' "$("$letters_array".size)"
 
+echo 
+echo "----------------------------------------------------------"
+echo "String for identifier manipulation (camelcase, snakecase)"
+echo "----------------------------------------------------------"
+
 echo 'identifier = new OString "HTTPServer some-value"'
 identifier = new OString "HTTPServer some-value"
 echo 'identifier.camelcase => ' "$(identifier.camelcase)"
 echo 'identifier.snakecase => ' "$(identifier.snakecase)"
+
+echo 
+echo "----------------------------------------------------------"
+echo "String manipulation methods: append, prepend, sub, gsub, delete, clear"
+echo "----------------------------------------------------------"
 
 text.append " Welcome."
 echo 'text.append " Welcome."; text.to_s => ' "$(text.to_s)"

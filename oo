@@ -450,6 +450,28 @@ command_not_found_handle() {
         return 0
     fi
 
+    if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\[([0-9]+)\](=(.*))?$ ]]; then
+        local indexed_obj="${BASH_REMATCH[1]}"
+        local indexed_index="${BASH_REMATCH[2]}"
+        local indexed_value="${BASH_REMATCH[4]}"
+        local indexed_assignment=false
+
+        if [ "${BASH_REMATCH[3]}" = "=" ] || [ "${args[0]}" = "=" ]; then
+            indexed_assignment=true
+            [ "${BASH_REMATCH[3]}" = "=" ] || indexed_value="${args[*]:1}"
+        fi
+
+        if [ -f "$_OO_STORE/instances/$indexed_obj/__class__" ] && \
+            [ "$(cat "$_OO_STORE/instances/$indexed_obj/__class__")" = OString ]; then
+            local indexed_method="__index_get"
+            if [ "$indexed_assignment" = true ]; then
+                indexed_method="__index_set"
+            fi
+            this="$indexed_obj" "__OString_${indexed_method}" "$indexed_index" "$indexed_value"
+            return $?
+        fi
+    fi
+
     # OString literals: name = "text", name = OString("text"), or a marked heredoc.
     if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OString" ]; then
         local literal_value="" literal_rhs="${args[*]:1}"
@@ -514,6 +536,7 @@ command_not_found_handle() {
     fi
 
     # 4. Method call or property inspection: obj.member [args...]
+    # 4. Method call or property inspection: obj.member [args...] / obj.attr / obj.dump
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$ ]]; then
         local obj="${BASH_REMATCH[1]}"
         local member="${BASH_REMATCH[2]}"
