@@ -752,6 +752,7 @@ Features:
 * Query its length, emptiness, contents, prefix, suffix, or the index of a substring
 * Change case, convert between camel case and snake case, reverse, or trim whitespace
 * Return the string's characters as a string or as an `OArray` with one character per element
+* Read or replace a character by its 1-based index, and iterate over characters with `each`
 * Append, prepend, replace, substitute, delete, or clear string contents
 * Text-returning methods include literal double quotes around their result; `length`, `size`, `index`, and boolean checks return unquoted values
 * A bare `OString` object evaluates like its `to_s` method
@@ -768,6 +769,8 @@ Methods:
 * `lstrip`/`ltrim`, `rstrip`/`rtrim`, and `strip`/`trim`: remove whitespace from the left, right, or both sides
 * `chars`: return characters separated by spaces
 * `to_array` and `to_a`: create an `OArray` containing one character per element, including whitespace
+* `each`: iterate over each character; an inline block can use a placeholder such as `@char`, or a heredoc block can receive a 1-based index and character such as `i,c`
+* `str[n]`: read the character at the 1-based index `n`; `str[n] = 'x'` replaces it with exactly one character
 * `append`/`concat`, `prepend`, and `replace`: modify the string contents
 * `sub`, `gsub`, and `delete`: replace the first match, replace all matches, or remove matches
 * `clear`: set the string to an empty value
@@ -792,6 +795,16 @@ echo "text.upcase => $(text.upcase)"
 echo "text.trim => $(text.trim)"
 
 letters = new OString "Bash lang"
+echo "letters[4] => [$(letters[4])]"
+letters[4] = 'X'
+echo "letters after replacement => $(letters.to_s)"
+
+letters.each 'printf "char: <%s>\\n" "@char"'
+
+letters.each i,c <<DO
+printf 'index %s: <%s>\\n' "@i" "@c"
+DO
+
 letters_array=$(letters.to_a)
 echo "letters_array.to_s => $("$letters_array".to_s)"
 echo "letters_array.size => $("$letters_array".size)"
