@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#
+# Example usage of the OHash class.
+
+source "$xSHELL_INIT"
+xs_use OHash
+
+h = new OHash "not found"
+profile = new OHash
+profile[:city] = London
+h[:name] = "Ada Lovelace"
+h[:language] = Bash
+h[:profile] = profile
+
+echo "-- Basic access --"
+echo "h.to_s => $(h.to_s)"
+echo "h[:name] => $(h[:name])"
+echo "h[:missing] (default) => $(h[:missing])"
+echo "h.fetch missing unknown => $(h.fetch missing unknown)"
+echo "h.has_key :language => $(h.has_key :language)"
+echo "h.keys => $(h.keys)"
+echo "h.values => $(h.values)"
+echo "h.count => $(h.count)"
+echo "profile[:city] => $(profile[:city])"
+
+echo
+echo "-- Public method coverage --"
+api = new OHash "fallback"
+api.set :set_value first
+api.store :stored_value second
+echo "api.set :set_value first; api.get :set_value => $(api.get :set_value)"
+echo "api.store :stored_value second; api.get :stored_value => $(api.get :stored_value)"
+echo "api.fetch :set_value => $(api.fetch :set_value)"
+echo "api.fetch :missing fallback-value => $(api.fetch :missing fallback-value)"
+echo "api.has_key :set_value => $(api.has_key :set_value)"
+echo "api.key :set_value => $(api.key :set_value)"
+echo "api.include :set_value => $(api.include :set_value)"
+echo "api.member :set_value => $(api.member :set_value)"
+echo "api.size / api.count / api.length => $(api.size) / $(api.count) / $(api.length)"
+echo "api.keys => $(api.keys)"
+echo "api.values => $(api.values)"
+echo "api.to_s => $(api.to_s)"
+api.delete :stored_value
+echo "api.delete :stored_value; api.to_s => $(api.to_s)"
+echo "api.empty before clear => $(api.empty)"
+api.clear
+echo "api.clear; api.empty => $(api.empty)"
+
+echo
+echo "-- Symbol and string keys --"
+h[name] = "String-key value"
+echo "h[:name] (symbol key) => $(h[:name])"
+echo "h[name] (string key) => $(h[name])"
+echo "h.keys => $(h.keys)"
+
+echo
+echo "-- Replacing an existing value --"
+echo "h[:language] before replacement => $(h[:language])"
+h[:language] = Ruby
+echo "h[:language] after replacement => $(h[:language])"
+echo "h.count after replacement => $(h.count)"
+
+echo
+echo "-- Merge --"
+extra = new OHash
+extra[:runtime] = Bash
+extra[:version] = 5
+h.merge extra
+echo "h.merge extra; h.to_s => $(h.to_s)"
+echo "h[:language] after merge => $(h[:language])"
+echo "h.values after merge => $(h.values)"
+
+echo
+echo "-- Iterate over key/value pairs --"
+h.each 'printf "h.each pair => %s => %s\\n" "@key" "@value"'
+
+echo
+echo "-- Build a compact report --"
+h.each 'printf "h.each report => %-12s %s\\n" "@key" "@value"'
+
+echo
+echo "-- Select one key --"
+h.each '[[ "@key" == :name ]] && printf "h.each filter (:name) => %s\\n" "@value"'
+
+echo
+echo "-- Filter values by content --"
+h.each '[[ "@value" == *Bash* ]] && printf "h.each filter (value contains Bash) => %s => %s\\n" "@key" "@value"'
+
+echo
+echo "-- Sum numeric values --"
+numbers = new OHash
+numbers[:first] = 12
+numbers[:second] = 8
+numbers[:third] = 5
+total=$(numbers.each 'printf "%s\\n" "@value"' | awk '{ total += $1 } END { print total + 0 }')
+echo "numbers.to_s => $(numbers.to_s)"
+echo "numbers.each values | awk sum => $total"
+
+echo
+echo "-- Delete and clear --"
+h.delete :language
+echo "h.delete :language; h.to_s => $(h.to_s)"
+echo "h.size after delete => $(h.size)"
+h.clear
+echo "h.clear; h.empty => $(h.empty)"
+echo "h.count after clear => $(h.count)"

@@ -1,0 +1,402 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: OHash
+# Created: Friday, 2026/10/02 - 22:14:05
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Friday, 2026/10/02 - 22:54:55
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.1
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+## Description: Hash-like collection for the xSHELL OO library
+# ############################################################################
+#
+
+_xLIB_OHASH_=true
+
+xs_use oo
+
+class OHash {
+    method __encode() {
+        printf 'x%s' "$(printf '%s' "$1" | base64 | tr -d '\r\n')"
+    }
+
+    method __decode() {
+        local decoded
+        local encoded="${1#x}"
+        if printf '' | base64 --decode >/dev/null 2>&1; then
+            decoded=$(printf '%s' "$encoded" | base64 --decode; printf '\001')
+        else
+            decoded=$(printf '%s' "$encoded" | base64 -D; printf '\001')
+        fi
+        printf '%s' "${decoded%$'\001'}"
+    }
+
+    method __file() {
+        mkdir -p "$_OO_STORE/instances/$1"
+        printf '%s/%s' "$_OO_STORE/instances/$1" 'pairs'
+    }
+
+    method __require_key() {
+        if [ -z "$2" ]; then
+            echo "OHash: empty keys are not allowed" >&2
+            return 2
+        fi
+    }
+
+    method __has() {
+        local data_file encoded_key stored_key stored_type stored_value
+        __OHash___require_key "$1" "$2" || return $?
+        data_file=$(__OHash___file "$1")
+        encoded_key=$(__OHash___encode "$2")
+        [ -f "$data_file" ] || return 1
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            [ "$stored_key" = "$encoded_key" ] && return 0
+        done < "$data_file"
+        return 1
+    }
+
+    method __get() {
+        local data_file encoded_key stored_key stored_type stored_value
+        __OHash___require_key "$1" "$2" || return $?
+        data_file=$(__OHash___file "$1")
+        encoded_key=$(__OHash___encode "$2")
+        [ -f "$data_file" ] || return 1
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            if [ "$stored_key" = "$encoded_key" ]; then
+                __OHash___decode "$stored_value"
+                return 0
+            fi
+        done < "$data_file"
+        return 1
+    }
+
+    method __set() {
+        local data_file temp_file encoded_key encoded_value stored_key stored_type stored_value value_type found=false
+        __OHash___require_key "$1" "$2" || return $?
+        data_file=$(__OHash___file "$1")
+        temp_file="$data_file.tmp.$$"
+        encoded_key=$(__OHash___encode "$2")
+        encoded_value=$(__OHash___encode "$3")
+        value_type=${4:-string}
+        if [ "$value_type" = string ] && [ -f "$_OO_STORE/instances/$3/__class__" ] && [ "$(cat "$_OO_STORE/instances/$3/__class__")" = OHash ]; then
+            value_type=hash
+        fi
+        touch "$data_file"
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            if [ -z "$stored_value" ]; then
+                stored_value=$stored_type
+                stored_type=string
+            fi
+            if [ "$stored_key" = "$encoded_key" ]; then
+                if [ "$found" = false ]; then
+                    printf '%s\t%s\t%s\n' "$encoded_key" "$value_type" "$encoded_value" >> "$temp_file"
+                    found=true
+                fi
+            else
+                printf '%s\t%s\t%s\n' "$stored_key" "$stored_type" "$stored_value" >> "$temp_file"
+            fi
+        done < "$data_file"
+        [ "$found" = true ] || printf '%s\t%s\t%s\n' "$encoded_key" "$value_type" "$encoded_value" >> "$temp_file"
+        mv "$temp_file" "$data_file"
+    }
+
+    method __delete() {
+        local data_file temp_file encoded_key stored_key stored_type stored_value deleted=false
+        __OHash___require_key "$1" "$2" || return $?
+        data_file=$(__OHash___file "$1")
+        temp_file="$data_file.tmp.$$"
+        encoded_key=$(__OHash___encode "$2")
+        [ -f "$data_file" ] || return 1
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            if [ "$stored_key" = "$encoded_key" ]; then
+                deleted=true
+            else
+                printf '%s\t%s\t%s\n' "$stored_key" "$stored_type" "$stored_value" >> "$temp_file"
+            fi
+        done < "$data_file"
+        if [ "$deleted" = true ]; then
+            mv "$temp_file" "$data_file"
+            return 0
+        fi
+        rm -f "$temp_file"
+        return 1
+    }
+
+    method __render() {
+        local obj="$1" ancestors="${2:-}" data_file stored_key stored_type stored_value key value separator=''
+        case " $ancestors " in
+            *" $obj "*)
+                printf '{...}'
+                return 0
+                ;;
+        esac
+
+        ancestors+=" $obj"
+        data_file="$_OO_STORE/instances/$obj/pairs"
+        printf '{'
+        if [ -f "$data_file" ]; then
+            while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                if [ -z "$stored_value" ]; then
+                    stored_value=$stored_type
+                    stored_type=string
+                fi
+                key=$(__OHash___decode "$stored_key"; printf '\001')
+                key=${key%$'\001'}
+                value=$(__OHash___decode "$stored_value"; printf '\001')
+                value=${value%$'\001'}
+                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    value=$(__OHash___render "$value" "$ancestors")
+                fi
+                key=${key//$'\n'/\\n}
+                value=${value//$'\n'/\\n}
+                printf '%s%s=>%s' "$separator" "$key" "$value"
+                separator=', '
+            done < "$data_file"
+        fi
+        printf '}'
+    }
+
+    property default_value
+
+    define constructor() {
+        local data_file
+        this.default_value="${1:-}"
+        data_file=$(__OHash___file "$this")
+        : > "$data_file"
+    }
+
+    method set() {
+        [ "$#" -ge 2 ] || return 2
+        __OHash___set "$this" "$1" "$2"
+    }
+
+    method store() {
+        this.set "$@"
+    }
+
+    method get() {
+        [ "$#" -ge 1 ] || return 2
+        __OHash___require_key "$this" "$1" || return $?
+        if __OHash___has "$this" "$1"; then
+            __OHash___get "$this" "$1"
+        else
+            this.default_value
+        fi
+    }
+
+    method fetch() {
+        [ "$#" -ge 1 ] || return 2
+        __OHash___require_key "$this" "$1" || return $?
+        if __OHash___has "$this" "$1"; then
+            __OHash___get "$this" "$1"
+        elif [ "$#" -ge 2 ]; then
+            printf '%s\n' "$2"
+        else
+            return 1
+        fi
+    }
+
+    method has_key() {
+        [ "$#" -ge 1 ] || return 2
+        __OHash___require_key "$this" "$1" || return $?
+        if __OHash___has "$this" "$1"; then
+            echo true
+        else
+            echo false
+        fi
+    }
+
+    method key() {
+        this.has_key "$@"
+    }
+
+    method include() {
+        this.has_key "$@"
+    }
+
+    method member() {
+        this.has_key "$@"
+    }
+
+    method delete() {
+        [ "$#" -ge 1 ] || return 2
+        __OHash___require_key "$this" "$1" || return $?
+        __OHash___delete "$this" "$1"
+    }
+
+    method keys() {
+        local data_file stored_key stored_type stored_value key separator=''
+        data_file=$(__OHash___file "$this")
+        printf '['
+        if [ -f "$data_file" ]; then
+            while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                key=$(__OHash___decode "$stored_key"; printf '\001')
+                key=${key%$'\001'}
+                key=${key//$'\n'/\\n}
+                printf '%s%s' "$separator" "$key"
+                separator=', '
+            done < "$data_file"
+        fi
+        printf ']\n'
+    }
+
+    method values() {
+        local data_file stored_key stored_type stored_value value separator=''
+        data_file=$(__OHash___file "$this")
+        printf '['
+        if [ -f "$data_file" ]; then
+            while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                if [ -z "$stored_value" ]; then
+                    stored_value=$stored_type
+                    stored_type=string
+                fi
+                value=$(__OHash___decode "$stored_value"; printf '\001')
+                value=${value%$'\001'}
+                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    value=$(__OHash___render "$value")
+                fi
+                value=${value//$'\n'/\\n}
+                printf '%s%s' "$separator" "$value"
+                separator=', '
+            done < "$data_file"
+        fi
+        printf ']\n'
+    }
+
+    method size() {
+        local data_file count=0
+        data_file=$(__OHash___file "$this")
+        [ -f "$data_file" ] && count=$(wc -l < "$data_file")
+        echo "$count"
+    }
+
+    method count() {
+        this.size
+    }
+
+    method length() {
+        this.size
+    }
+
+    method empty() {
+        [ "$(this.size)" -eq 0 ] && echo true || echo false
+    }
+
+    method clear() {
+        : > "$(__OHash___file "$this")"
+    }
+
+    method each() {
+        local block="$1" expanded_block data_file stored_key stored_type stored_value key value
+        [ -n "$block" ] || return 2
+        data_file=$(__OHash___file "$this")
+        [ -f "$data_file" ] || return 0
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            if [ -z "$stored_value" ]; then
+                stored_value=$stored_type
+                stored_type=string
+            fi
+            key=$(__OHash___decode "$stored_key"; printf '\001')
+            key=${key%$'\001'}
+            value=$(__OHash___decode "$stored_value"; printf '\001')
+            value=${value%$'\001'}
+            if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                value=$(__OHash___render "$value")
+            fi
+            expanded_block=${block//@key/\$key}
+            expanded_block=${expanded_block//@value/\$value}
+            eval "$expanded_block"
+        done < "$data_file"
+    }
+
+    method merge() {
+        local source="$1" source_file stored_key stored_type stored_value key value
+        [ -n "$source" ] || return 2
+        source_file=$(__OHash___file "$source")
+        [ -f "$source_file" ] || return 0
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            if [ -z "$stored_value" ]; then
+                stored_value=$stored_type
+                stored_type=string
+            fi
+            key=$(__OHash___decode "$stored_key"; printf '\001')
+            key=${key%$'\001'}
+            value=$(__OHash___decode "$stored_value"; printf '\001')
+            value=${value%$'\001'}
+            __OHash___set "$this" "$key" "$value" "$stored_type"
+        done < "$source_file"
+    }
+
+    method to_s() {
+        __OHash___render "$this"
+        printf '\n'
+    }
+}
+
+if [ "${_OHASH_COMMAND_HANDLER_INSTALLED:-false}" != true ] && declare -f command_not_found_handle >/dev/null; then
+    eval "$(declare -f command_not_found_handle | sed '1s/command_not_found_handle/__OHash_delegate_command_not_found_handle/')"
+
+    __OHash_command_not_found_handle() {
+        local cmd="$1"
+        shift
+        local args=("$@")
+
+        if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.__([a-zA-Z0-9_]+)$ ]]; then
+            local private_obj="${BASH_REMATCH[1]}"
+            if [ -f "$_OO_STORE/instances/$private_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$private_obj/__class__")" = OHash ]; then
+                echo "OHash: private methods cannot be called on an object" >&2
+                return 1
+            fi
+        fi
+
+        if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\[(.*)\](=(.*))?$ ]]; then
+            local indexed_obj="${BASH_REMATCH[1]}"
+            local indexed_key="${BASH_REMATCH[2]}"
+            local indexed_value="${BASH_REMATCH[4]}"
+            local indexed_assignment=false
+
+            if [ "${BASH_REMATCH[3]}" = "=" ] || [ "${args[0]}" = "=" ]; then
+                indexed_assignment=true
+                [ "${BASH_REMATCH[3]}" = "=" ] || indexed_value="${args[*]:1}"
+            fi
+
+            if [ -f "$_OO_STORE/instances/$indexed_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$indexed_obj/__class__")" = OHash ]; then
+                if [ -z "$indexed_key" ]; then
+                    echo "OHash: empty keys are not allowed" >&2
+                    return 2
+                fi
+
+                local indexed_method="get"
+                local indexed_method_class
+                if [ "$indexed_assignment" = true ]; then
+                    indexed_method="set"
+                fi
+
+                if indexed_method_class=$(__oo_resolve_method_class OHash "$indexed_method"); then
+                    if [ "$indexed_assignment" = true ]; then
+                        this="$indexed_obj" "__${indexed_method_class}_${indexed_method}" "$indexed_key" "$indexed_value"
+                    else
+                        this="$indexed_obj" "__${indexed_method_class}_${indexed_method}" "$indexed_key"
+                    fi
+                    return $?
+                fi
+            fi
+        fi
+
+        __OHash_delegate_command_not_found_handle "$cmd" "${args[@]}"
+    }
+
+    command_not_found_handle() {
+        __OHash_command_not_found_handle "$@"
+    }
+
+    _OHASH_COMMAND_HANDLER_INSTALLED=true
+fi
