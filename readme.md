@@ -69,6 +69,7 @@
   - [utils](#utils)
   - [oo](#oo)
   - [OArray](#oarray)
+  - [OHash](#ohash)
 - [Go Back](#go-back)
 - [TODO List](#todo-list)
 
@@ -731,6 +732,68 @@ echo "Array after popping last element: $(arr.to_s)"
 arr.clear
 echo "Array after clearing: $(arr.to_s)"
 echo "Is array empty? $(arr.empty)"
+```
+
+</details>
+</br>
+
+#### OHash
+
+```
+A Hash-like class for storing and working with key/value pairs in Bash.
+```
+
+<details close="true">
+
+Features:
+
+* Create an ordered hash with an optional default value
+* Use symbol-style keys such as `:name` and string keys such as `name`; these are distinct keys
+* Read and write values with `h[:key]` and `h[:key] = value`
+* Store nested OHash instances as sub-hashes
+* List keys and values, including nested hashes, in a compact single-line form
+* Iterate over key/value pairs with `each`
+* Check, fetch, replace, delete, merge, and clear entries
+
+Public methods:
+
+* `set` and `store`: write a key/value pair
+* `get`: return a value or the configured default
+* `fetch`: return a value or an explicitly supplied fallback
+* `has_key`, `key`, `include`, and `member`: test whether a key exists
+* `keys` and `values`: return the keys or values in insertion order
+* `size`, `count`, and `length`: return the number of entries
+* `each`: run a shell block for each pair; use `@key` and `@value` in the block
+* `merge`: copy pairs from another OHash, replacing values for duplicate keys
+* `delete`, `clear`, and `empty`: remove entries or inspect/clear the hash
+* `to_s`: format the hash, recursively including sub-hashes
+
+An empty key (`""`) is not allowed. Symbol-style and string keys remain distinct: `:name` is different from `name`.
+
+```bash
+source "$xSHELL_INIT"
+xs_use OHash
+
+h = new OHash "not found"
+profile = new OHash
+profile[:city] = London
+h[:name] = "Ada Lovelace"
+h[name] = "String-key value"
+h[:profile] = profile
+
+echo "h[:name] => $(h[:name])"
+echo "h[name] => $(h[name])"
+echo "h.keys => $(h.keys)"
+echo "h.values => $(h.values)"
+echo "h.to_s => $(h.to_s)"
+
+h.each 'printf "%s => %s\\n" "@key" "@value"'
+
+extra = new OHash
+extra[:language] = Bash
+h.merge extra
+h.delete :name
+echo "h.count => $(h.count)"
 ```
 
 </details>
