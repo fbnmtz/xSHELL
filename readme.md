@@ -5,10 +5,10 @@
  Created: Friday, 2022/12/30 - 04:54:21
  Author.: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Last Modified: Saturday, 2026/10/03 - 00:39:34
+ Last Modified: Saturday, 2026/10/03 - 01:21:41
  Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
- Version: 0.1.6.599
+ Version: 0.1.6.601
  ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
  Description: 
   >
@@ -748,7 +748,9 @@ A Hash-like class for storing and working with key/value pairs in Bash.
 Features:
 
 * Create an ordered hash with an optional default value
-* Return `nil` for a missing key when no default value is supplied; pass a constructor argument to choose another default
+* Return `nil` for a missing key by default; use `new OHash default_for_missing <value>` to define an explicit value for missing keys
+  * Accepted aliases:
+    * `missing, missing_key, default, missing_key_default, missing_key_value`
 * Create hashes from a literal assignment such as `config = { host: "localhost", port: 3000 }`; bare keys become symbols (`:host`)
 * Use symbol-style keys such as `:name` and string keys such as `name`; these are distinct keys
 * Read and write values with `h[:key]` and `h[:key] = value`
@@ -776,7 +778,7 @@ An empty key (`""`) is not allowed. Symbol-style and string keys remain distinct
 source "$xSHELL_INIT"
 xs_use OHash
 
-h = new OHash "not found"
+h = new OHash default_for_missing "not found"
 profile = new OHash
 profile[:city] = London
 h[:name] = "Ada Lovelace"
@@ -795,6 +797,7 @@ echo "h.to_s => $(h.to_s)"
 echo "config.to_s => $(config.to_s)"
 without_default = new OHash
 echo "without_default[:missing] => $(without_default[:missing])"
+echo "h[:missing] => $(h[:missing])"
 
 h.each 'printf "%s => %s\\n" "@key" "@value"'
 

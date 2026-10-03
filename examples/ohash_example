@@ -26,7 +26,7 @@
 source "$xSHELL_INIT"
 xs_use OHash
 
-h = new OHash "not found"
+h = new OHash default_for_missing "not found"
 profile = new OHash
 profile[:city] = London
 h[:name] = "Ada Lovelace"
@@ -36,7 +36,7 @@ h[:profile] = profile
 echo "-- Basic access --"
 echo "h.to_s => $(h.to_s)"
 echo "h[:name] => $(h[:name])"
-echo "h[:missing] (default) => $(h[:missing])"
+echo "h[:missing] (default_for_missing) => $(h[:missing])"
 echo "h.fetch missing unknown => $(h.fetch missing unknown)"
 echo "h.has_key :language => $(h.has_key :language)"
 echo "h.keys => $(h.keys)"
