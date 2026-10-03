@@ -21,6 +21,13 @@ source "$xSHELL_INIT"
 xs_use OArray
 
 # Example usage
+literal_array = [1, 2, 3]
+echo "Array literal: $(literal_array.to_s)"
+literal_array = "(1, 2, 3)"
+echo "Comma-separated array literal: $(literal_array.to_s)"
+literal_array = "(1 2 3)"
+echo "Space-separated array literal: $(literal_array.to_s)"
+
 arr = new OArray
 arr.add "pineapple"
 arr.push "banana"

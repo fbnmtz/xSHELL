@@ -473,6 +473,14 @@ command_not_found_handle() {
     fi
 
     # OString literals: name = "text", name = OString("text"), or a marked heredoc.
+    if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OArray" ]; then
+        local array_literal="${args[*]:1}"
+        if [[ "$array_literal" =~ ^\[.*\]$ || "$array_literal" =~ ^\(.*\)$ ]]; then
+            __oo_instantiate "$cmd" OArray "$array_literal"
+            return $?
+        fi
+    fi
+
     if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OString" ]; then
         local literal_value="" literal_rhs="${args[*]:1}"
 

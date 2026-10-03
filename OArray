@@ -36,8 +36,19 @@ class OArray {
 
     # constructor() or init()
     define constructor() {
-        # Initialize the elements property as an empty array
         this.elements="()"
+        local values="$*"
+        local element
+        values="${values#[}"
+        values="${values%]}"
+        values="${values#(}"
+        values="${values%)}"
+        values="${values//,/ }"
+        local -a initial_elements=()
+        read -r -a initial_elements <<< "$values"
+        for element in "${initial_elements[@]}"; do
+            this.push "$element"
+        done
     }
 
     # Method to add an element to the array

@@ -678,6 +678,26 @@ Features:
 * Checking if the array is empty
 * Converting the array to a string
 
+Arrays can be initialized directly with a bracket literal, separating elements
+with commas:
+
+```bash
+arr = [1, 2, 3]
+echo "Array: $(arr.to_s)" # ( 1 2 3 )
+```
+
+Parenthesized values are also accepted when the literal is quoted. Commas or
+whitespace can separate the elements:
+
+```bash
+arr = "(1, 2, 3)"
+arr = "(1 2 3)"
+```
+
+Unquoted forms such as `arr = (1 2 3)` are not valid Bash syntax, so xSHELL
+cannot intercept them. The native Bash form `arr=(1 2 3)` creates a Bash array,
+not an `OArray` object.
+
 ```bash
 source "$xSHELL_INIT"
 xs_use OArray
