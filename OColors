@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: OColors
+# Created: Monday, 2026/10/05 - 22:56:52
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/10/06 - 20:32:54
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.6
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+_xLIB_OCOLORS_=true
+
+xs_use oo
+
+class OColors {
+    method constructor() {
+        this.enable
+    }
+
+    method enable() {
+        this.RESET='\033[0m'
+        this.BOLD='\033[1m'
+        this.DIM='\033[2m'
+        this.ITALIC='\033[3m'
+        this.UNDERLINED='\033[4m'
+        this.BLINK='\033[5m'
+        this.REVERSE='\033[7m'
+        this.HIDDEN='\033[8m'
+
+        this.BLACK='\033[30m'
+        this.RED='\033[31m'
+        this.GREEN='\033[32m'
+        this.YELLOW='\033[33m'
+        this.BLUE='\033[34m'
+        this.MAGENTA='\033[35m'
+        this.CYAN='\033[36m'
+        this.WHITE='\033[37m'
+        this.GREY='\033[90m'
+
+        this.BLACK_BRIGHT='\033[90m'
+        this.RED_BRIGHT='\033[91m'
+        this.GREEN_BRIGHT='\033[92m'
+        this.YELLOW_BRIGHT='\033[93m'
+        this.BLUE_BRIGHT='\033[94m'
+        this.MAGENTA_BRIGHT='\033[95m'
+        this.CYAN_BRIGHT='\033[96m'
+        this.WHITE_BRIGHT='\033[97m'
+        this.GREY_BRIGHT='\033[90m'
+
+        this.BGBLACK='\033[40m'
+        this.BGRED='\033[41m'
+        this.BGGREEN='\033[42m'
+        this.BGYELLOW='\033[43m'
+        this.BGBLUE='\033[44m'
+        this.BGMAGENTA='\033[45m'
+        this.BGCYAN='\033[46m'
+        this.BGWHITE='\033[47m'
+        this.BGGREY='\033[100m'
+
+        this.BGBLACK_BRIGHT='\033[100m'
+        this.BGRED_BRIGHT='\033[101m'
+        this.BGGREEN_BRIGHT='\033[102m'
+        this.BGYELLOW_BRIGHT='\033[103m'
+        this.BGBLUE_BRIGHT='\033[104m'
+        this.BGMAGENTA_BRIGHT='\033[105m'
+        this.BGCYAN_BRIGHT='\033[106m'
+        this.BGWHITE_BRIGHT='\033[107m'
+        this.BGGREY_BRIGHT='\033[100m'
+
+        this.ATTR_BOLD="$this.BOLD"
+        this.ATTR_DIM="$this.DIM"
+        this.ATTR_ITALIC="$this.ITALIC"
+        this.ATTR_UNDERLINED="$this.UNDERLINED"
+        this.ATTR_BLINK="$this.BLINK"
+        this.ATTR_REVERSE="$this.REVERSE"
+        this.ATTR_HIDDEN="$this.HIDDEN"
+
+        this.FG_BLACK="$this.BLACK"
+        this.FG_RED="$this.RED"
+        this.FG_GREEN="$this.GREEN"
+        this.FG_YELLOW="$this.YELLOW"
+        this.FG_BLUE="$this.BLUE"
+        this.FG_MAGENTA="$this.MAGENTA"
+        this.FG_CYAN="$this.CYAN"
+        this.FG_WHITE="$this.WHITE"
+        this.FG_GREY="$this.GREY"
+
+        this.BLACK_BRIGTH="$this.BLACK_BRIGHT"
+        this.RED_BRIGTH="$this.RED_BRIGHT"
+        this.GREEN_BRIGTH="$this.GREEN_BRIGHT"
+        this.YELLOW_BRIGTH="$this.YELLOW_BRIGHT"
+        this.BLUE_BRIGTH="$this.BLUE_BRIGHT"
+        this.MAGENTA_BRIGTH="$this.MAGENTA_BRIGHT"
+        this.CYAN_BRIGTH="$this.CYAN_BRIGHT"
+        this.WHITE_BRIGTH="$this.WHITE_BRIGHT"
+        this.GREY_BRIGTH="$this.GREY_BRIGHT"
+
+        this.FG_BLACK_BRIGHT="$this.BLACK_BRIGHT"
+        this.FG_RED_BRIGHT="$this.RED_BRIGHT"
+        this.FG_GREEN_BRIGHT="$this.GREEN_BRIGHT"
+        this.FG_YELLOW_BRIGHT="$this.YELLOW_BRIGHT"
+        this.FG_BLUE_BRIGHT="$this.BLUE_BRIGHT"
+        this.FG_MAGENTA_BRIGHT="$this.MAGENTA_BRIGHT"
+        this.FG_CYAN_BRIGHT="$this.CYAN_BRIGHT"
+        this.FG_WHITE_BRIGHT="$this.WHITE_BRIGHT"
+        this.FG_GREY_BRIGHT="$this.GREY_BRIGHT"
+
+        this.FG_BLACK_BRIGTH="$this.BLACK_BRIGHT"
+        this.FG_RED_BRIGTH="$this.RED_BRIGHT"
+        this.FG_GREEN_BRIGTH="$this.GREEN_BRIGHT"
+        this.FG_YELLOW_BRIGTH="$this.YELLOW_BRIGHT"
+        this.FG_BLUE_BRIGTH="$this.BLUE_BRIGHT"
+        this.FG_MAGENTA_BRIGTH="$this.MAGENTA_BRIGHT"
+        this.FG_CYAN_BRIGTH="$this.CYAN_BRIGHT"
+        this.FG_WHITE_BRIGTH="$this.WHITE_BRIGHT"
+        this.FG_GREY_BRIGTH="$this.GREY_BRIGHT"
+
+        this.BG_BLACK="$this.BGBLACK"
+        this.BG_RED="$this.BGRED"
+        this.BG_GREEN="$this.BGGREEN"
+        this.BG_YELLOW="$this.BGYELLOW"
+        this.BG_BLUE="$this.BGBLUE"
+        this.BG_MAGENTA="$this.BGMAGENTA"
+        this.BG_CYAN="$this.BGCYAN"
+        this.BG_WHITE="$this.BGWHITE"
+        this.BG_GREY="$this.BGGREY"
+
+        this.BG_BLACK_BRIGHT="$this.BGBLACK_BRIGHT"
+        this.BG_RED_BRIGHT="$this.BGRED_BRIGHT"
+        this.BG_GREEN_BRIGHT="$this.BGGREEN_BRIGHT"
+        this.BG_YELLOW_BRIGHT="$this.BGYELLOW_BRIGHT"
+        this.BG_BLUE_BRIGHT="$this.BGBLUE_BRIGHT"
+        this.BG_MAGENTA_BRIGHT="$this.BGMAGENTA_BRIGHT"
+        this.BG_CYAN_BRIGHT="$this.BGCYAN_BRIGHT"
+        this.BG_WHITE_BRIGHT="$this.BGWHITE_BRIGHT"
+        this.BG_GREY_BRIGHT="$this.BGGREY_BRIGHT"
+
+        this.BG_BLACK_BRIGTH="$this.BGBLACK_BRIGHT"
+        this.BG_RED_BRIGTH="$this.BGRED_BRIGHT"
+        this.BG_GREEN_BRIGTH="$this.BGGREEN_BRIGHT"
+        this.BG_YELLOW_BRIGTH="$this.BGYELLOW_BRIGHT"
+        this.BG_BLUE_BRIGTH="$this.BGBLUE_BRIGHT"
+        this.BG_MAGENTA_BRIGTH="$this.BGMAGENTA_BRIGHT"
+        this.BG_CYAN_BRIGTH="$this.BGCYAN_BRIGHT"
+        this.BG_WHITE_BRIGTH="$this.BGWHITE_BRIGHT"
+        this.BG_GREY_BRIGTH="$this.BGGREY_BRIGHT"
+
+        this.FGBLACK="$this.BLACK"
+        this.FGRED="$this.RED"
+        this.FGGREEN="$this.GREEN"
+        this.FGYELLOW="$this.YELLOW"
+        this.FGBLUE="$this.BLUE"
+        this.FGMAGENTA="$this.MAGENTA"
+        this.FGCYAN="$this.CYAN"
+        this.FGWHITE="$this.WHITE"
+        this.FGGREY="$this.GREY"
+
+        this.R="$this.RESET"
+        this.B="$this.BOLD"
+        this.M="$this.DIM"
+        this.I="$this.ITALIC"
+        this.U="$this.UNDERLINED"
+        this.K="$this.BLINK"
+        this.V="$this.REVERSE"
+        this.H="$this.HIDDEN"
+
+        this.k="$this.BLACK"
+        this.r="$this.RED"
+        this.g="$this.GREEN"
+        this.y="$this.YELLOW"
+        this.b="$this.BLUE"
+        this.m="$this.MAGENTA"
+        this.c="$this.CYAN"
+        this.w="$this.WHITE"
+        this.e="$this.GREY"
+
+        this.bk="$this.BGBLACK"
+        this.br="$this.BGRED"
+        this.bg="$this.BGGREEN"
+        this.by="$this.BGYELLOW"
+        this.bb="$this.BGBLUE"
+        this.bm="$this.BGMAGENTA"
+        this.bc="$this.BGCYAN"
+        this.bw="$this.BGWHITE"
+        this.be="$this.BGGREY"
+    }
+
+    method show() {
+        printf '%s\n' 'OColors - attributes and colors'
+        printf '%bBOLD / DIM / ITALIC / UNDERLINED / BLINK / REVERSE / HIDDEN%b\n' \
+            "$(this.BOLD)" "$(this.RESET)"
+        printf '%bBLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY%b\n' \
+            "$(this.BLACK)" "$(this.RESET)"
+        printf '%bBGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY%b\n' \
+            "$(this.BGBLACK)" "$(this.RESET)"
+        printf '%bRESET / R%b\n' "$(this.RESET)" "$(this.RESET)"
+    }
+
+    method show_aliases() {
+        printf '%bshort foreground aliases: k r g y b m c w e%b\n' \
+            "$(this.RED)" "$(this.RESET)"
+        printf '%bshort background aliases: bk br bg by bb bm bc bw be%b\n' \
+            "$(this.BGBLUE)" "$(this.RESET)"
+        printf '%bshort attribute aliases: B M I U K V H R%b\n' \
+            "$(this.BOLD)" "$(this.RESET)"
+    }
+
+    method disable() {
+        local property
+        for property in RESET BOLD DIM ITALIC UNDERLINED BLINK REVERSE HIDDEN \
+            BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
+            BLACK_BRIGHT RED_BRIGHT GREEN_BRIGHT YELLOW_BRIGHT BLUE_BRIGHT MAGENTA_BRIGHT CYAN_BRIGHT WHITE_BRIGHT GREY_BRIGHT \
+            BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY \
+            BGBLACK_BRIGHT BGRED_BRIGHT BGGREEN_BRIGHT BGYELLOW_BRIGHT BGBLUE_BRIGHT BGMAGENTA_BRIGHT BGCYAN_BRIGHT BGWHITE_BRIGHT BGGREY_BRIGHT \
+            ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
+            FG_BLACK FG_RED FG_GREEN FG_YELLOW FG_BLUE FG_MAGENTA FG_CYAN FG_WHITE FG_GREY \
+            FG_BLACK_BRIGHT FG_RED_BRIGHT FG_GREEN_BRIGHT FG_YELLOW_BRIGHT FG_BLUE_BRIGHT FG_MAGENTA_BRIGHT FG_CYAN_BRIGHT FG_WHITE_BRIGHT FG_GREY_BRIGHT \
+            FG_BLACK_BRIGTH FG_RED_BRIGTH FG_GREEN_BRIGTH FG_YELLOW_BRIGTH FG_BLUE_BRIGTH FG_MAGENTA_BRIGTH FG_CYAN_BRIGTH FG_WHITE_BRIGTH FG_GREY_BRIGTH \
+            BLACK_BRIGTH RED_BRIGTH GREEN_BRIGTH YELLOW_BRIGTH BLUE_BRIGTH MAGENTA_BRIGTH CYAN_BRIGTH WHITE_BRIGTH GREY_BRIGTH \
+            BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY \
+            BG_BLACK_BRIGHT BG_RED_BRIGHT BG_GREEN_BRIGHT BG_YELLOW_BRIGHT BG_BLUE_BRIGHT BG_MAGENTA_BRIGHT BG_CYAN_BRIGHT BG_WHITE_BRIGHT BG_GREY_BRIGHT \
+            BG_BLACK_BRIGTH BG_RED_BRIGTH BG_GREEN_BRIGTH BG_YELLOW_BRIGTH BG_BLUE_BRIGTH BG_MAGENTA_BRIGTH BG_CYAN_BRIGTH BG_WHITE_BRIGTH BG_GREY_BRIGTH \
+            FGBLACK FGRED FGGREEN FGYELLOW FGBLUE FGMAGENTA FGCYAN FGWHITE FGGREY \
+            R B M I U K V H k r g y b m c w e bk br bg by bb bm bc bw be
+        do
+            __oo_set "$this" "$property" ""
+        done
+    }
+}

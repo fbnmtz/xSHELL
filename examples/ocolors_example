@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: examples/ocolors_example
+# Created: Monday, 2026/10/05 - 22:56:52
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Tuesday, 2026/10/06 - 20:30:13
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.17
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  >
+# ############################################################################
+# HISTORY:
+#
+
+source "$xSHELL_INIT"
+xs_use OColors
+
+c = new OColors
+
+show_group() {
+	local title="$1"
+	shift
+	local name value
+
+	echo -e "\n$(c.br)$(c.y)$title$(c.R)\n"
+	for name in "$@"; do
+		value=$(c.$name)
+		printf "%b%-24s %s %b\n" "$value" "$name" 'Example text' "$(c.R)"
+	done
+}
+
+show_group 'Attributes' \
+	RESET BOLD DIM ITALIC UNDERLINED BLINK REVERSE HIDDEN \
+	ATTR_BOLD ATTR_DIM ATTR_ITALIC ATTR_UNDERLINED ATTR_BLINK ATTR_REVERSE ATTR_HIDDEN \
+	R B M I U K V H
+
+show_group 'Foreground colors' \
+	BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY \
+	FG_BLACK FG_RED FG_GREEN FG_YELLOW FG_BLUE FG_MAGENTA FG_CYAN FG_WHITE FG_GREY \
+	FGBLACK FGRED FGGREEN FGYELLOW FGBLUE FGMAGENTA FGCYAN FGWHITE FGGREY \
+	k r g y b m c w e
+
+# show_group 'Bright foreground colors' \
+# 	BLACK_BRIGHT RED_BRIGHT GREEN_BRIGHT YELLOW_BRIGHT BLUE_BRIGHT MAGENTA_BRIGHT CYAN_BRIGHT WHITE_BRIGHT GREY_BRIGHT \
+# 	FG_BLACK_BRIGHT FG_RED_BRIGHT FG_GREEN_BRIGHT FG_YELLOW_BRIGHT FG_BLUE_BRIGHT FG_MAGENTA_BRIGHT FG_CYAN_BRIGHT FG_WHITE_BRIGHT FG_GREY_BRIGHT \
+# 	BLACK_BRIGTH RED_BRIGTH GREEN_BRIGTH YELLOW_BRIGTH BLUE_BRIGTH MAGENTA_BRIGTH CYAN_BRIGTH WHITE_BRIGTH GREY_BRIGTH \
+# 	FG_BLACK_BRIGTH FG_RED_BRIGTH FG_GREEN_BRIGTH FG_YELLOW_BRIGTH FG_BLUE_BRIGTH FG_MAGENTA_BRIGTH FG_CYAN_BRIGTH FG_WHITE_BRIGTH FG_GREY_BRIGTH
+
+show_group 'Background colors' \
+	BGBLACK BGRED BGGREEN BGYELLOW BGBLUE BGMAGENTA BGCYAN BGWHITE BGGREY \
+	BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE BG_GREY \
+	bk br bg by bb bm bc bw be
+
+# show_group 'Bright background colors' \
+# 	BGBLACK_BRIGHT BGRED_BRIGHT BGGREEN_BRIGHT BGYELLOW_BRIGHT BGBLUE_BRIGHT BGMAGENTA_BRIGHT BGCYAN_BRIGHT BGWHITE_BRIGHT BGGREY_BRIGHT \
+# 	BG_BLACK_BRIGHT BG_RED_BRIGHT BG_GREEN_BRIGHT BG_YELLOW_BRIGHT BG_BLUE_BRIGHT BG_MAGENTA_BRIGHT BG_CYAN_BRIGHT BG_WHITE_BRIGHT BG_GREY_BRIGHT \
+# 	BG_BLACK_BRIGTH BG_RED_BRIGTH BG_GREEN_BRIGTH BG_YELLOW_BRIGTH BG_BLUE_BRIGTH BG_MAGENTA_BRIGTH BG_CYAN_BRIGTH BG_WHITE_BRIGTH BG_GREY_BRIGTH
+
+# show_group 'Combined styles and colors' \
+# 	BOLD RED UNDERLINED BLUE ITALIC GREEN BLINK YELLOW REVERSE MAGENTA HIDDEN CYAN
+
+echo -e "\n$(c.BOLD)Methods$(c.RESET)"
+c.show
+c.show_aliases
+
+# c.disable
+# disabled_red=$(c.RED)
+# printf 'Disabled value length: %s\n' "${#disabled_red}"
+# c.enable
+# printf 'Restored RED: %s\n' "$(c.RED)"
