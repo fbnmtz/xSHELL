@@ -6,10 +6,10 @@
 # Created: Saturday, 2026/10/03 - 01:29:01
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 05:26:34
+# Last Modified: Sunday, 2026/10/11 - 11:15:03
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.3.82
+# Version: 0.0.4.88
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -20,7 +20,7 @@
 
 _xLIB_OSTRING_=true
 
-xs_use oo
+xs_use oo OArray
 
 class OString {
     property value ""
@@ -356,7 +356,22 @@ class OString {
     method delete() {
         this.gsub "$1" ""
     }
-}
 
-# _oo_end_class
-xs_use OArray
+    method delete_at() {
+        local value index offset
+        value="$(this.value)"
+        index="${1-}"
+        if [[ ! "$index" =~ ^[0-9]+$ ]]; then
+            echo "OString: index out of range: $index" >&2
+            return 2
+        fi
+        index=$((10#$index))
+        if [ "$index" -lt 1 ] || [ "$index" -gt "${#value}" ]; then
+            echo "OString: index out of range: $index" >&2
+            return 2
+        fi
+        offset=$((index - 1))
+        this.value="${value:0:offset}${value:offset+1}"
+    }
+    
+}
