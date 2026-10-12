@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 05:03:03
+# Last Modified: Monday, 2026/10/12 - 02:38:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.7.86
+# Version: 0.1.8.90
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -425,24 +425,31 @@ if declare -f command_not_found_handle &>/dev/null && ! declare -f __orig_comman
     eval "$(declare -f command_not_found_handle | sed '1s/command_not_found_handle/__orig_command_not_found_handle/')"
 fi
 
-# Intercept object syntax:
-# 1. Instantiation: obj = new Class [args...]
-# 2. Assignment with spaces: obj.attr = value
-# 3. Assignment without spaces: obj.attr=value
-# 4. Method dispatch & property get: obj.member [args...] / obj.attr / obj.dump
+# Intercepted command forms (recognized cases return without running an external command):
+# 1. Object construction: obj = new Class [args...]
+# 2. OArray literals: obj = [items...] or obj = (items...) when OArray is loaded.
+# 3. OString construction: obj = "text", obj = OString(value), or obj = OString heredoc.
+# 4. OString numeric indexing: obj[index] reads a character; obj[index]=value replaces it.
+# 5. Attribute assignment: obj.attr = value or obj.attr=value.
+# 6. Bare OString evaluation: obj runs its to_s method when entered without arguments.
+# 7. Member access: obj.method [args...] dispatches a method; obj.attr reads an instance attribute.
+# 8. Object introspection: obj.class prints the class name; obj.dump lists properties and methods.
+# 9. In methods, this.member is rewritten to the current instance's obj.member form.
+# Unrecognized commands are passed to the handler that was installed before this library, if any;
+# otherwise the handler prints Bash's command-not-found diagnostic and returns 127.
 command_not_found_handle() {
     local cmd="$1"
     shift
     local args=("$@")
 
-    # If inside a method and calling this.attr or this.method
+    # 9. Rewrite this.member to the current object's obj.member form inside a method.
     if [ -n "$this" ]; then
         if [[ "$cmd" =~ ^this\.(.*)$ ]]; then
             cmd="${this}.${BASH_REMATCH[1]}"
         fi
     fi
 
-    # 1. Instantiation: obj = new Class [args...]
+    # 1. Instantiate an object from: obj = new Class [args...].
     if [ "${args[0]}" = "=" ] && [ "${args[1]}" = "new" ]; then
         local obj="$cmd"
         local cls="${args[2]}"
@@ -450,6 +457,7 @@ command_not_found_handle() {
         return 0
     fi
 
+    # 4. Route numeric bracket access on OString instances to its indexed getter or setter.
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\[([0-9]+)\](=(.*))?$ ]]; then
         local indexed_obj="${BASH_REMATCH[1]}"
         local indexed_index="${BASH_REMATCH[2]}"
@@ -472,7 +480,7 @@ command_not_found_handle() {
         fi
     fi
 
-    # OString literals: name = "text", name = OString("text"), or a marked heredoc.
+    # 2. Treat bracketed or parenthesized assignment values as OArray literals when that class is loaded.
     if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OArray" ]; then
         local array_literal="${args[*]:1}"
         if [[ "$array_literal" =~ ^\[.*\]$ || "$array_literal" =~ ^\(.*\)$ ]]; then
@@ -481,6 +489,7 @@ command_not_found_handle() {
         fi
     fi
 
+    # 3. Construct OString instances from a quoted literal, OString(value), or the explicit heredoc form.
     if [ "${args[0]}" = "=" ] && [ -d "$_OO_STORE/classes/OString" ]; then
         local literal_value="" literal_rhs="${args[*]:1}"
 
@@ -513,7 +522,7 @@ command_not_found_handle() {
         fi
     fi
 
-    # 2. Attribute assignment with spaces: obj.attr = value
+    # 5a. Store an attribute assignment written with spaces around the equals sign.
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$ ]] && [ "${args[0]}" = "=" ]; then
         local obj="${BASH_REMATCH[1]}"
         local attr="${BASH_REMATCH[2]}"
@@ -522,7 +531,7 @@ command_not_found_handle() {
         return 0
     fi
 
-    # 3. Attribute assignment without spaces: obj.attr=value
+    # 5b. Store an attribute assignment when the value is attached to the command token.
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)=(.*)$ ]]; then
         local obj="${BASH_REMATCH[1]}"
         local attr="${BASH_REMATCH[2]}"
@@ -531,7 +540,7 @@ command_not_found_handle() {
         return 0
     fi
 
-    # A bare OString object evaluates to the same display value as obj.to_s.
+    # 6. Make a bare OString object print through to_s; other bare object names fall through normally.
     if [[ "$cmd" =~ ^[a-zA-Z0-9_]+$ ]] && [ "${#args[@]}" -eq 0 ] && \
         [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
         local object_cls tostring_cls
@@ -543,8 +552,7 @@ command_not_found_handle() {
         fi
     fi
 
-    # 4. Method call or property inspection: obj.member [args...]
-    # 4. Method call or property inspection: obj.member [args...] / obj.attr / obj.dump
+    # 7. Resolve obj.member syntax, preferring callable methods before attribute reads or introspection.
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$ ]]; then
         local obj="${BASH_REMATCH[1]}"
         local member="${BASH_REMATCH[2]}"
@@ -553,24 +561,25 @@ command_not_found_handle() {
             local cls
             cls=$(cat "$_OO_STORE/instances/$obj/__class__")
 
-            # Method dispatch
+            # 7a. Dispatch a matching instance method, including methods inherited from a parent class.
             local method_cls
             if method_cls=$(__oo_resolve_method_class "$cls" "$member"); then
                 this="$obj" "__${method_cls}_${member}" "${args[@]}"
                 return $?
             fi
 
-            # Introspection: obj.class
+            # 8a. Report the object's concrete class name.
             if [ "$member" = "class" ]; then
                 echo "$cls"
                 return 0
             fi
 
-            # Introspection: obj.dump
+            # 8b. Dump declared and dynamic properties, then list methods across the class ancestry.
             if [ "$member" = "dump" ]; then
                 echo "=== DUMP OBJECT BEGIN ==="
                 echo "[object: $obj <class:$cls>]"
                 echo -e "  Property's:"
+                # Walk from the concrete class toward its parents; the seen-name list avoids duplicates.
                 local property_cls="$cls"
                 local listed_properties=""
                 while [ -n "$property_cls" ]; do
@@ -598,6 +607,7 @@ command_not_found_handle() {
                     fi
                 done
 
+                # Include instance files that were assigned without a class property declaration.
                 for f in "$_OO_STORE/instances/$obj"/*; do
                     [ -f "$f" ] || continue
                     local aname
@@ -607,6 +617,7 @@ command_not_found_handle() {
                     echo "    .$aname == $(cat "$f")"
                 done
                 echo "  Methods:"
+                # Walk inherited method metadata and show an overridden name only once.
                 local method_cls="$cls"
                 local listed_methods=""
                 while [ -n "$method_cls" ]; do
@@ -631,7 +642,7 @@ command_not_found_handle() {
                 return 0
             fi
 
-            # Getter: obj.attr
+            # 7b. Read an instance attribute when no method or built-in inspection matched the member.
             if [ -f "$_OO_STORE/instances/$obj/$member" ]; then
                 cat "$_OO_STORE/instances/$obj/$member"
                 return 0
@@ -639,12 +650,13 @@ command_not_found_handle() {
         fi
     fi
 
-    # Delegate to previous handler if available
+    # Delegate unrecognized commands to the handler that was active before this library was loaded.
     if type __orig_command_not_found_handle &>/dev/null; then
         __orig_command_not_found_handle "$cmd" "${args[@]}"
         return $?
     fi
 
+    # If no previous handler exists, print Bash's usual diagnostic and return its not-found status.
     echo "bash: $cmd: command not found" >&2
     return 127
 }
