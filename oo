@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/10/12 - 02:38:13
+# Last Modified: Sunday, 2026/10/18 - 02:36:57
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.8.90
+# Version: 0.1.9.94
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -517,8 +517,14 @@ command_not_found_handle() {
         fi
 
         if [ "${#args[@]}" -eq 2 ] && [ "${args[1]}" != "{" ]; then
-            __oo_instantiate "$cmd" OString "$literal_rhs"
-            return $?
+            # Do not treat as OString if it is a hash literal (e.g. "{ ... }" or multiline "{ ... }")
+            local trimmed_rhs="${literal_rhs#"${literal_rhs%%[![:space:]]*}"}"
+            if [[ "$trimmed_rhs" =~ ^\{.*\}$ ]]; then
+                :
+            else
+                __oo_instantiate "$cmd" OString "$literal_rhs"
+                return $?
+            fi
         fi
     fi
 
@@ -540,12 +546,12 @@ command_not_found_handle() {
         return 0
     fi
 
-    # 6. Make a bare OString object print through to_s; other bare object names fall through normally.
+    # 6. Make a bare OString or OHash object print through to_s; other bare object names fall through normally.
     if [[ "$cmd" =~ ^[a-zA-Z0-9_]+$ ]] && [ "${#args[@]}" -eq 0 ] && \
         [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
         local object_cls tostring_cls
         object_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
-        if [ "$object_cls" = "OString" ] && \
+        if [[ "$object_cls" =~ ^(OString|OHash)$ ]] && \
             tostring_cls=$(__oo_resolve_method_class "$object_cls" to_s); then
             this="$cmd" "__${tostring_cls}_to_s"
             return $?

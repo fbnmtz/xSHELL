@@ -6,10 +6,10 @@
 # Created: Friday, 2026/10/02 - 22:18:37
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 00:56:01
+# Last Modified: Sunday, 2026/10/18 - 02:36:30
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.2
+# Version: 0.0.2.258
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -26,113 +26,171 @@
 source "$xSHELL_INIT"
 xs_use OHash
 
-h = new OHash default_for_missing "not found"
-profile = new OHash
-profile[:city] = London
-h[:name] = "Ada Lovelace"
-h[:language] = Bash
-h[:profile] = profile
+echo ----------------------------------------------------------
+echo "OHash - Object creation"
+echo ----------------------------------------------------------
 
-echo "-- Basic access --"
-echo "h.to_s => $(h.to_s)"
-echo "h[:name] => $(h[:name])"
-echo "h[:missing] (default_for_missing) => $(h[:missing])"
-echo "h.fetch missing unknown => $(h.fetch missing unknown)"
-echo "h.has_key :language => $(h.has_key :language)"
-echo "h.keys => $(h.keys)"
-echo "h.values => $(h.values)"
-echo "h.count => $(h.count)"
-echo "profile[:city] => $(profile[:city])"
-without_default = new OHash
-echo "without_default[:missing] (implicit nil) => $(without_default[:missing])"
+echo "config = new OHash; config[:host] = 'localhost'; config[:port] = 3000"
+config = new OHash; config[:host] = "localhost"; config[:port] = 3000
+echo
+echo "   \`-> 1 - 'new OHash' and setting values"
+echo
+echo "----------------------------------------------------------"
+echo
+
+echo "network = { ip_address: '192.168.5.10', netmask: '255.255.255.0', gateway: '192.168.5.1' }"
+network = { ip_address: "192.168.5.10", netmask: "255.255.255.0", gateway: "192.168.5.1" }
+echo
+echo "   \`-> 2 - literal hash creation (single line)"
+echo
+echo "----------------------------------------------------------"
+echo
+
+echo -e "database = { \\
+    host: 'db.example.com', \\
+    port: 5432, \\
+    username: 'dbuser', \\
+    password: 'dbpass' \\
+}"
+
+database = { \
+    host: "db.example.com", \
+    port: 5432, \
+    username: "dbuser", \
+    password: "dbpass" \
+}
 
 echo
-echo "-- Hash literal --"
-config = { host: "localhost", port: 3000 }
-echo "config = { host: 'localhost', port: 3000 }"
-echo "equivalent to config = new OHash; config[:host] = 'localhost'; config[:port] = 3000"
-echo "config.to_s => $(config.to_s)"
-echo "config[:host] => $(config[:host])"
-echo "config[:port] => $(config[:port])"
+echo "   \`-> 3 - literal hash creation (multiline without quotes)"
+echo
+echo "----------------------------------------------------------"
+echo
+
+
+echo 'app = "{
+    name: 'MyApp', 
+    version: '1.0.0' 
+}"'
+
+app = "{
+    name: 'MyApp', 
+    version: '1.0.0' 
+}"
+echo
+echo "   \`-> 4 - literal hash creation (multiline with quotes)"
+echo
 
 echo
-echo "-- Public method coverage --"
-api = new OHash "fallback"
-api.set :set_value first
-api.store :stored_value second
-echo "api.set :set_value first; api.get :set_value => $(api.get :set_value)"
-echo "api.store :stored_value second; api.get :stored_value => $(api.get :stored_value)"
-echo "api.fetch :set_value => $(api.fetch :set_value)"
-echo "api.fetch :missing fallback-value => $(api.fetch :missing fallback-value)"
-echo "api.has_key :set_value => $(api.has_key :set_value)"
-echo "api.key :set_value => $(api.key :set_value)"
-echo "api.include :set_value => $(api.include :set_value)"
-echo "api.member :set_value => $(api.member :set_value)"
-echo "api.size / api.count / api.length => $(api.size) / $(api.count) / $(api.length)"
-echo "api.keys => $(api.keys)"
-echo "api.values => $(api.values)"
-echo "api.to_s => $(api.to_s)"
-api.delete :stored_value
-echo "api.delete :stored_value; api.to_s => $(api.to_s)"
-echo "api.empty before clear => $(api.empty)"
-api.clear
-echo "api.clear; api.empty => $(api.empty)"
+echo ----------------------------------------------------------
+echo "OHash - Show all object items - .to_s and aliases"
+echo ----------------------------------------------------------
+echo "config.class                          => $(config.class)"
+echo
+echo "config.to_s                           => $(config.to_s)"
+echo "config                                => $(config)"
 
 echo
-echo "-- Symbol and string keys --"
-h[name] = "String-key value"
-echo "h[:name] (symbol key) => $(h[:name])"
-echo "h[name] (string key) => $(h[name])"
-echo "h.keys => $(h.keys)"
+echo ----------------------------------------------------------
+echo "OHash - Methods and basic usage"
+echo ----------------------------------------------------------
+echo "config[:host]                         => $(config[:host])"
+echo "config[:port]                         => $(config[:port])"
+echo
+echo "config.set :ip_address '192.168.5.1'"
+echo "config.store :protocol 'https'"
+config.set :ip_address "192.168.5.1"
+config.store :protocol "https"
+echo
+echo "config[:ip_address]                   => $(config[:ip_address])"
+echo "config[:protocol]                     => $(config[:protocol])"
+echo "config.fetch :host                    => $(config.fetch :host)"
+echo "config.key :protocol                  => $(config.key :protocol)"
+echo "config.has_key :port                  => $(config.has_key :port)"
+echo "config.keys                           => $(config.keys)"
+echo "config.values                         => $(config.values)"
+echo "config.include :protocol              => $(config.include :protocol)"
+echo "config.member :ip_address             => $(config.member :ip_address)"
+echo
+echo "config.size / config.count / config.length => $(config.size) / $(config.count) / $(config.length)"
 
 echo
-echo "-- Replacing an existing value --"
-echo "h[:language] before replacement => $(h[:language])"
-h[:language] = Ruby
-echo "h[:language] after replacement => $(h[:language])"
-echo "h.count after replacement => $(h.count)"
+echo "config.delete :ip_address"
+config.delete :ip_address
+echo
+echo "config.to_s after delete              => $(config.to_s)"
 
 echo
-echo "-- Merge --"
-extra = new OHash
-extra[:runtime] = Bash
-extra[:version] = 5
-h.merge extra
-echo "h.merge extra; h.to_s => $(h.to_s)"
-echo "h[:language] after merge => $(h[:language])"
-echo "h.values after merge => $(h.values)"
+echo "network[:ip_address]                  => $(network[:ip_address])"
+echo "network[:netmask]                     => $(network[:netmask])"
+echo "network[:gateway]                     => $(network[:gateway])"
+echo "network.to_s                          => $(network.to_s)"
 
 echo
-echo "-- Iterate over key/value pairs --"
-h.each 'printf "h.each pair => %s => %s\\n" "@key" "@value"'
+echo "database[:host]                       => $(database[:host])"
+echo "database[:port]                       => $(database[:port])"
+echo "database[:username]                   => $(database[:username])"  
+echo "database[:password]                   => $(database[:password])"
+echo "database.to_s                         => $(database.to_s)"
+
+echo 
+echo "app[:name]                            => $(app[:name])"
+echo "app[:version]                         => $(app[:version])"
+echo "app.to_s                              => $(app.to_s)"
 
 echo
-echo "-- Build a compact report --"
-h.each 'printf "h.each report => %-12s %s\\n" "@key" "@value"'
+echo ----------------------------------------------------------
+echo "OHash - Merge and Iteration"
+echo ----------------------------------------------------------
+
+echo "config[:network] = network"
+echo "config[:database] = database"
+echo "config.merge app"
+config[:network] = network
+config[:database] = database
+config.merge app
+
+echo ----------------------------------------------------------
 
 echo
-echo "-- Select one key --"
-h.each '[[ "@key" == :name ]] && printf "h.each filter (:name) => %s\\n" "@value"'
+echo "config.to_s                           => $(config.to_s)"
+echo "config[:network]                      => $(config[:network])"
+echo "config[:network][:ip_address]         => $(config[:network][:ip_address])"
+echo "config.dig :network :ip_address       => $(config.dig :network :ip_address)"
 
 echo
-echo "-- Filter values by content --"
-h.each '[[ "@value" == *Bash* ]] && printf "h.each filter (value contains Bash) => %s => %s\\n" "@key" "@value"'
+echo ----------------------------------------------------------
+echo "change config[:network][:ip_address] to 192.168.5.200"
+echo "config[:network][:ip_address] = '192.168.5.200'"
+config[:network][:ip_address] = "192.168.5.200"
+echo ----------------------------------------------------------
 
 echo
+echo "config[:network][:ip_address]         => $(config[:network][:ip_address])"
+echo "config.empty                          => $(config.empty)"
+echo
+echo "config.pretty                         => $(config.pretty)"
+
+echo
+echo ----------------------------------------------------------
+config.each 'printf "config.each report => %-12s %s\\n" "@key" "@value"'
+
+echo
+echo ----------------------------------------------------------
+config.each '[[ "@key" == :name ]] && printf "config.each filter (:name) => %s\\n" "@value"'
+
+echo
+echo ----------------------------------------------------------
+config.each '[[ "@value" == *local* ]] && printf "config.each filter (value contains \"local\") => %s => %s\\n" "@key" "@value"'
+
+echo
+echo ----------------------------------------------------------
 echo "-- Sum numeric values --"
+echo ----------------------------------------------------------
 numbers = new OHash
 numbers[:first] = 12
 numbers[:second] = 8
 numbers[:third] = 5
-total=$(numbers.each 'printf "%s\\n" "@value"' | awk '{ total += $1 } END { print total + 0 }')
-echo "numbers.to_s => $(numbers.to_s)"
-echo "numbers.each values | awk sum => $total"
 
-echo
-echo "-- Delete and clear --"
-h.delete :language
-echo "h.delete :language; h.to_s => $(h.to_s)"
-echo "h.size after delete => $(h.size)"
-h.clear
-echo "h.clear; h.empty => $(h.empty)"
-echo "h.count after clear => $(h.count)"
+total=$(numbers.each 'printf "%s\\n" "@value"' | awk '{ total += $1 } END { print total + 0 }')
+echo "numbers.to_s      => $(numbers.to_s)"
+echo "numbers.each values | awk sum => $total"

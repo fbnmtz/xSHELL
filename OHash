@@ -6,461 +6,1331 @@
 # Created: Friday, 2026/10/02 - 22:14:05
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 01:22:04
+# Last Modified: Sunday, 2026/10/18 - 02:36:45
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.3
+# Version: 0.0.3.17
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
-#  >
+#  > Hash-like collection for the xSHELL OO library
 # ############################################################################
 # HISTORY:
 ## Description: Hash-like collection for the xSHELL OO library
 # ############################################################################
 #
 
+# Mark the OHash library module as loaded in xSHELL
 _xLIB_OHASH_=true
 
+# Import the object-orientation library dependency
 xs_use oo
 
+# Declare class OHash
 class OHash {
+    # Private method to encode string keys and values into safe Base64 format prefixed with 'x'
     method __encode() {
+        # Convert argument to base64, strip newlines and carriage returns, then prefix with 'x'
         printf 'x%s' "$(printf '%s' "$1" | base64 | tr -d '\r\n')"
     }
 
+    # Private method to decode previously encoded Base64 strings
     method __decode() {
+        # Declare local variable to hold decoded result
         local decoded
+        # Strip the leading 'x' prefix added during encoding
         local encoded="${1#x}"
+        # Test if GNU base64 --decode syntax is available
         if printf '' | base64 --decode >/dev/null 2>&1; then
+            # Decode using standard GNU base64 decode option appending delimiter byte
             decoded=$(printf '%s' "$encoded" | base64 --decode; printf '\001')
         else
+            # Decode using BSD/macOS base64 -D option appending delimiter byte
             decoded=$(printf '%s' "$encoded" | base64 -D; printf '\001')
         fi
+        # Output decoded value removing the trailing delimiter byte
         printf '%s' "${decoded%$'\001'}"
     }
 
+    # Private method to resolve and ensure the storage file path for an instance
     method __file() {
+        # Create instance directory in the OO storage directory
         mkdir -p "$_OO_STORE/instances/$1"
+        # Print path to the 'pairs' data file for this instance
         printf '%s/%s' "$_OO_STORE/instances/$1" 'pairs'
     }
 
+    # Private method to validate that a key is non-empty
     method __require_key() {
+        # Check if key argument is empty
         if [ -z "$2" ]; then
+            # Print error message to standard error
             echo "OHash: empty keys are not allowed" >&2
+            # Return error status code 2
             return 2
         fi
     }
 
+    # Private method to check if a key exists in an instance
     method __has() {
+        # Declare local variables for file lookup and row parsing
         local data_file encoded_key stored_key stored_type stored_value
+        # Ensure key is provided and valid
         __OHash___require_key "$1" "$2" || return $?
+        # Get path to pairs file
         data_file=$(__OHash___file "$1")
+        # Encode key for lookup
         encoded_key=$(__OHash___encode "$2")
+        # Return 1 if data file does not exist yet
         [ -f "$data_file" ] || return 1
+        # Read data file tab-delimited records line by line
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Return 0 immediately if encoded key matches
             [ "$stored_key" = "$encoded_key" ] && return 0
         done < "$data_file"
+        # Return 1 if key was not found
         return 1
     }
 
+    # Private method to retrieve the decoded value for a key
     method __get() {
+        # Declare local variables for file lookup and row parsing
         local data_file encoded_key stored_key stored_type stored_value
+        # Ensure key is provided and valid
         __OHash___require_key "$1" "$2" || return $?
+        # Get path to pairs file
         data_file=$(__OHash___file "$1")
+        # Encode key for lookup
         encoded_key=$(__OHash___encode "$2")
+        # Return 1 if data file does not exist
         [ -f "$data_file" ] || return 1
+        # Read records tab-separated
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Check if current stored key matches lookup key
             if [ "$stored_key" = "$encoded_key" ]; then
+                # Decode stored value and print to standard output
                 __OHash___decode "$stored_value"
+                # Return success status
                 return 0
             fi
         done < "$data_file"
+        # Return 1 if key was not found
         return 1
     }
 
+    # Private method to set or update a key/value pair in an instance
     method __set() {
+        # Declare local variables for storage file paths and flags
         local data_file temp_file encoded_key encoded_value stored_key stored_type stored_value value_type found=false
+        # Ensure key is provided and valid
         __OHash___require_key "$1" "$2" || return $?
+        # Resolve target pairs file path
         data_file=$(__OHash___file "$1")
+        # Create unique temporary file path for atomic write
         temp_file="$data_file.tmp.$$"
+        # Encode target key
         encoded_key=$(__OHash___encode "$2")
+        # Encode target value
         encoded_value=$(__OHash___encode "$3")
+        # Default value type to string if not specified
         value_type=${4:-string}
+        # If type is string but value is an existing OHash instance, mark type as hash
         if [ "$value_type" = string ] && [ -f "$_OO_STORE/instances/$3/__class__" ] && [ "$(cat "$_OO_STORE/instances/$3/__class__")" = OHash ]; then
+            # Assign value_type to hash
             value_type=hash
         fi
+        # Ensure pairs file exists
         touch "$data_file"
+        # Iterate existing records to update matching key or preserve other entries
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy format where type column was omitted
             if [ -z "$stored_value" ]; then
+                # Shift type into value
                 stored_value=$stored_type
+                # Default type to string
                 stored_type=string
             fi
+            # Check if this record matches the key being updated
             if [ "$stored_key" = "$encoded_key" ]; then
+                # If not yet written, write updated key, type and value to temp file
                 if [ "$found" = false ]; then
+                    # Write updated entry tab-delimited
                     printf '%s\t%s\t%s\n' "$encoded_key" "$value_type" "$encoded_value" >> "$temp_file"
+                    # Mark as updated
                     found=true
                 fi
             else
+                # Write original record unchanged to temp file
                 printf '%s\t%s\t%s\n' "$stored_key" "$stored_type" "$stored_value" >> "$temp_file"
             fi
         done < "$data_file"
+        # Append new key if it did not exist previously
         [ "$found" = true ] || printf '%s\t%s\t%s\n' "$encoded_key" "$value_type" "$encoded_value" >> "$temp_file"
+        # Atomically replace data file with updated contents
         mv "$temp_file" "$data_file"
     }
 
+    # Private method to remove a key/value pair from an instance
     method __delete() {
+        # Declare local variables for file handling and deletion tracking
         local data_file temp_file encoded_key stored_key stored_type stored_value deleted=false
+        # Ensure key is provided and valid
         __OHash___require_key "$1" "$2" || return $?
+        # Resolve target pairs file path
         data_file=$(__OHash___file "$1")
+        # Create temporary file path
         temp_file="$data_file.tmp.$$"
+        # Encode key to delete
         encoded_key=$(__OHash___encode "$2")
+        # Return 1 if data file does not exist
         [ -f "$data_file" ] || return 1
+        # Read records tab-separated
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # If key matches target, skip it and set deleted flag to true
             if [ "$stored_key" = "$encoded_key" ]; then
+                # Flag deletion as performed
                 deleted=true
             else
+                # Write non-matching records to temp file
                 printf '%s\t%s\t%s\n' "$stored_key" "$stored_type" "$stored_value" >> "$temp_file"
             fi
         done < "$data_file"
+        # If deletion occurred, replace original file with temp file
         if [ "$deleted" = true ]; then
+            # Move temp file to data file
             mv "$temp_file" "$data_file"
+            # Return success
             return 0
         fi
+        # Remove unused temporary file if nothing was deleted
         rm -f "$temp_file"
+        # Return failure
         return 1
     }
 
+    # Private method to recursively render the hash representation as a string
     method __render() {
+        # Declare local variables for rendering and circular reference tracking
         local obj="$1" ancestors="${2:-}" data_file stored_key stored_type stored_value key value separator=''
+        # Check if the object is already in ancestors to guard against circular references
         case " $ancestors " in
             *" $obj "*)
+                # Print circular reference placeholder
+                printf '{...}'
+                # Return success
+                return 0
+                ;;
+        esac
+
+        # Add current object to ancestors chain
+        ancestors+=" $obj"
+        # Resolve path to pairs file
+        data_file="$_OO_STORE/instances/$obj/pairs"
+        # Print opening curly brace
+        printf '{'
+        # Check if pairs data file exists
+        if [ -f "$data_file" ]; then
+            # Read pairs from file
+            while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                # Handle legacy format where type column was missing
+                if [ -z "$stored_value" ]; then
+                    # Shift value
+                    stored_value=$stored_type
+                    # Default type
+                    stored_type=string
+                fi
+                # Decode stored key
+                key=$(__OHash___decode "$stored_key"; printf '\001')
+                # Strip delimiter byte
+                key=${key%$'\001'}
+                # Decode stored value
+                value=$(__OHash___decode "$stored_value"; printf '\001')
+                # Strip delimiter byte
+                value=${value%$'\001'}
+                # If value is a nested OHash instance, recursively render it
+                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    # Recursively render nested hash
+                    value=$(__OHash___render "$value" "$ancestors")
+                fi
+                # Escape embedded newlines in keys for display
+                key=${key//$'\n'/\\n}
+                # Escape embedded newlines in values for display
+                value=${value//$'\n'/\\n}
+                # Print key-value pair formatted with separator
+                printf '%s%s=>%s' "$separator" "$key" "$value"
+                # Update separator to comma and space for subsequent entries
+                separator=', '
+            done < "$data_file"
+        fi
+        # Print closing curly brace
+        printf '}'
+    }
+
+    # Private method to recursively render the hash representation as a multiline formatted string
+    method __render_pretty() {
+        # Target object to render
+        local obj="$1"
+        # Current indentation level (number of spaces)
+        local indent="${2:-0}"
+        # Ancestors list to detect circular references
+        local ancestors="${3:-}"
+        # File path for pairs
+        local data_file
+        # Data file row variables
+        local stored_key stored_type stored_value key value
+        # First entry flag for comma handling
+        local is_first=true
+        # Space prefix for current level
+        local spaces
+        # Space prefix for inner items level
+        local inner_spaces
+        # Circular reference check
+        case " $ancestors " in
+            *" $obj "*)
+                # Print circular reference representation
                 printf '{...}'
                 return 0
                 ;;
         esac
 
+        # Track ancestor object
         ancestors+=" $obj"
+        # Generate spaces string for current indentation
+        spaces=$(printf '%*s' "$indent" '')
+        # Generate spaces string for inner indentation (4 spaces deeper)
+        inner_spaces=$(printf '%*s' "$((indent + 4))" '')
+        # Resolve data file path
         data_file="$_OO_STORE/instances/$obj/pairs"
-        printf '{'
-        if [ -f "$data_file" ]; then
-            while IFS=$'\t' read -r stored_key stored_type stored_value; do
-                if [ -z "$stored_value" ]; then
-                    stored_value=$stored_type
-                    stored_type=string
-                fi
-                key=$(__OHash___decode "$stored_key"; printf '\001')
-                key=${key%$'\001'}
-                value=$(__OHash___decode "$stored_value"; printf '\001')
-                value=${value%$'\001'}
-                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
-                    value=$(__OHash___render "$value" "$ancestors")
-                fi
-                key=${key//$'\n'/\\n}
-                value=${value//$'\n'/\\n}
-                printf '%s%s=>%s' "$separator" "$key" "$value"
-                separator=', '
-            done < "$data_file"
+
+        # Check if pairs data file exists and is not empty
+        if [ ! -s "$data_file" ]; then
+            # Print empty braces
+            printf '{\n%s}' "$spaces"
+            return 0
         fi
-        printf '}'
+
+        # Print opening curly brace followed by newline
+        printf '{\n'
+        # Read records from pairs file
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy format where type column was omitted
+            if [ -z "$stored_value" ]; then
+                stored_value=$stored_type
+                stored_type=string
+            fi
+            # Decode key
+            key=$(__OHash___decode "$stored_key"; printf '\001')
+            key=${key%$'\001'}
+            # Strip leading colon from key name for JSON-like/ruby-like key: value output
+            local clean_key="${key#:}"
+            # Decode value
+            value=$(__OHash___decode "$stored_value"; printf '\001')
+            value=${value%$'\001'}
+
+            # If not first entry, print newline after previous trailing comma
+            if [ "$is_first" = true ]; then
+                is_first=false
+            else
+                printf ',\n'
+            fi
+
+            # Check if value is a nested OHash instance
+            if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                # Print inner indentation and key
+                printf '%s:%s => ' "$inner_spaces" "$clean_key"
+                # Recursively render nested hash with increased indentation
+                __OHash___render_pretty "$value" "$((indent + 4))" "$ancestors"
+            else
+                # Escape embedded newlines in value
+                value=${value//$'\n'/\\n}
+                # Check if value is numeric
+                if [[ "$value" =~ ^-?[0-9]+$ ]]; then
+                    # Print numeric value without quotes
+                    printf '%s:%s => %s' "$inner_spaces" "$clean_key" "$value"
+                else
+                    # Escape quotes in string value
+                    local escaped_val="${value//\"/\\\"}"
+                    # Print quoted string value
+                    printf '%s:%s => "%s"' "$inner_spaces" "$clean_key" "$escaped_val"
+                fi
+            fi
+        done < "$data_file"
+
+        # Print newline after last entry and closing brace with outer indentation
+        printf '\n%s}' "$spaces"
     }
 
+    # Declare default_value property for fallback when a requested key is absent
     property default_value
 
+    # Constructor method for OHash instances
     define constructor() {
+        # Initialize local variables and default value
         local data_file default_value="${1-nil}"
+        # Inspect argument to support named default options
         case "${1:-}" in
             default_for_missing|missing_key_default|missing_key_value|missing_key|missing|default)
+                # Ensure value is passed after option flag
                 if [ "$#" -lt 2 ]; then
+                    # Report missing argument error
                     echo "OHash: ${1} requires a value" >&2
+                    # Return error code 2
                     return 2
                 fi
+                # Assign specified default value
                 default_value="$2"
                 ;;
         esac
+        # Set instance default_value property
         this.default_value="$default_value"
+        # Get data file path for this instance
         data_file=$(__OHash___file "$this")
+        # Empty or create the pairs data file
         : > "$data_file"
     }
 
+    # Public method: set(key, value)
     method set() {
+        # Validate that both key and value arguments are supplied
         [ "$#" -ge 2 ] || return 2
+        # Delegate to private setter
         __OHash___set "$this" "$1" "$2"
     }
 
+    # Public method: store(key, value) - alias for set
     method store() {
+        # Forward arguments to set method
         this.set "$@"
     }
 
+    # Public method: get(key)
     method get() {
+        # Declare local variables
+        local data_file encoded_key stored_key stored_type stored_value value
+        # Validate that at least one argument is given
         [ "$#" -ge 1 ] || return 2
+        # Ensure key is non-empty
         __OHash___require_key "$this" "$1" || return $?
-        if __OHash___has "$this" "$1"; then
-            __OHash___get "$this" "$1"
-        else
+        # If key is missing, return default value
+        if ! __OHash___has "$this" "$1"; then
+            # Output configured default value
             this.default_value
+            # Return status from default_value
+            return $?
         fi
+        # Resolve data file path
+        data_file=$(__OHash___file "$this")
+        # Encode requested key
+        encoded_key=$(__OHash___encode "$1")
+        # Search through records
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy format where type column was omitted
+            if [ -z "$stored_value" ]; then
+                # Shift value
+                stored_value=$stored_type
+                # Default type
+                stored_type=string
+            fi
+            # Check for key match
+            if [ "$stored_key" = "$encoded_key" ]; then
+                # Decode stored value
+                value=$(__OHash___decode "$stored_value"; printf '\001')
+                # Remove delimiter byte
+                value=${value%$'\001'}
+                # If value is a nested hash, render it; otherwise print scalar value
+                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    # Render nested hash
+                    __OHash___render "$value"
+                else
+                    # Print raw value followed by newline
+                    printf '%s\n' "$value"
+                fi
+                # Return success
+                return 0
+            fi
+        done < "$data_file"
+        # Fallback to output default value if not matched
+        this.default_value
     }
 
+    # Public method: fetch(key, [default])
     method fetch() {
+        # Declare local variables
+        local data_file encoded_key stored_key stored_type stored_value value
+        # Validate arguments count
         [ "$#" -ge 1 ] || return 2
+        # Ensure key is non-empty
         __OHash___require_key "$this" "$1" || return $?
-        if __OHash___has "$this" "$1"; then
-            __OHash___get "$this" "$1"
-        elif [ "$#" -ge 2 ]; then
-            printf '%s\n' "$2"
-        else
-            return 1
+        # If key does not exist, return provided default argument or exit with error 1
+        if ! __OHash___has "$this" "$1"; then
+            # Print provided default if passed; otherwise return failure
+            [ "$#" -ge 2 ] && printf '%s\n' "$2" || return 1
+            # Return status code
+            return $?
         fi
+        # Resolve pairs file
+        data_file=$(__OHash___file "$this")
+        # Encode key
+        encoded_key=$(__OHash___encode "$1")
+        # Search in file
+        while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy rows
+            if [ -z "$stored_value" ]; then
+                # Shift value
+                stored_value=$stored_type
+                # Default type
+                stored_type=string
+            fi
+            # Match key
+            if [ "$stored_key" = "$encoded_key" ]; then
+                # Decode value
+                value=$(__OHash___decode "$stored_value"; printf '\001')
+                # Strip delimiter
+                value=${value%$'\001'}
+                # Render nested hash or print value
+                if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    # Render nested hash
+                    __OHash___render "$value"
+                else
+                    # Print scalar value
+                    printf '%s\n' "$value"
+                fi
+                # Return success
+                return 0
+            fi
+        done < "$data_file"
+        # Fallback to provided default argument or fail with 1
+        [ "$#" -ge 2 ] && printf '%s\n' "$2" || return 1
     }
 
+    # Public method: has_key(key)
     method has_key() {
+        # Check arguments count
         [ "$#" -ge 1 ] || return 2
+        # Validate key
         __OHash___require_key "$this" "$1" || return $?
+        # Check presence and output boolean string
         if __OHash___has "$this" "$1"; then
+            # Echo true if key exists
             echo true
         else
+            # Echo false if key does not exist
             echo false
         fi
     }
 
+    # Public method: key(key) - alias for has_key
     method key() {
+        # Forward call to has_key
         this.has_key "$@"
     }
 
+    # Public method: include(key) - alias for has_key
     method include() {
+        # Forward call to has_key
         this.has_key "$@"
     }
 
+    # Public method: member(key) - alias for has_key
     method member() {
+        # Forward call to has_key
         this.has_key "$@"
     }
 
+    # Public method: delete(key)
     method delete() {
+        # Check arguments count
         [ "$#" -ge 1 ] || return 2
+        # Validate key
         __OHash___require_key "$this" "$1" || return $?
+        # Delegate to private delete method
         __OHash___delete "$this" "$1"
     }
 
+    # Public method: keys() - returns array-like list of keys
     method keys() {
+        # Declare local variables
         local data_file stored_key stored_type stored_value key separator=''
+        # Resolve data file
         data_file=$(__OHash___file "$this")
+        # Print opening bracket
         printf '['
+        # Iterate over records if file exists
         if [ -f "$data_file" ]; then
+            # Read pairs
             while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                # Decode key
                 key=$(__OHash___decode "$stored_key"; printf '\001')
+                # Strip delimiter byte
                 key=${key%$'\001'}
+                # Escape embedded newlines
                 key=${key//$'\n'/\\n}
+                # Print key with separator
                 printf '%s%s' "$separator" "$key"
+                # Update separator to comma and space
                 separator=', '
             done < "$data_file"
         fi
+        # Print closing bracket and newline
         printf ']\n'
     }
 
+    # Public method: values() - returns array-like list of values
     method values() {
+        # Declare local variables
         local data_file stored_key stored_type stored_value value separator=''
+        # Resolve data file
         data_file=$(__OHash___file "$this")
+        # Print opening bracket
         printf '['
+        # Iterate over records if file exists
         if [ -f "$data_file" ]; then
+            # Read pairs
             while IFS=$'\t' read -r stored_key stored_type stored_value; do
+                # Handle legacy record
                 if [ -z "$stored_value" ]; then
+                    # Shift value
                     stored_value=$stored_type
+                    # Default type
                     stored_type=string
                 fi
+                # Decode value
                 value=$(__OHash___decode "$stored_value"; printf '\001')
+                # Strip delimiter byte
                 value=${value%$'\001'}
+                # Render nested hash if applicable
                 if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                    # Render nested hash
                     value=$(__OHash___render "$value")
                 fi
+                # Escape embedded newlines
                 value=${value//$'\n'/\\n}
+                # Print value with separator
                 printf '%s%s' "$separator" "$value"
+                # Update separator to comma and space
                 separator=', '
             done < "$data_file"
         fi
+        # Print closing bracket and newline
         printf ']\n'
     }
 
+    # Public method: size() - returns count of pairs
     method size() {
+        # Declare local variables
         local data_file count=0
+        # Resolve data file path
         data_file=$(__OHash___file "$this")
+        # Count lines in data file if it exists
         [ -f "$data_file" ] && count=$(wc -l < "$data_file")
+        # Output count
         echo "$count"
     }
 
+    # Public method: count() - alias for size
     method count() {
+        # Call size method
         this.size
     }
 
+    # Public method: length() - alias for size
     method length() {
+        # Call size method
         this.size
     }
 
+    # Public method: empty() - returns true if hash has no pairs, false otherwise
     method empty() {
+        # Check if size equals zero
         [ "$(this.size)" -eq 0 ] && echo true || echo false
     }
 
+    # Public method: clear() - removes all pairs
     method clear() {
+        # Truncate pairs data file to zero bytes
         : > "$(__OHash___file "$this")"
     }
 
+    # Public method: each(block) - iterates over each key/value pair
     method each() {
+        # Declare local variables
         local block="$1" expanded_block data_file stored_key stored_type stored_value key value
+        # Ensure block string is supplied
         [ -n "$block" ] || return 2
+        # Resolve data file path
         data_file=$(__OHash___file "$this")
+        # Return immediately if data file does not exist
         [ -f "$data_file" ] || return 0
+        # Read records tab-separated
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy format
             if [ -z "$stored_value" ]; then
+                # Shift value
                 stored_value=$stored_type
+                # Default type
                 stored_type=string
             fi
+            # Decode key
             key=$(__OHash___decode "$stored_key"; printf '\001')
+            # Strip delimiter
             key=${key%$'\001'}
+            # Decode value
             value=$(__OHash___decode "$stored_value"; printf '\001')
+            # Strip delimiter
             value=${value%$'\001'}
+            # Render nested hash if applicable
             if [ "$stored_type" = hash ] && [ -f "$_OO_STORE/instances/$value/__class__" ] && [ "$(cat "$_OO_STORE/instances/$value/__class__")" = OHash ]; then
+                # Render nested hash
                 value=$(__OHash___render "$value")
             fi
+            # Replace @key placeholder with $key
             expanded_block=${block//@key/\$key}
+            # Replace @value placeholder with $value
             expanded_block=${expanded_block//@value/\$value}
+            # Execute block expression with eval
             eval "$expanded_block"
         done < "$data_file"
     }
 
+    # Public method: merge(source_hash) - copies pairs from source hash into this hash
     method merge() {
+        # Declare local variables
         local source="$1" source_file stored_key stored_type stored_value key value
+        # Validate that source object identifier is provided
         [ -n "$source" ] || return 2
+        # Resolve source data file
         source_file=$(__OHash___file "$source")
+        # Return 0 if source data file does not exist
         [ -f "$source_file" ] || return 0
+        # Iterate source pairs
         while IFS=$'\t' read -r stored_key stored_type stored_value; do
+            # Handle legacy format
             if [ -z "$stored_value" ]; then
+                # Shift value
                 stored_value=$stored_type
+                # Default type
                 stored_type=string
             fi
+            # Decode key
             key=$(__OHash___decode "$stored_key"; printf '\001')
+            # Strip delimiter
             key=${key%$'\001'}
+            # Decode value
             value=$(__OHash___decode "$stored_value"; printf '\001')
+            # Strip delimiter
             value=${value%$'\001'}
+            # Store into current instance preserving type
             __OHash___set "$this" "$key" "$value" "$stored_type"
         done < "$source_file"
     }
 
+    # Public method: dig(key1, key2, ...) - extracts nested values traversing keys
+    method dig() {
+        # Ensure at least one key argument is provided
+        [ "$#" -ge 1 ] || return 2
+        # Declare local variables for traversal
+        local current="$this" key next_val
+        # Loop through all arguments
+        while [ "$#" -gt 0 ]; do
+            # Pop first key from arguments
+            key="$1"
+            # Shift remaining arguments
+            shift
+            # Validate key is non-empty
+            __OHash___require_key "$current" "$key" || return $?
+            # Check if current hash contains the key
+            if __OHash___has "$current" "$key"; then
+                # Get the value
+                next_val=$(__OHash___get "$current" "$key")
+                # If more keys remain in path
+                if [ "$#" -gt 0 ]; then
+                    # Check if next_val is an OHash instance
+                    if [ -f "$_OO_STORE/instances/$next_val/__class__" ] && [ "$(cat "$_OO_STORE/instances/$next_val/__class__")" = OHash ]; then
+                        # Traverse into next nested hash
+                        current="$next_val"
+                    else
+                        # Return default value when cannot dig deeper
+                        this.default_value
+                        # Return success
+                        return 0
+                    fi
+                else
+                    # Print target value when last key reached
+                    printf '%s\n' "$next_val"
+                    # Return success
+                    return 0
+                fi
+            else
+                # Return default value if key not found
+                this.default_value
+                # Return success
+                return 0
+            fi
+        done
+    }
+
+    # Public method: to_s() - converts hash to formatted string
     method to_s() {
+        # Render hash representation
         __OHash___render "$this"
+        # Print newline at the end
         printf '\n'
+    }
+
+    # Public method: to_pretty() - renders hash as a formatted multiline string
+    method to_pretty() {
+        # Render multiline hash representation starting at indentation 0
+        __OHash___render_pretty "$this" 0
+        # Print newline at the end
+        printf '\n'
+    }
+
+    # Public method: pretty() - alias for to_pretty
+    method pretty() {
+        # Forward call to to_pretty
+        this.to_pretty
+    }
+
+    # Public method: inspect() - alias for to_pretty
+    method inspect() {
+        # Forward call to to_pretty
+        this.to_pretty
     }
 }
 
+# Install command_not_found_handle interception if not already registered
 if [ "${_OHASH_COMMAND_HANDLER_INSTALLED:-false}" != true ] && declare -f command_not_found_handle >/dev/null; then
+    # Delegate existing command_not_found_handle to __OHash_delegate_command_not_found_handle
     eval "$(declare -f command_not_found_handle | sed '1s/command_not_found_handle/__OHash_delegate_command_not_found_handle/')"
 
-    __OHash_command_not_found_handle() {
-        local cmd="$1"
-        shift
-        local args=("$@")
+    # Helper function to tokenize literal hash items, splitting curly braces
+    __OHash_tokenize() {
+        # Reset output token array
+        __TOKENIZED=()
+        # Declare local loop variable
+        local item
+        # Loop through all raw token arguments
+        for item in "$@"; do
+            # Loop while characters remain in current item
+            while [ -n "$item" ]; do
+                # Match one or more leading opening braces
+                if [[ "$item" =~ ^(\{+)(.*)$ ]]; then
+                    # Extract matched opening braces
+                    local braces="${BASH_REMATCH[1]}"
+                    # Extract remaining substring
+                    local rest="${BASH_REMATCH[2]}"
+                    # Declare loop counter
+                    local j
+                    # Append each opening brace as individual token
+                    for ((j = 0; j < ${#braces}; j++)); do
+                        __TOKENIZED+=("{")
+                    done
+                    # Continue parsing rest of string
+                    item="$rest"
+                # Match one or more leading closing braces
+                elif [[ "$item" =~ ^(\}+)(.*)$ ]]; then
+                    # Extract matched closing braces
+                    local braces="${BASH_REMATCH[1]}"
+                    # Extract remaining substring
+                    local rest="${BASH_REMATCH[2]}"
+                    # Declare loop counter
+                    local j
+                    # Append each closing brace as individual token
+                    for ((j = 0; j < ${#braces}; j++)); do
+                        __TOKENIZED+=("}")
+                    done
+                    # Continue parsing rest of string
+                    item="$rest"
+                # Match content up to the next brace
+                elif [[ "$item" =~ ^([^\{\}]+)(.*)$ ]]; then
+                    # Append non-brace token
+                    __TOKENIZED+=("${BASH_REMATCH[1]}")
+                    # Continue parsing rest of string
+                    item="${BASH_REMATCH[2]}"
+                else
+                    # Fallback append item and break loop
+                    __TOKENIZED+=("$item")
+                    break
+                fi
+            done
+        done
+    }
 
-        if [[ "$cmd" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] && [ "${args[0]}" = "=" ] && [ "${args[1]}" = "{" ]; then
-            local end_index=$((${#args[@]} - 1))
-            local closing_attached=false
-            local token key value i
-            local -a literal_keys=() literal_values=()
+    # Helper function to populate an OHash from parsed tokens
+    __OHash_populate_literal() {
+        # Target object name
+        local target_obj="$1"
+        # Starting token index
+        local start_idx="$2"
+        # Ending token index
+        local end_idx="$3"
+        # Shift target, start and end arguments
+        shift 3
+        # Store tokens array
+        local -a tokens=("$@")
 
-            if [[ "${args[end_index]}" == *} ]] && [ "${args[end_index]}" != "}" ]; then
-                args[end_index]="${args[end_index]%\}}"
-                closing_attached=true
-            elif [ "${args[end_index]}" = "}" ]; then
-                closing_attached=true
-                end_index=$((end_index - 1))
+        # Resolve setter method class
+        local setter_cls
+        setter_cls=$(__oo_resolve_method_class OHash set) || return 1
+
+        # Declare index and token variables
+        local i="$start_idx" token key value
+        # Loop through tokens within specified range
+        while [ "$i" -le "$end_idx" ]; do
+            # Extract current token
+            token="${tokens[i]}"
+            # Strip trailing comma
+            token="${token%,}"
+
+            # Check if token ends with colon (key: value syntax)
+            if [[ "$token" == *: ]]; then
+                # Strip trailing colon to get key name
+                key="${token%:}"
+                # Ensure symbol prefix ':' on key
+                [[ "$key" == :* ]] || key=":$key"
+                # Move to value index
+                i=$((i + 1))
+            # Check if next token is hash rocket => (key => value syntax)
+            elif [ "$((i + 1))" -le "$end_idx" ] && [ "${tokens[i + 1]}" = "=>" ]; then
+                # Assign key name
+                key="$token"
+                # Ensure symbol prefix ':' on key
+                [[ "$key" == :* ]] || key=":$key"
+                # Skip key and arrow tokens
+                i=$((i + 2))
+            else
+                # Print syntax error message
+                echo "OHash: expected a key ending with ':' in hash literal" >&2
+                # Return error status 2
+                return 2
             fi
 
-            i=2
-            while [ "$i" -le "$end_index" ]; do
-                token="${args[i]}"
-                if [[ "$token" != *: ]]; then
-                    echo "OHash: expected a key ending with ':' in hash literal" >&2
+            # Ensure key is not empty
+            [ -n "$key" ] || {
+                # Print error message
+                echo "OHash: empty keys are not allowed" >&2
+                # Return error status 2
+                return 2
+            }
+
+            # Check if value token is missing
+            if [ "$i" -gt "$end_idx" ]; then
+                # Print error message
+                echo "OHash: missing value for key '$key'" >&2
+                # Return error status 2
+                return 2
+            fi
+
+            # Check if value begins a nested hash literal
+            if [ "${tokens[i]}" = "{" ]; then
+                # Track nesting depth
+                local depth=1
+                # Mark sub-hash start index
+                local sub_start=$((i + 1))
+                # Initialize sub-hash end index
+                local sub_end=-1
+                # Declare loop counter
+                local j
+                # Search for matching closing brace
+                for ((j = sub_start; j <= end_idx; j++)); do
+                    # Increment depth on opening brace
+                    if [ "${tokens[j]}" = "{" ]; then
+                        depth=$((depth + 1))
+                    # Decrement depth on closing brace
+                    elif [ "${tokens[j]}" = "}" ]; then
+                        depth=$((depth - 1))
+                        # When matching closing brace is reached
+                        if [ "$depth" -eq 0 ]; then
+                            # Mark sub-hash end index
+                            sub_end=$((j - 1))
+                            break
+                        fi
+                    fi
+                done
+
+                # Verify balanced braces
+                if [ "$depth" -ne 0 ] || [ "$sub_end" -lt 0 ]; then
+                    # Print unbalanced brace error message
+                    echo "OHash: hash literal must end with '}'" >&2
+                    # Return error status 2
                     return 2
                 fi
 
-                key="${token%:}"
-                [ -n "$key" ] || {
-                    echo "OHash: empty keys are not allowed" >&2
-                    return 2
-                }
-                [[ "$key" == :* ]] || key=":$key"
-
-                i=$((i + 1))
-                if [ "$i" -gt "$end_index" ]; then
-                    echo "OHash: missing value for key '$key'" >&2
-                    return 2
+                # Generate unique object name for nested sub-hash
+                local sub_obj="__subhash_${target_obj}_${i}_$RANDOM"
+                # Instantiate nested OHash
+                __oo_instantiate "$sub_obj" OHash || return $?
+                # If sub-hash has entries, recursively populate it
+                if [ "$sub_start" -le "$sub_end" ]; then
+                    __OHash_populate_literal "$sub_obj" "$sub_start" "$sub_end" "${tokens[@]}" || return $?
                 fi
-                value="${args[i]}"
+                # Store nested sub-hash in parent object with type 'hash'
+                this="$target_obj" "__${setter_cls}_set" "$key" "$sub_obj" "hash" || return $?
+                # Advance index past nested hash
+                i=$((j + 1))
+            else
+                # Extract scalar value token
+                value="${tokens[i]}"
+                # Strip trailing comma
                 value="${value%,}"
-                literal_keys+=("$key")
-                literal_values+=("$value")
+                # Store key and scalar value in target object
+                this="$target_obj" "__${setter_cls}_set" "$key" "$value" || return $?
+                # Advance to next token
                 i=$((i + 1))
+            fi
+        done
+    }
+
+    # Helper function to read default fallback value for missing keys
+    __OHash___read_default_value() {
+        # Instance object name
+        local obj="$1"
+        # Check if instance has specific default_value stored
+        if [ -f "$_OO_STORE/instances/$obj/default_value" ]; then
+            # Output instance default value
+            cat "$_OO_STORE/instances/$obj/default_value"
+        # Check if class has default fallback stored
+        elif [ -f "$_OO_STORE/classes/OHash/default_default_value" ]; then
+            # Output class default value
+            cat "$_OO_STORE/classes/OHash/default_default_value"
+        else
+            # Default to nil
+            printf 'nil\n'
+        fi
+    }
+
+    # Helper function to resolve indexed bracket paths like obj[:a][:b]
+    __OHash_resolve_path() {
+        # Root object identifier
+        local root_obj="$1"
+        # Bracket access string (e.g. [:a][:b])
+        local bracket_str="$2"
+        # Flag indicating whether this is an assignment operation
+        local is_assignment="$3"
+        # Value to assign if assignment operation
+        local assigned_value="$4"
+
+        # Array to store parsed keys
+        local -a keys=()
+        # String of remaining unparsed bracket segments
+        local remaining="$bracket_str"
+        # Parse bracket components with regex
+        while [[ "$remaining" =~ ^\[([^]]*)\](.*)$ ]]; do
+            # Extract key inside brackets
+            local k="${BASH_REMATCH[1]}"
+            # Save remainder of string
+            remaining="${BASH_REMATCH[2]}"
+            # Ensure key is non-empty
+            if [ -z "$k" ]; then
+                # Print error message
+                echo "OHash: empty keys are not allowed" >&2
+                # Return error status 2
+                return 2
+            fi
+            # Append key to array
+            keys+=("$k")
+        done
+
+        # If invalid bracket format or no keys parsed, return failure
+        if [ -n "$remaining" ] || [ "${#keys[@]}" -eq 0 ]; then
+            return 1
+        fi
+
+        # Get total number of keys in the path
+        local num_keys="${#keys[@]}"
+        # Current object pointer initialized to root
+        local current_obj="$root_obj"
+        # Declare loop variables
+        local i k next_obj current_cls
+
+        # Handle path assignment (e.g. obj[:k1][:k2] = val)
+        if [ "$is_assignment" = true ]; then
+            # Resolve setter class
+            local setter_cls
+            setter_cls=$(__oo_resolve_method_class OHash set) || return 1
+
+            # Traverse intermediate keys
+            for ((i = 0; i < num_keys - 1; i++)); do
+                # Get key at index i
+                k="${keys[i]}"
+                # Reset current class
+                current_cls=""
+                # Read class of current object if instance file exists
+                if [ -f "$_OO_STORE/instances/$current_obj/__class__" ]; then
+                    current_cls=$(cat "$_OO_STORE/instances/$current_obj/__class__")
+                fi
+
+                # Ensure current object is an OHash instance
+                if [ "$current_cls" != "OHash" ]; then
+                    # Print error message
+                    echo "OHash: cannot index into non-hash object '$current_obj'" >&2
+                    # Return failure
+                    return 1
+                fi
+
+                # If intermediate key already exists in current object
+                if __OHash___has "$current_obj" "$k"; then
+                    # Retrieve existing intermediate value
+                    next_obj=$(__OHash___get "$current_obj" "$k")
+                    # Check if next_obj is an OHash instance
+                    if [ -f "$_OO_STORE/instances/$next_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$next_obj/__class__")" = "OHash" ]; then
+                        # Move pointer to next object
+                        current_obj="$next_obj"
+                    else
+                        # Auto-vivify new sub-hash if existing value is not a hash
+                        local sub_hash="__subhash_${root_obj}_$RANDOM"
+                        __oo_instantiate "$sub_hash" OHash
+                        this="$current_obj" "__${setter_cls}_set" "$k" "$sub_hash" "hash"
+                        current_obj="$sub_hash"
+                    fi
+                else
+                    # Auto-vivify new sub-hash when key does not exist
+                    local sub_hash="__subhash_${root_obj}_$RANDOM"
+                    __oo_instantiate "$sub_hash" OHash
+                    this="$current_obj" "__${setter_cls}_set" "$k" "$sub_hash" "hash"
+                    current_obj="$sub_hash"
+                fi
             done
 
-            if [ "$closing_attached" != true ]; then
+            # Set the final key to the assigned value
+            local last_key="${keys[num_keys - 1]}"
+            this="$current_obj" "__${setter_cls}_set" "$last_key" "$assigned_value"
+            return $?
+        else
+            # Handle path read (e.g. obj[:k1][:k2])
+            local getter_cls
+            getter_cls=$(__oo_resolve_method_class OHash get) || return 1
+
+            # Traverse intermediate keys
+            for ((i = 0; i < num_keys - 1; i++)); do
+                # Get key at index i
+                k="${keys[i]}"
+                # Reset current class
+                current_cls=""
+                # Read class of current object
+                if [ -f "$_OO_STORE/instances/$current_obj/__class__" ]; then
+                    current_cls=$(cat "$_OO_STORE/instances/$current_obj/__class__")
+                fi
+
+                # Return default value if intermediate object is not a hash
+                if [ "$current_cls" != "OHash" ]; then
+                    __OHash___read_default_value "$root_obj"
+                    return 0
+                fi
+
+                # Traverse to next object if key exists
+                if __OHash___has "$current_obj" "$k"; then
+                    next_obj=$(__OHash___get "$current_obj" "$k")
+                    if [ -f "$_OO_STORE/instances/$next_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$next_obj/__class__")" = "OHash" ]; then
+                        current_obj="$next_obj"
+                    else
+                        __OHash___read_default_value "$root_obj"
+                        return 0
+                    fi
+                else
+                    __OHash___read_default_value "$root_obj"
+                    return 0
+                fi
+            done
+
+            # Get final key value
+            local last_key="${keys[num_keys - 1]}"
+            current_cls=""
+            if [ -f "$_OO_STORE/instances/$current_obj/__class__" ]; then
+                current_cls=$(cat "$_OO_STORE/instances/$current_obj/__class__")
+            fi
+
+            # If current object is OHash, dispatch get method; otherwise return default
+            if [ "$current_cls" = "OHash" ]; then
+                local get_cls
+                get_cls=$(__oo_resolve_method_class OHash get) || return 1
+                this="$current_obj" "__${get_cls}_get" "$last_key"
+                return $?
+            else
+                __OHash___read_default_value "$root_obj"
+                return 0
+            fi
+        fi
+    }
+
+    # Interceptor function for command-not-found invocations related to OHash
+    __OHash_command_not_found_handle() {
+        # Unrecognized command name
+        local cmd="$1"
+        # Shift command name
+        shift
+        # Store command arguments
+        local args=("$@")
+
+        # Intercept inline hash literal: obj = { ... }
+        if [[ "$cmd" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] && [ "${args[0]}" = "=" ] && [ "${args[1]}" = "{" ]; then
+            # Extract raw tokens after '='
+            local raw_tokens=("${args[@]:1}")
+            # Tokenize braces and words
+            __OHash_tokenize "${raw_tokens[@]}"
+            # Count total parsed tokens
+            local total_tokens="${#__TOKENIZED[@]}"
+            # Ensure literal starts with '{' and ends with '}'
+            if [ "$total_tokens" -lt 2 ] || [ "${__TOKENIZED[0]}" != "{" ] || [ "${__TOKENIZED[total_tokens - 1]}" != "}" ]; then
                 echo "OHash: hash literal must end with '}'" >&2
                 return 2
             fi
 
+            # Instantiate empty OHash object
             __OHash_delegate_command_not_found_handle "$cmd" = new OHash || return $?
-            local literal_setter_class
-            literal_setter_class=$(__oo_resolve_method_class OHash set) || return 1
-            for i in "${!literal_keys[@]}"; do
-                this="$cmd" "__${literal_setter_class}_set" "${literal_keys[i]}" "${literal_values[i]}" || return $?
-            done
+            # If literal has key/value contents, populate them into the hash
+            if [ "$total_tokens" -gt 2 ]; then
+                __OHash_populate_literal "$cmd" 1 $((total_tokens - 2)) "${__TOKENIZED[@]}" || return $?
+            fi
+            # Return success
             return 0
         fi
 
+        # Intercept multiline / quoted string literal hash definition: obj = "{ ... }" or obj = '{ ... }'
+        if [[ "$cmd" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] && [ "${args[0]}" = "=" ] && [ "${#args[@]}" -ge 2 ]; then
+            # Join RHS arguments
+            local rhs="${args[*]:1}"
+            # Trim leading whitespace
+            local trimmed_rhs="${rhs#"${rhs%%[![:space:]]*}"}"
+            # Trim trailing whitespace
+            trimmed_rhs="${trimmed_rhs%"${trimmed_rhs##*[![:space:]]}"}"
+            # Check if trimmed string starts with '{' and ends with '}'
+            if [[ "$trimmed_rhs" =~ ^\{.*\}$ ]]; then
+                # Evaluate RHS inside array to parse bash quoted words and newlines
+                local -a raw_tokens=()
+                if eval "raw_tokens=($rhs)" 2>/dev/null; then
+                    # Tokenize braces and words
+                    __OHash_tokenize "${raw_tokens[@]}"
+                    # Count total parsed tokens
+                    local total_tokens="${#__TOKENIZED[@]}"
+                    # Ensure literal starts with '{' and ends with '}'
+                    if [ "$total_tokens" -ge 2 ] && [ "${__TOKENIZED[0]}" = "{" ] && [ "${__TOKENIZED[total_tokens - 1]}" = "}" ]; then
+                        # Instantiate empty OHash object
+                        __OHash_delegate_command_not_found_handle "$cmd" = new OHash || return $?
+                        # Populate hash entries if present
+                        if [ "$total_tokens" -gt 2 ]; then
+                            __OHash_populate_literal "$cmd" 1 $((total_tokens - 2)) "${__TOKENIZED[@]}" || return $?
+                        fi
+                        # Return success
+                        return 0
+                    fi
+                fi
+            fi
+        fi
+
+        # Guard against direct calls to private methods (obj.__method)
         if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\.__([a-zA-Z0-9_]+)$ ]]; then
+            # Extract object name
             local private_obj="${BASH_REMATCH[1]}"
+            # Verify if object belongs to OHash class
             if [ -f "$_OO_STORE/instances/$private_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$private_obj/__class__")" = OHash ]; then
                 echo "OHash: private methods cannot be called on an object" >&2
                 return 1
             fi
         fi
 
-        if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\[(.*)\](=(.*))?$ ]]; then
+        # Intercept bracket indexing syntax: obj[:key] or obj[:key] = value
+        if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)(\[.+\])(=(.*))?$ ]]; then
+            # Extract target object name
             local indexed_obj="${BASH_REMATCH[1]}"
-            local indexed_key="${BASH_REMATCH[2]}"
+            # Extract bracket path expression
+            local indexed_brackets="${BASH_REMATCH[2]}"
+            # Extract inline value if assigned with =
             local indexed_value="${BASH_REMATCH[4]}"
+            # Flag for assignment mode
             local indexed_assignment=false
 
+            # Check if equals sign was attached or passed as subsequent argument
             if [ "${BASH_REMATCH[3]}" = "=" ] || [ "${args[0]}" = "=" ]; then
                 indexed_assignment=true
+                # If value not in command token, get from arguments
                 [ "${BASH_REMATCH[3]}" = "=" ] || indexed_value="${args[*]:1}"
             fi
 
+            # Check if object is an OHash instance
             if [ -f "$_OO_STORE/instances/$indexed_obj/__class__" ] && [ "$(cat "$_OO_STORE/instances/$indexed_obj/__class__")" = OHash ]; then
-                if [ -z "$indexed_key" ]; then
-                    echo "OHash: empty keys are not allowed" >&2
-                    return 2
-                fi
-
-                local indexed_method="get"
-                local indexed_method_class
-                if [ "$indexed_assignment" = true ]; then
-                    indexed_method="set"
-                fi
-
-                if indexed_method_class=$(__oo_resolve_method_class OHash "$indexed_method"); then
-                    if [ "$indexed_assignment" = true ]; then
-                        this="$indexed_obj" "__${indexed_method_class}_${indexed_method}" "$indexed_key" "$indexed_value"
-                    else
-                        this="$indexed_obj" "__${indexed_method_class}_${indexed_method}" "$indexed_key"
-                    fi
-                    return $?
-                fi
+                # Resolve path and read or write value
+                __OHash_resolve_path "$indexed_obj" "$indexed_brackets" "$indexed_assignment" "$indexed_value"
+                return $?
             fi
         fi
 
+        # Bare OHash evaluation: prints through to_s when entered without arguments
+        if [[ "$cmd" =~ ^[a-zA-Z0-9_]+$ ]] && [ "${#args[@]}" -eq 0 ] && \
+            [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
+            # Resolve object class and to_s method
+            local object_cls tostring_cls
+            object_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
+            if [ "$object_cls" = "OHash" ] && \
+                tostring_cls=$(__oo_resolve_method_class "$object_cls" to_s); then
+                # Execute to_s method on bare object
+                this="$cmd" "__${tostring_cls}_to_s"
+                return $?
+            fi
+        fi
+
+        # Delegate unrecognized commands to the previous handler in the chain
         __OHash_delegate_command_not_found_handle "$cmd" "${args[@]}"
     }
 
+    # Set command_not_found_handle entrypoint to __OHash_command_not_found_handle
     command_not_found_handle() {
         __OHash_command_not_found_handle "$@"
     }
 
+    # Backup original echo function if defined
+    if declare -f echo >/dev/null && ! declare -f __OHash_orig_echo >/dev/null; then
+        eval "$(declare -f echo | sed '1s/^echo ()/__OHash_orig_echo ()/')"
+    fi
+
+    # Override echo to support bare OHash/OString and bracket expression expansion
+    echo() {
+        # Array to store resolved arguments
+        local -a resolved=()
+        # Declare loop variables
+        local arg obj val
+        # Process each argument passed to echo
+        for arg in "$@"; do
+            # Check if argument is an indexed bracket expression: obj[...]
+            if [[ "$arg" =~ ^([a-zA-Z0-9_]+)(\[[^]]*\])+$ ]]; then
+                obj="${BASH_REMATCH[1]}"
+                # If object instance exists, evaluate the command expression
+                if [ -n "$_OO_STORE" ] && [ -f "$_OO_STORE/instances/$obj/__class__" ]; then
+                    val=$("$arg")
+                    resolved+=("$val")
+                    continue
+                fi
+            # Check if argument is a bare object identifier
+            elif [[ "$arg" =~ ^[a-zA-Z0-9_]+$ ]]; then
+                # If object instance exists in store
+                if [ -n "$_OO_STORE" ] && [ -f "$_OO_STORE/instances/$arg/__class__" ]; then
+                    local cls
+                    cls=$(cat "$_OO_STORE/instances/$arg/__class__")
+                    # If object is an OHash instance, format via __OHash_to_s
+                    if [ "$cls" = "OHash" ]; then
+                        val=$(this="$arg" __OHash_to_s)
+                        resolved+=("$val")
+                        continue
+                    # If object is an OString instance, format via __OString_to_s
+                    elif [ "$cls" = "OString" ]; then
+                        val=$(this="$arg" __OString_to_s)
+                        resolved+=("$val")
+                        continue
+                    fi
+                fi
+            fi
+            # Append unresolved argument as-is
+            resolved+=("$arg")
+        done
+        # Dispatch to previously defined echo or builtin echo
+        if type __OHash_orig_echo &>/dev/null; then
+            __OHash_orig_echo "${resolved[@]}"
+        elif [ -n "$APP_LOG" ]; then
+            builtin echo -e "${resolved[@]}" | tee -a "$APP_LOG"
+        else
+            builtin echo -e "${resolved[@]}"
+        fi
+    }
+
+    # Mark the OHash command handler as successfully installed
     _OHASH_COMMAND_HANDLER_INSTALLED=true
 fi
