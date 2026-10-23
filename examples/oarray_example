@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Saturday, 2026/10/03 - 17:00:22
+# Last Modified: Thursday, 2026/10/22 - 23:32:19
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.156
+# Version: 0.0.8.290
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -21,73 +21,118 @@ source "$xSHELL_INIT"
 xs_use OArray
 
 # Example usage
-literal_array = [1, 2, 3]
-echo "literal_array = [1, 2, 3]: $(literal_array.to_s)"
-literal_array = "(3, 4, 5)"
-echo "Comma-separated array - literal_array = \"(3, 4, 5)\": $(literal_array.to_s)"
-literal_array = "(6 7 8)"
-echo "Space-separated array - literal_array = \"(6 7 8)\": $(literal_array.to_s)"
+echo ----------------------------------------------------------
+echo "OArray - Object creation" 
+echo ----------------------------------------------------------
 
+# arr = new OArray [1, 2]
 arr = new OArray
-arr.add "pineapple"
-arr.push "banana"
-arr.push "cherry"
-arr.push "apple"
-arr.push "melon"
-arr.push "mango"
-arr.push "melon"  # Duplicate, should not be added again
-arr.push "nuts"
+echo "arr = new OArray                : $(arr.to_s)  # Empty array"
+literal_array = [1, 2, 3]
+echo "literal_array = [1, 2, 3]       : $(literal_array.to_s)  # literal array creation"
+literal_array = [3 4 5]
+echo "literal_array = [3 4 5]         : $(literal_array.to_s)  # literal array creation"
+literal_array = "(6, 7, 8)"
+echo "literal_array = \"(6, 7, 8)\"     : $(literal_array.to_s)  # Comma-separated array"
+literal_array = "(9 10 11)"
+echo "literal_array = \"(9 10 11)\"     : $(literal_array.to_s)  # Space-separated array"
 
-echo "Array: $(arr.to_s)"
-echo "Size.: $(arr.size)"
-echo "Count: $(arr.count)"
 echo
-echo "Is array empty? $(arr.empty)"
-echo "First element.: $(arr.first)"
-echo "Last element..: $(arr.last)"
+echo ----------------------------------------------------------
+echo "OArray - element addition and basic operations" 
+echo ----------------------------------------------------------
+arr.add "pineapple"
+echo "arr.add \"pineapple\"             : $(arr.to_s)  # Adding an element (.add or .push)"
+arr.push "banana"
+echo "arr.push \"banana\"               : $(arr.to_s)"
+arr.push "cherry"
+echo "arr.push \"cherry\"               : $(arr.to_s)"
+arr.push "apple"
+echo "arr.push \"apple\"                : $(arr.to_s)"
+arr.push "melon"
+echo "arr.push \"melon\"                : $(arr.to_s)"
+arr.push "mango"
+echo "arr.push \"mango\"                : $(arr.to_s)"
+arr.push "melon"
+echo "arr.push \"melon\"                : $(arr.to_s)"
+arr.push "nuts"
+echo "arr.push \"nuts\"                 : $(arr.to_s)"
 
-echo "Element at index 1: $(arr.at 1)"
-echo "Is 'banana' included? $(arr.include "banana")"
-echo "Index of 'cherry': $(arr.index_of "cherry")"
+echo
+echo "arr.class                       : $(arr.class)"
+echo "arr.to_s                        : $(arr.to_s)"
+echo "arr.size / arr.count            : $(arr.size) / $(arr.count) "
+
+echo
+echo "arr.empty                       : $(arr.empty)"
+echo "arr.first                       : $(arr.first)"
+echo "arr.last                        : $(arr.last) "
+
+echo "arr.at 3                        : $(arr.at 3) "
+echo "arr.values                      : $(arr.values) "
+# echo "arr[2]                          : $(arr[2])    # Accessing element at index 2 using bracket notation"
+echo "arr.include \"banana\"            : $(arr.include "banana") "
+echo "arr.index_of \"cherry\"           : $(arr.index_of "cherry") "
+echo "arr.sort asc                    : $(arr.sort asc)"
+echo "arr.sort desc                   : $(arr.sort desc)"
+echo "arr.reverse                     : $(arr.reverse)"
+echo "arr.uniq                        : $(arr.uniq)"
+arr.delete_at 1
+echo "arr.delete_at 1                 : $(arr.to_s)"
+arr.pop
+echo "arr.pop                         : $(arr.to_s)"
+
+echo
+literal_array.add 12
+values=$(literal_array.values)
+values=${values// /+}
+echo "literal_array.add 12            : $(literal_array.to_s)"
+echo "literal_array.sum               : ${values} = $(literal_array.sum)"
+
+echo
+echo ----------------------------------------------------------
+echo "OArray - iteration examples"
+echo ----------------------------------------------------------
 
 # Iterate over the array using string command 
 #   `-> change @var_name as you want. Ex @item, @fruit, @value, etc)
 #   `-> bellow, each item is available as @var_name.
-echo -e "\n.each (one string - simple syntax)"
+echo -e "\n# .each (one string - simple syntax)"
+echo -e "arr.each \"echo simple item: @e\"\n"
 arr.each "echo simple item: @e"
 
-echo -e "\n.each (heredoc block)"
+echo -e "\n# .each (heredoc block)"
+echo 'arr.each fruit <<DO
+    echo "Fruit: @fruit"
+DO
+'
 # Iterate over the array using each block
 arr.each fruit <<DO
     echo "Fruit: @fruit"
 DO
 
-echo -e "\n.each (heredoc block with index/value)"
+echo -e "\n# .each (heredoc block with index/value)"
+echo 'arr.each i,v <<DO
+    echo "Index: @i - Value: @v"
+DO
+'
 # Iterate over the array using each block with index/value
 arr.each i,v <<DO
     echo "Index: @i - Value: @v"
 DO
 
-echo -e "\n.each (two strings - vars and block)"
+echo -e "\n# .each (two strings - vars and block)"
+echo -e "arr.each i,v 'DO 
+    echo \"Index: @i - Value: @v\"
+DONE'
+"
+
 arr.each i,v 'DO 
     echo "Index: @i - Value: @v"
 DONE'
 
 echo
-
-echo "Array as string: $(arr.to_s)"
-echo "Sorted (asc).: $(arr.sort asc)"
-echo "Sorted (desc): $(arr.sort desc)"
-echo "Reversed.....: $(arr.reverse)"
-echo "Sum..........: $(arr.sum)"
-echo "Unique.......: $(arr.uniq)"
-
-arr.delete_at 1
-echo "Array after deleting element at index 1: $(arr.to_s)"
-
-arr.pop
-echo "Array after popping last element: $(arr.to_s)"
-
+echo ----------------------------------------------------------
 arr.clear
-echo "Array after clearing: $(arr.to_s)"
-echo "Is array empty? $(arr.empty)"
+echo "arr.clear                       : $(arr.to_s)"
+echo "arr.empty                       : $(arr.empty)"

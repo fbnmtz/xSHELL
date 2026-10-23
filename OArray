@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/09/22 - 12:40:28
+# Last Modified: Thursday, 2026/10/22 - 23:32:25
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.6.230
+# Version: 0.0.7.235
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -221,8 +221,15 @@ class OArray {
         if [ -z "$elements" ]; then
             echo "()"
         else
-            echo "( ${elements//$'\n'/ } )"
+            echo "(${elements//$'\n'/ })"
         fi
+    }
+
+    # Method to return all values (space-separated)
+    method values() {
+        local elements
+        elements=$(this.__contents)
+        echo "${elements//$'\n'/ }"
     }
 
     # Method to get the first element of the array
