@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Sunday, 2026/10/18 - 02:36:57
+# Last Modified: Monday, 2026/11/02 - 15:45:17
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.9.94
+# Version: 0.1.10.100
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -47,6 +47,11 @@ else
 fi
 mkdir -p "$_OO_STORE/classes" "$_OO_STORE/instances"
 _OO_OWNER_PID="$BASHPID"
+
+# Load root base class OObject if available
+if type xs_use &>/dev/null && [ "${_xLIB_OOBJECT_:-false}" != true ]; then
+    xs_use OObject
+fi
 
 # Ensure cleanup of temporary object directory on exit
 __oo_cleanup() {
@@ -88,6 +93,7 @@ class() {
     _OO_CURRENT_CLASS="$1"
     _OO_VIS_MODE="auto"
     shift
+    local has_parent=false
     while [ $# -gt 0 ]; do
         case "$1" in
             --visibility=*)
@@ -99,12 +105,19 @@ class() {
                 ;;
             extends|:)
                 shift
+                has_parent=true
                 mkdir -p "$_OO_STORE/classes/$_OO_CURRENT_CLASS"
                 echo "$1" > "$_OO_STORE/classes/$_OO_CURRENT_CLASS/parent"
                 ;;
         esac
         shift
     done
+
+    # Implicit inheritance: classes automatically inherit from OObject unless explicit or OObject itself
+    if [ "$has_parent" = false ] && [ "$_OO_CURRENT_CLASS" != "OObject" ]; then
+        mkdir -p "$_OO_STORE/classes/$_OO_CURRENT_CLASS"
+        echo "OObject" > "$_OO_STORE/classes/$_OO_CURRENT_CLASS/parent"
+    fi
 
     mkdir -p "$_OO_STORE/classes/$_OO_CURRENT_CLASS/visibility"
     echo "$_OO_VIS_MODE" > "$_OO_STORE/classes/$_OO_CURRENT_CLASS/vis_mode"
@@ -403,14 +416,27 @@ __oo_instantiate() {
     mkdir -p "$_OO_STORE/instances/$obj"
     printf '%s\n' "$cls" > "$_OO_STORE/instances/$obj/__class__"
 
-    if [ -d "$_OO_STORE/classes/$cls" ]; then
-        local def_file aname
-        for def_file in "$_OO_STORE/classes/$cls"/default_*; do
-            [ -f "$def_file" ] || continue
-            aname=$(basename "$def_file" | sed 's/^default_//')
-            cp "$def_file" "$_OO_STORE/instances/$obj/$aname"
-        done
-    fi
+    local target_cls="$cls"
+    local -a inheritance_chain=()
+    while [ -n "$target_cls" ]; do
+        inheritance_chain=("$target_cls" "${inheritance_chain[@]}")
+        if [ -f "$_OO_STORE/classes/$target_cls/parent" ]; then
+            target_cls=$(cat "$_OO_STORE/classes/$target_cls/parent")
+        else
+            target_cls=""
+        fi
+    done
+
+    local chain_cls def_file aname
+    for chain_cls in "${inheritance_chain[@]}"; do
+        if [ -d "$_OO_STORE/classes/$chain_cls" ]; then
+            for def_file in "$_OO_STORE/classes/$chain_cls"/default_*; do
+                [ -f "$def_file" ] || continue
+                aname=$(basename "$def_file" | sed 's/^default_//')
+                cp "$def_file" "$_OO_STORE/instances/$obj/$aname"
+            done
+        fi
+    done
 
     local ctor_cls
     if ctor_cls=$(__oo_resolve_method_class "$cls" init); then
@@ -429,7 +455,7 @@ fi
 # 1. Object construction: obj = new Class [args...]
 # 2. OArray literals: obj = [items...] or obj = (items...) when OArray is loaded.
 # 3. OString construction: obj = "text", obj = OString(value), or obj = OString heredoc.
-# 4. OString numeric indexing: obj[index] reads a character; obj[index]=value replaces it.
+# 4. OString/OArray numeric indexing: obj[index] reads a character; obj[index]=value replaces it.
 # 5. Attribute assignment: obj.attr = value or obj.attr=value.
 # 6. Bare OString evaluation: obj runs its to_s method when entered without arguments.
 # 7. Member access: obj.method [args...] dispatches a method; obj.attr reads an instance attribute.
@@ -457,7 +483,7 @@ command_not_found_handle() {
         return 0
     fi
 
-    # 4. Route numeric bracket access on OString instances to its indexed getter or setter.
+    # 4. Route numeric bracket access on OString/OArray instances to its indexed getter or setter.
     if [[ "$cmd" =~ ^([a-zA-Z0-9_]+)\[([0-9]+)\](=(.*))?$ ]]; then
         local indexed_obj="${BASH_REMATCH[1]}"
         local indexed_index="${BASH_REMATCH[2]}"
@@ -469,14 +495,25 @@ command_not_found_handle() {
             [ "${BASH_REMATCH[3]}" = "=" ] || indexed_value="${args[*]:1}"
         fi
 
-        if [ -f "$_OO_STORE/instances/$indexed_obj/__class__" ] && \
-            [ "$(cat "$_OO_STORE/instances/$indexed_obj/__class__")" = OString ]; then
-            local indexed_method="__index_get"
-            if [ "$indexed_assignment" = true ]; then
-                indexed_method="__index_set"
+        if [ -f "$_OO_STORE/instances/$indexed_obj/__class__" ]; then
+            local obj_cls
+            obj_cls=$(cat "$_OO_STORE/instances/$indexed_obj/__class__")
+            if [ "$obj_cls" = OString ]; then
+                local indexed_method="__index_get"
+                if [ "$indexed_assignment" = true ]; then
+                    indexed_method="__index_set"
+                fi
+                this="$indexed_obj" "__OString_${indexed_method}" "$indexed_index" "$indexed_value"
+                return $?
+            elif [ "$obj_cls" = OArray ]; then
+                if [ "$indexed_assignment" = true ]; then
+                    this="$indexed_obj" "__OArray___index_set" "$indexed_index" "$indexed_value"
+                    return $?
+                else
+                    this="$indexed_obj" "__OArray_at" "$indexed_index"
+                    return $?
+                fi
             fi
-            this="$indexed_obj" "__OString_${indexed_method}" "$indexed_index" "$indexed_value"
-            return $?
         fi
     fi
 
@@ -546,12 +583,12 @@ command_not_found_handle() {
         return 0
     fi
 
-    # 6. Make a bare OString or OHash object print through to_s; other bare object names fall through normally.
+    # 6. Make a bare OString/OHash/OArray object print through to_s; other bare object names fall through normally.
     if [[ "$cmd" =~ ^[a-zA-Z0-9_]+$ ]] && [ "${#args[@]}" -eq 0 ] && \
         [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
         local object_cls tostring_cls
         object_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
-        if [[ "$object_cls" =~ ^(OString|OHash)$ ]] && \
+        if [[ "$object_cls" =~ ^(OString|OHash|OArray)$ ]] && \
             tostring_cls=$(__oo_resolve_method_class "$object_cls" to_s); then
             this="$cmd" "__${tostring_cls}_to_s"
             return $?

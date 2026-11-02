@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/10/22 - 23:32:25
+# Last Modified: Monday, 2026/11/02 - 15:45:41
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.7.235
+# Version: 0.0.8.239
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -17,7 +17,7 @@
 # HISTORY:
 #
 
-_xLIB_TARRAY_=true;
+_xLIB_OARRAY_=true
 
 xs_use oo
 
@@ -89,6 +89,31 @@ class OArray {
         local elements
         elements=$(this.__contents)
         echo "$elements" | sed -n "${index}p"
+    }
+
+    # Method to set an element by index (called by arr[index] = value)
+    method __index_set() {
+        local index="$1"
+        local new_val="$2"
+        [ "$index" -ge 1 ] || return 2
+        local elements el idx=1 updated=()
+        elements=$(this.__contents)
+        while IFS= read -r el; do
+            [ -n "$el" ] || continue
+            if [ "$idx" -eq "$index" ]; then
+                updated+=("$new_val")
+            else
+                updated+=("$el")
+            fi
+            idx=$((idx + 1))
+        done <<< "$elements"
+        # If index was beyond current size, append it
+        if [ "$index" -ge "$idx" ]; then
+            updated+=("$new_val")
+        fi
+        local joined
+        joined=$(printf '%s\n' "${updated[@]}")
+        this.elements="($joined)"
     }
 
     # Method to check if an element is in the array

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# ############################################################################
+# Project: xSHELL (none)
+# File...: OObject
+# Created: Thursday, 2026/10/22 - 23:45:00
+# Author.: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Last Modified: Monday, 2026/11/02 - 15:44:58
+# Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Version: 0.0.1.4
+# ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
+# Description: 
+#  > Universal Root Base Class for the xSHELL Object Orientation (OO) system
+# ############################################################################
+# HISTORY:
+#
+
+# Mark the OObject library module as loaded in xSHELL
+_xLIB_OOBJECT_=true
+
+# Import the object-orientation library dependency
+xs_use oo
+
+# Declare universal base class OObject
+class OObject {
+    # Default string representation: <ClassName:objectId>
+    method to_s() {
+        local cls="Object"
+        if [ -n "$this" ] && [ -f "$_OO_STORE/instances/$this/__class__" ]; then
+            cls=$(cat "$_OO_STORE/instances/$this/__class__")
+        fi
+        printf '#<%s:%s>\n' "$cls" "$this"
+    }
+
+    # Default formatted string representation
+    method to_pretty() {
+        this.to_s
+    }
+
+    # Alias to to_pretty
+    method pretty() {
+        this.to_pretty
+    }
+
+    # Alias to to_pretty
+    method inspect() {
+        this.to_pretty
+    }
+
+    # Return the object's class name
+    method class_name() {
+        if [ -n "$this" ] && [ -f "$_OO_STORE/instances/$this/__class__" ]; then
+            cat "$_OO_STORE/instances/$this/__class__"
+        else
+            printf 'Object\n'
+        fi
+    }
+}
+

@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Thursday, 2026/10/22 - 23:32:19
+# Last Modified: Monday, 2026/11/02 - 15:45:29
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.8.290
+# Version: 0.0.9.304
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -60,6 +60,7 @@ echo "arr.push \"nuts\"                 : $(arr.to_s)"
 
 echo
 echo "arr.class                       : $(arr.class)"
+echo "arr                             : $(arr)"
 echo "arr.to_s                        : $(arr.to_s)"
 echo "arr.size / arr.count            : $(arr.size) / $(arr.count) "
 
@@ -69,9 +70,12 @@ echo "arr.first                       : $(arr.first)"
 echo "arr.last                        : $(arr.last) "
 
 echo "arr.at 3                        : $(arr.at 3) "
+echo "arr[2]                          : $(arr[2]) # Accessing element at index 2 using bracket notation"
+arr[2] = "blueberry"
+echo "arr[2] = \"blueberry\"            : $(arr.to_s)  # Setting element at index 2 using bracket notation"
 echo "arr.values                      : $(arr.values) "
-# echo "arr[2]                          : $(arr[2])    # Accessing element at index 2 using bracket notation"
 echo "arr.include \"banana\"            : $(arr.include "banana") "
+echo "arr.include \"apple\"             : $(arr.include "apple") "
 echo "arr.index_of \"cherry\"           : $(arr.index_of "cherry") "
 echo "arr.sort asc                    : $(arr.sort asc)"
 echo "arr.sort desc                   : $(arr.sort desc)"
@@ -81,8 +85,15 @@ arr.delete_at 1
 echo "arr.delete_at 1                 : $(arr.to_s)"
 arr.pop
 echo "arr.pop                         : $(arr.to_s)"
+arr.pop
+echo "arr.pop                         : $(arr.to_s)"
+arr.pop
+echo "arr.pop                         : $(arr.to_s)"
+arr.pop
+echo "arr.pop                         : $(arr.to_s)"
 
 echo
+echo "literal_array.to_s              : $(literal_array.to_s)"
 literal_array.add 12
 values=$(literal_array.values)
 values=${values// /+}
