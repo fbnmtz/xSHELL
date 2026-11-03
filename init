@@ -6,10 +6,10 @@
 # Created: Thursday, 2021/05/20 - 13:18:34
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/09/21 - 19:41:43
+# Last Modified: Tuesday, 2026/11/03 - 00:16:34
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.48.1367
+# Version: 0.1.49.1372
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description:
 #  >
@@ -60,11 +60,13 @@ xSHELL_LIBS=()
 # PATHs to search a LIB
 xSHELL_DIRS=(
     "$xSHELL_PATH/"         # 1
-    "$xSHELL_PATH/lib/"     # 2
-    "$xSHELL_PATH/vendor/"  # 3
-    "$APP_DIR/"             # 4
-    "$APP_DIR/lib/"         # 5
-    "$APP_DIR/vendor/"      # 6
+    "$xSHELL_PATH/classes/" # 2
+    "$xSHELL_PATH/lib/"     # 3
+    "$xSHELL_PATH/vendor/"  # 4
+    "$APP_DIR/"             # 5
+    "$APP_DIR/classes/"     # 6
+    "$APP_DIR/lib/"         # 7
+    "$APP_DIR/vendor/"      # 8
 )
 # OLD DIRs
     # "$xSHELL_PATH/lib/functions/"
