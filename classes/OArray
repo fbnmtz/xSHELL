@@ -2,324 +2,481 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: OArray
+# File...: classes/OArray
 # Created: Sunday, 2026/09/20 - 01:08:43
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/11/02 - 15:45:41
+# Last Modified: Saturday, 2026/11/07 - 18:24:49
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.8.239
+# Version: 0.0.9.246
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
-#  >
+#  > Ordered collection class (Array) for the xSHELL Object Orientation (OO) system
+#  > Inherits from OCollection (which inherits from OObject)
 # ############################################################################
 # HISTORY:
 #
 
+# Mark the OArray library module as loaded in xSHELL to prevent double inclusion
 _xLIB_OARRAY_=true
 
-xs_use oo
+# Import the base collection class dependency (OCollection inherits from OObject and imports oo)
+xs_use OCollection
 
-# Class OArray
-class OArray {
-    # property name default_value
+# Declare class OArray extending OCollection
+class OArray extends OCollection {
+
+    # Declare the elements property that holds the array elements represented as (item1\nitem2...)
     property elements
 
+    # Internal helper function to extract raw element lines stripping the enclosing parenthesis
     function __contents() {
+        # Declare local variable for raw elements string
         local elements
+        # Read the current value of the elements property
         elements="$(this.elements)"
+        # Strip leading opening parenthesis '('
         elements="${elements#(}"
+        # Strip trailing closing parenthesis ')'
         elements="${elements%)}"
+        # Output raw newline-delimited elements string without adding trailing newline
         printf '%s' "$elements"
     }
 
-    # constructor() or init()
+    # Constructor method for OArray instances (accepts comma-separated, space-separated, bracketed, or parenthesized values)
     define constructor() {
+        # Initialize elements property with an empty collection string "()"
         this.elements="()"
+        # Capture all constructor arguments as a single string
         local values="$*"
+        # Declare loop variable for initial elements
         local element
+        # Strip leading bracket '[' if provided in literal format
         values="${values#[}"
+        # Strip trailing bracket ']' if provided in literal format
         values="${values%]}"
+        # Strip leading parenthesis '(' if provided in tuple format
         values="${values#(}"
+        # Strip trailing parenthesis ')' if provided in tuple format
         values="${values%)}"
+        # Normalize commas into spaces so words can be read into an array
         values="${values//,/ }"
+        # Declare indexed array for parsed initial elements
         local -a initial_elements=()
+        # Read whitespace-separated tokens into initial_elements array
         read -r -a initial_elements <<< "$values"
+        # Iterate over each token and push it into the array instance
         for element in "${initial_elements[@]}"; do
+            # Append each element using the push method
             this.push "$element"
         done
     }
 
-    # Method to add an element to the array
+    # Public method: push(element) - appends an element to the end of the array
     method push() {
+        # The new element to append
         local element="$1"
+        # Declare local variable for current contents
         local elements
+        # Retrieve current inner elements without enclosing parentheses
         elements=$(this.__contents)
+        # If the array is not currently empty, append a newline separator before the new element
         [ -n "$elements" ] && elements+=$'\n'
+        # Append the new element string
         elements+="$element"
+        # Update the instance elements property wrapped in parentheses
         this.elements="($elements)"
     }
 
-    # Method (alias for push)
+    # Public method: add(element) - alias for push
     method add() {
+        # Forward argument to push method
         this.push "$1"
     }
 
-    # Method to get the size of the array
+    # Public method: size() - returns the total number of elements in the array
     method size() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Initialize element counter to 0
         local count=0
+        # Iterate over each newline-separated line
         while IFS= read -r line; do
+            # Increment counter only for non-empty lines
             [ -n "$line" ] && count=$((count + 1))
         done <<< "$elements"
+        # Output the total count
         echo "$count"
     }
 
-    # Method to get the count of elements in the array (alias for size)
+    # Public method: count() - alias for size
     method count() {
+        # Delegate call to size method
         this.size
     }
 
-    # Method to get an element by index
+    # Public method: at(index) - retrieves the element at 1-based index
     method at() {
+        # The 1-based index of the element to retrieve
         local index="$1"
+        # Return success with empty output if index is less than 1
         [ "$index" -ge 1 ] || return 0
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Extract and print only the specified line using sed
         echo "$elements" | sed -n "${index}p"
     }
 
-    # Method to set an element by index (called by arr[index] = value)
+    # Private/Internal method: __index_set(index, value) - updates element at 1-based index (invoked by arr[index] = value)
     method __index_set() {
+        # Target 1-based index
         local index="$1"
+        # New value to assign at the specified index
         local new_val="$2"
+        # Return error code 2 if index is not a valid 1-based number
         [ "$index" -ge 1 ] || return 2
+        # Declare local loop and accumulator variables
         local elements el idx=1 updated=()
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Iterate over current elements line by line
         while IFS= read -r el; do
+            # Skip empty lines
             [ -n "$el" ] || continue
+            # If current position matches target index, insert new value; otherwise keep existing element
             if [ "$idx" -eq "$index" ]; then
+                # Replace with new value
                 updated+=("$new_val")
             else
+                # Preserve existing element
                 updated+=("$el")
             fi
+            # Increment current 1-based position counter
             idx=$((idx + 1))
         done <<< "$elements"
-        # If index was beyond current size, append it
+        # If the target index was greater than or equal to the count of elements, append the new value
         if [ "$index" -ge "$idx" ]; then
+            # Append new value at the end
             updated+=("$new_val")
         fi
+        # Declare local variable for joined elements
         local joined
+        # Join array elements with newline characters
         joined=$(printf '%s\n' "${updated[@]}")
+        # Store updated string wrapped in parentheses back into elements property
         this.elements="($joined)"
     }
 
-    # Method to check if an element is in the array
+    # Public method: include(element) - checks if the given element exists in the array
     method include() {
+        # Element to search for
         local element="$1"
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Check if element matches any line exactly using grep (-q: quiet, -x: exact line, -F: fixed string)
         if echo "$elements" | grep -qxF "$element"; then
+            # Output true if found
             echo "true"
         else
+            # Output false if not found
             echo "false"
         fi
     }
 
-    # Method to get the index of an element
+    # Public method: index_of(element) - returns the 1-based index of element, or -1 if absent
     method index_of() {
+        # Element to look up
         local element="$1"
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Initialize 1-based index counter to 1
         local index=1
+        # Read elements line by line
         while IFS= read -r line; do
+            # Check if current line equals the target element
             if [ "$line" = "$element" ]; then
+                # Output matching 1-based index
                 echo "$index"
+                # Return success
                 return 0
             fi
+            # Increment index counter
             index=$((index + 1))
         done <<< "$elements"
+        # Output -1 if element was not found in the array
         echo "-1"
     }
     
-    # Method to iterate over the elements of the array
+    # Public method: each(block) - iterates over array elements with inline string, block, or heredoc
     method each() {
+        # First argument: variable name(s) or inline block string
         local arg="$1"
+        # Variable to accumulate block commands to execute
         local block=""
+        # Variable to read lines when reading block input
         local line
+        # Variable names to populate (e.g. "element" or "i,v")
         local var_names=""
 
-        # --- Detects call form: inline or heredoc ---
-        if [[ ! -t 0 ]]; then
+        # Detect calling convention: heredoc (stdin has data), inline, or multi-argument block
+        if [[ ! -t 0 ]] && IFS= read -r -t 0 line; then
+            # Heredoc form detected: variable name passed as argument, body provided via stdin
             xs_debug -l 3 "heredoc detected"
-            # heredoc form: arr.each fruit <<DO ... DO
-            #                arr.each i,v   <<DO ... DO
+            # Assign variable names from argument
             var_names="$arg"
+            # Read block lines until EOF or marker line matching "^DO$"
             while IFS= read -r line; do
+                # Stop reading when DO marker is reached
                 [[ "$line" =~ ^DO$ ]] && break
+                # Append line and newline to block
                 block+="$line"$'\n'
             done
         elif [[ "$arg" == *" "* ]]; then
-            # inline form: arr.each "echo @element"
+            # Inline command string form: e.g. arr.each "echo @element"
             xs_debug -l 3 "inline detected"
+            # Use argument as the block code
             block="$arg"
-            # Extract the variable name from @varname, otherwise use "element"
+            # Check if block mentions placeholder @var_name to extract custom variable name
             if [[ "$arg" =~ \@([a-zA-Z_][a-zA-Z0-9_]*) ]]; then
+                # Use name captured from regex
                 var_names="${BASH_REMATCH[1]}"
             else
+                # Default variable name to "element"
                 var_names="element"
             fi
         else
-            # new form: arr.each i,v 'DO ... DONE'
+            # Explicit string block form: e.g. arr.each i,v 'DO ... DONE'
             xs_debug -l 3 "string block detected"
+            # First argument specifies variable name(s)
             var_names="$arg"
+            # Capture remaining arguments as block
             block="$*"
-            # Remove the 'DO' and 'DONE' markers (first and last lines) from the block
+            # Remove wrapper marker lines (first line e.g. DO and last line e.g. DONE)
             block=$(echo "$block" | sed '1d;$d')
         fi
 
-        # --- Replace @var1 and @var2 with $var1 and $var2 in the block ---
+        # Parse variable names: supports single variable (@var) or two variables for index and value (@idx, @val)
         IFS=',' read -r var1 var2 <<< "$var_names"
+        # If second variable name exists, replace both placeholders with shell variable references
         if [ -n "$var2" ]; then
+            # Replace @var1 placeholder with $var1
             block=$(echo "$block" | sed "s/@$var1/\$$var1/g")
+            # Replace @var2 placeholder with $var2
             block=$(echo "$block" | sed "s/@$var2/\$$var2/g")
         else
+            # Replace single @var1 placeholder with $var1
             block=$(echo "$block" | sed "s/@$var1/\$$var1/g")
         fi
 
-        # --- Get the elements and iterate over them        
+        # Retrieve inner elements string for iteration
         local elements
+        # Fetch newline-delimited elements
         elements=$(this.__contents)
+        # Initialize 1-based index counter to 1
         local index=1
+        # Read elements line by line
         while IFS= read -r element; do
+            # Execute block only for non-empty lines
             [ -n "$element" ] && {
+                # Split variable names again inside loop scope
                 IFS=',' read -r var1 var2 <<< "$var_names"
+                # If two variables specified, bind index to var1 and element to var2; otherwise bind element to var1
                 if [ -n "$var2" ]; then
+                    # Evaluate block with both index and element assigned
                     eval "$var1=$index; $var2=\"$element\"; $block"
                 else
+                    # Evaluate block with element assigned
                     eval "$var1=\"$element\"; $block"
                 fi
             }
+            # Increment 1-based index counter
             index=$((index + 1))
         done <<< "$elements"
     }
 
-    # Method to remove an element by index
+    # Public method: delete_at(index) - removes the element at 1-based index
     method delete_at() {
+        # The 1-based index to remove
         local index="$1"
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Return success immediately if index is less than 1
         [ "$index" -ge 1 ] || return 0
+        # Delete line matching index using sed 'Nd' command
         elements=$(echo "$elements" | sed "${index}d")
+        # Store modified elements back wrapped in parentheses
         this.elements="($elements)"
     }
 
-    # Method to remove the last element of the array
+    # Public method: pop() - removes and discards the last element of the array
     method pop() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Remove the final line using head -n -1
         elements=$(echo "$elements" | head -n -1)
+        # Store modified elements back wrapped in parentheses
         this.elements="($elements)"
     }
 
-    # Method to clear the array
+    # Public method: clear() - empties the array
     method clear() {
+        # Reset elements property to an empty array representation "()"
         this.elements="()"
     }
 
-    # Method to check if the array is empty
+    # Public method: empty() - returns "true" if the array has no elements, "false" otherwise
     method empty() {
+        # Read raw elements property value
         local elements=$(this.elements)
+        # Check if value equals the empty collection string "()"
         if [ "$elements" = "()" ]; then
+            # Output true if empty
             echo "true"
         else
+            # Output false if not empty
             echo "false"
         fi
     }
 
-    # Method to convert the array to a string
+    # Public method: to_s() - converts the array into a single-line string representation "(item1 item2 ...)"
     method to_s() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # If no elements exist, print "()"; otherwise replace newlines with spaces and wrap in parentheses
         if [ -z "$elements" ]; then
+            # Output empty array string
             echo "()"
         else
+            # Output space-separated array string wrapped in parentheses
             echo "(${elements//$'\n'/ })"
         fi
     }
 
-    # Method to return all values (space-separated)
+    # Public method: values() - returns all elements as a single space-separated string
     method values() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Output elements replacing newlines with spaces
         echo "${elements//$'\n'/ }"
     }
 
-    # Method to get the first element of the array
+    # Public method: first() - retrieves the first element of the array (at index 1)
     method first() {
+        # Call at method with index 1
         this.at 1
     }
 
-    # Method to get the last element of the array
+    # Public method: last() - retrieves the last element of the array (at index size)
     method last() {
+        # Call at method passing the total count returned by size
         this.at $(this.size)
     }
 
-    # Method to sort the array in ascending order
+    # Public method: sort([asc|desc]) - returns a sorted array representation (ascending by default)
     method sort() {
+        # Optional sort direction argument (defaults to "asc")
         local sort_by=$1
+        # Variable to hold sorting command
         local sort_cmd
+        # Default to ascending sort order if argument is omitted
         [ -z "$sort_by" ] && sort_by="asc"
+        # Select sorting command based on direction argument
         case "$sort_by" in
+            # Ascending order uses standard sort
             asc ) sort_cmd="sort"    ;;
+            # Descending order uses reverse sort (-r)
             desc) sort_cmd="sort -r" ;;
+            # Report invalid argument error
             *) echo "Invalid sort order: $sort_by. Use 'asc' or 'desc'." ;;
         esac
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Declare local variable for sorted elements output
         local sorted_elements
+        # Pipe elements into chosen sort command
         sorted_elements=$(echo "$elements" | $sort_cmd)
+        # Return sorted elements joined by space and enclosed in parentheses
         echo "(${sorted_elements//$'\n'/ })"
     }
 
-    # Method to reverse the array
+    # Public method: reverse() - returns the array elements in reversed order
     method reverse() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Declare indexed array to accumulate reversed items
         local reversed_elements=()
+        # Declare loop variable for each element line
         local element
+        # Read elements line by line
         while IFS= read -r element; do
+            # Prepend current element to the front of reversed_elements array
             reversed_elements=("$element" "${reversed_elements[@]}")
         done <<< "$elements"
+        # Output space-separated reversed array enclosed in parentheses
         echo "(${reversed_elements[@]})"
     }
 
-    # Method to sum the elements of the array (assuming numeric elements)
+    # Public method: sum() - computes the arithmetic sum of numeric elements
     method sum() {
+        # Declare local variable for inner elements
         local elements
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Initialize accumulator sum to 0
         local sum=0
+        # Read elements line by line
         while IFS= read -r element; do
+            # Add current element to sum using bash arithmetic expansion
             sum=$((sum + element))
         done <<< "$elements"
+        # Output total calculated sum
         echo "$sum"
     }
 
-    # Method to get unique elements of the array
+    # Public method: uniq() - returns array elements with duplicates removed preserving order
     method uniq() {
+        # Declare associative array to track encountered element keys
         local -A seen
+        # Declare indexed array to store unique elements
         local unique=()
+        # Declare loop and contents variables
         local elements el
+        # Retrieve inner elements string
         elements=$(this.__contents)
+        # Read elements line by line
         while IFS= read -r el; do
+            # Skip empty lines
             [ -n "$el" ] || continue
+            # Check if element key was not yet recorded in seen associative array
             if [[ -z "${seen[$el]+x}" ]]; then
+                # Mark element as seen
                 seen[$el]=1
+                # Append element to unique list
                 unique+=("$el")
             fi
         done <<< "$elements"
+        # Output unique elements enclosed in parentheses
         echo "(${unique[*]})"
     }
 

@@ -2,14 +2,14 @@
 #
 # ############################################################################
 # Project: xSHELL (none)
-# File...: OObject
+# File...: classes/OObject
 # Created: Thursday, 2026/10/22 - 23:45:00
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/11/02 - 15:44:58
+# Last Modified: Saturday, 2026/11/07 - 18:17:13
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.1.4
+# Version: 0.0.1.6
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Universal Root Base Class for the xSHELL Object Orientation (OO) system
@@ -32,6 +32,11 @@ class OObject {
             cls=$(cat "$_OO_STORE/instances/$this/__class__")
         fi
         printf '#<%s:%s>\n' "$cls" "$this"
+    }
+
+    # Alias to to_s
+    method to_string() {
+        this.to_s
     }
 
     # Default formatted string representation
