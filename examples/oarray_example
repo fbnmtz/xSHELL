@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/11/10 - 18:41:18
+# Last Modified: Tuesday, 2026/11/10 - 20:05:58
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.306
+# Version: 0.0.10.307
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -105,6 +105,8 @@ nums '<<' 20
 echo "nums '<<' 20                    : $(nums.to_s)"
 nums '<<' 30
 echo "nums '<<' 30                    : $(nums.to_s)"
+nums += 40
+echo "nums += 40                      : $(nums.to_s)  # Append operator (alias for .push)"
 echo "nums.size                       : $(nums.size)"
 echo "nums.sum                        : $(nums.sum)"
 

@@ -6,10 +6,10 @@
 # Created: Wednesday, 2026/09/16 - 23:00:00
 # Author.: @fbnmtz, fgm (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Tuesday, 2026/11/10 - 18:40:09
+# Last Modified: Tuesday, 2026/11/10 - 20:05:43
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.1.11.103
+# Version: 0.1.12.104
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  > Object Orientation (OO) for Bash
@@ -457,6 +457,7 @@ fi
 # 3. OString construction: obj = "text", obj = OString(value), or obj = OString heredoc.
 # 4. OString/OArray numeric indexing: obj[index] reads a character; obj[index]=value replaces it.
 # 4b. Shovel operator: obj '<<' value → dispatches obj.push(value) for collections.
+# 4c. Append operator: obj += value → dispatches obj.push(value) for collections.
 # 5. Attribute assignment: obj.attr = value or obj.attr=value.
 # 6. Bare OString evaluation: obj runs its to_s method when entered without arguments.
 # 7. Member access: obj.method [args...] dispatches a method; obj.attr reads an instance attribute.
@@ -526,6 +527,17 @@ command_not_found_handle() {
         shovel_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
         local push_cls
         if push_cls=$(__oo_resolve_method_class "$shovel_cls" push); then
+            this="$cmd" "__${push_cls}_push" "${args[@]:1}"
+            return $?
+        fi
+    fi
+
+    # 4c. Append operator: obj += value dispatches to push for collection instances.
+    if [ "${args[0]}" = "+=" ] && [ -f "$_OO_STORE/instances/$cmd/__class__" ]; then
+        local append_cls
+        append_cls=$(cat "$_OO_STORE/instances/$cmd/__class__")
+        local push_cls
+        if push_cls=$(__oo_resolve_method_class "$append_cls" push); then
             this="$cmd" "__${push_cls}_push" "${args[@]:1}"
             return $?
         fi
