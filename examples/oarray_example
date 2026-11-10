@@ -6,10 +6,10 @@
 # Created: Sunday, 2026/09/20 - 01:09:32
 # Author.: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Last Modified: Monday, 2026/11/02 - 15:45:29
+# Last Modified: Tuesday, 2026/11/10 - 18:41:18
 # Modified By..: @fbnmtz, (fabiano.matoz@gmail.com)
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
-# Version: 0.0.9.304
+# Version: 0.0.9.306
 # ~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~·~·~·~·~·~·~·~~·~·~·~·~·~~·~·~·~·~·~·~·~
 # Description: 
 #  >
@@ -91,6 +91,22 @@ arr.pop
 echo "arr.pop                         : $(arr.to_s)"
 arr.pop
 echo "arr.pop                         : $(arr.to_s)"
+
+echo
+echo ----------------------------------------------------------
+echo "OArray - shovel operator (<<) - alias for .push"
+echo ----------------------------------------------------------
+# The shovel operator '<<' is equivalent to .push
+# Note: '<<' must be quoted to avoid bash interpreting it as a here-document
+nums = new OArray
+nums '<<' 10
+echo "nums '<<' 10                    : $(nums.to_s)  # Shovel operator (alias for .push)"
+nums '<<' 20
+echo "nums '<<' 20                    : $(nums.to_s)"
+nums '<<' 30
+echo "nums '<<' 30                    : $(nums.to_s)"
+echo "nums.size                       : $(nums.size)"
+echo "nums.sum                        : $(nums.sum)"
 
 echo
 echo "literal_array.to_s              : $(literal_array.to_s)"
